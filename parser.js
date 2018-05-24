@@ -1,17 +1,10 @@
 /*jshint esversion: 6 */
 
+
 var data = [];
 var dataset = [];
 
-var selecteTerm = "kathleen_wynne";
-// var selecteTerm = "doug_ford";
-
 var PATH = "data/";     // Define files paths
-
-var showTableAll = false;
-var showMethodology = false;
-var showScrollHint = false;
-
 
 var terms = [
     // {name:"Ontario Politics",slug:"ontario_politics"},
@@ -21,6 +14,11 @@ var terms = [
     {name:"Andrea Horwath",slug:"andrea_horwath"},
     {name:"Mike Schreiner",slug:"mike_schreiner"}
 ];
+
+var selecteTerm = terms[0].slug;
+
+// var initalDate = Moment("2018-04-03");
+// console.log(initalDate);
 
 var dates = ["2018-04-03",
             "2018-04-04",
@@ -74,63 +72,6 @@ var dates = ["2018-04-03",
             "2018-05-22",
             "2018-05-23"
         ];        
-        
-
-$( document ).ready(function() {
-    loadData();
-    setupvis();
-
-    $('#methodology-toggle-icon').click(toggleMethodology);
-
-    UIkit.toggle($("#small-title"),{mode: 'media', animation:'uk-animation-fade,uk-animation-fade'});
-
-    UIkit.toggle($("#horizontal-scroll-hint"),{mode: 'media', animation:'uk-animation-fade,uk-animation-fade'});
-    $("#horizontal-scroll-hint").on('show', function () { showScrollHint = true; });
-    $("#horizontal-scroll-hint").on('hide', function () { showScrollHint = false; });
-
-
-    $("#menu-section").on('active', function () {
-       
-        UIkit.toggle($("#small-title")).toggle();
-    });
-    $("#menu-section").on('inactive', function () {
-        UIkit.toggle($("#small-title")).toggle();
-    });
-});
-
-function toggleTableListAll() {
-    showTableAll = !showTableAll;
-
-    var icon;
-
-    if (showTableAll) {
-        icon = 'minus-circle';
-        builtTable(selectedDataset.videos);
-    } else {
-        icon = 'plus-circle';
-    }
-        
-
-    UIkit.icon('#table-all-toggle-icon', {icon: icon});
-        
-}
-
-function toggleMethodology() {
-    showMethodology = !showMethodology;
-
-    var icon;
-
-    if (showMethodology) {
-        icon = 'minus-circle';
-    } else {
-        icon = 'plus-circle';
-    }
-        
-
-    UIkit.icon('#methodology-toggle-icon', {icon: icon});
-        
-}
-
 
 function dataIsReady() {
     console.log(data);
