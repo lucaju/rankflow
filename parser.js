@@ -22,6 +22,8 @@ var terms = [
     {name:"Mike Schreiner",slug:"mike_schreiner"}
 ];
 
+console.log("oi");
+
 var dates = ["2018-04-03",
             "2018-04-04",
             "2018-04-05",
