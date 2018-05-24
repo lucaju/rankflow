@@ -74,6 +74,7 @@ var dates = ["2018-04-03",
             "2018-05-22",
             "2018-05-23"
         ];        
+        
 
 $( document ).ready(function() {
     loadData();
