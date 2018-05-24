@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Ontario Elections 2018: YouTube Recommendation RankFlow</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="js/d3.min.js"></script>
+	<script type="text/javascript" src="js/moment.js"></script>
+
+	<script type="text/javascript" src="js/uikit.min.js"></script>
+	<script type="text/javascript" src="js/uikit-icons.min.js"></script>
+
+	<script type="text/javascript" src="./parser.js"></script>
+	<script type="text/javascript" src="./rankflowVis.js"></script>
+	<script type="text/javascript" src="./top10SentimentVis.js"></script>
+	
+    <link rel="stylesheet" href="css/uikit.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    
+</head>
+
+<body>
+
+<div id="super-header-section" class="uk-section uk-section-xsmall uk-section-secondary uk-padding-remove-vertical">
+	<div class="uk-container uk-container-expand">
+		<p class="uk-text-small"><a href="http://www.amo-oma.ca/en/" class="uk-link-muted"><span uk-icon="chevron-left"></span> Algorithmic Media Observatory</a></p>
+	</div>
+</div>
+
+<div id="header-section" class="uk-section uk-section-muted uk-background-fixed uk-background-bottom-center" style="background-image: url(img/background-green-blue-strips1.jpg);">
+	<div class="uk-container uk-container-small uk-text-center">
+		<h1 class="uk-heading-primary">Ontario Elections 2018<br/><span class="uk-h2">YouTube Recommendation RankFlow</span></h1>
+	</div>
+</div>  
+
+<div id="introduction-section" class="uk-section">
+	<div class="uk-container">
+		<!-- <h2 class="uk-h2 uk-text-center">Findings</h2> -->
+		<p class="uk-text-lead">What videos does YouTube recommend about Ontario party leaders? In the first study of its kind, we have identified the most recommended videos by YouTube for the pre-writ period from April 3 to May 8, 2018. Data was collected through tools developed by Guillaume Chaslot and the Algo Transparency project.</p>
+		<p>After watching any video on YouTube, the platform automatically recommends other videos based on a ranking produced by a deep learning neural network. Like search results, recommendations are a judgment made by a platform about the relevance of content. In recent months, The Guardian, The Washington Post and the New York Times have raised concerns about YouTube’s judgment. Its recommendation system might promote harmful or disturbing content particularly on YouTube Kids, their platform for young audiences. Data + Society, a US-based research centre, has also observed YouTube recommending extreme content based on benign queries.</p>			
+		<p>We cannot know for sure what has caused these recommendations. Likely the recommendations are a combination of public opinion, algorithmic design and possibly the work of partisan communities amplifying certain voices (also called media manipulation). This study prototypes a political discoverability audit, a tool to assess what content is being recommended online before and during an election, that has been called for in the lead-up to elections. These audits could become an important tool in understanding the role of social media platforms in elections.</p>
+		<h3 class="uk-h3 uk-text-center">Key Points</h3>
+		<div class="uk-margin-bottom uk-padding-bottom" uk-grid>
+			<div class="uk-width-1-3@m uk-width-1-1@s">
+				<p>YouTube on average recommends negative videos for Kathleen Wynne, half of top videos recommended were negative.</p>
+			</div>
+			<div class="uk-width-1-3@m uk-width-1-1@s">
+				<p>Most recommended video entitled “Youngest Ever Ontario MPP Destroys Premier Wynne” (1,395 recommendations), second most recommended video “Doug Ford Laughs Off Smug Leftist Avi Lewis”(977 recommendations)</p>
+			</div>
+			<div class="uk-width-1-3@m uk-width-1-1@s">
+				<p>TVO has uploaded the most videos recommended by YouTube (7 recommendations), part of the overall popularity of mainstream media outlets.</p>
+			</div>
+		</div>
+		<div class="uk-text-center uk-margin-large-top" uk-grid>
+			<div class="uk-width-auto"></div>
+			<div class="uk-width-expand">
+				<div id="rankflow-panel" class="uk-panel uk-overflow-auto">
+					<div id="top-10-setiment-visualization"></div>
+				</div>
+			</div>
+			<div class="uk-width-auto"></div>
+		</div>
+		
+	</div>
+</div>
+
+<div id="menu-section" class="uk-section uk-section-xsmall uk-background-muted uk-padding-remove-top uk-padding-remove-bottom uk-box-shadow-small" uk-sticky="media: 640" style="z-index: 980;" >
+	<div class="uk-container uk-text-center">
+
+		<div id="small-title" class="uk-clear-fix uk-margin-top" hidden>
+			<h4 class="uk-h4 uk-margin-remove-bottom">Ontario Elections 2018: YouTube Recommendation RankFlow</h4>
+		</div>
+	
+		<nav class="uk-navbar-container" uk-navbar>
+			<div class="uk-navbar-center">
+
+				<ul class="uk-navbar-nav" uk-switcher>
+					<!-- <li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('ontario_politics')">Ontario Politics</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('ontario_election')">Ontario Election</a></li> -->
+					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('kathleen_wynne')">Kathleen Wynne</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('doug_ford')">Doug Ford</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('andrea_horwath')">Andrea Horwath</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('mike_schreiner')">Mike Schreiner</a></li>
+				</ul>
+		
+			</div>
+		</nav>
+	</div>
+</div>
+
+<div id="top10-section" class="uk-section">
+	<div class="uk-container">
+		<h2 class="uk-h2 uk-text-center">Top 10 YouTube Recommendations</h2>
+		<div class="uk-text-small">
+			<div class="spiner uk-position-absolute uk-transform-center uk-margin-large-bottom" style="left: 50%;" uk-spinner="ratio: 1"></div>
+			<div id="top-ten-recommendations"></div>
+		</div>
+	</div>
+	<hr>
+</div>
+
+<div id="rankflow-section" class="uk-section uk-section-xsmall">
+	<div class="uk-container uk-container-expand">
+		<h2 class="uk-h2 uk-text-center">YouTube Recommendations Over Time</h2>
+		<div class="uk-text-center" uk-grid>
+			<div class="uk-width-auto"></div>
+			<div class="uk-width-expand">
+				<div class="spiner" uk-spinner="ratio: 3"></div>
+				<div id="rankflow-panel" class="uk-panel uk-overflow-auto">
+					<div id="visualization"></div>
+				</div>
+				<div id="horizontal-scroll-hint" class="uk-text-meta uk-margin-medium-top" hidden>
+					<p><span uk-icon="chevron-left"></span> Scroll <span uk-icon="chevron-right"></span></p>
+				</div>
+				<div id="modal-video-details" uk-modal></div>
+
+			</div>
+			<div class="uk-width-auto"></div>
+		</div>
+	</div>
+</div>
+
+<!-- <div id="list-all-section" class="uk-section uk-section-xsmall uk-section">
+	<hr>
+	<div class="uk-container">	
+		<h5 class="uk-h5 uk-text-center">List all videos <a id="table-all-toggle-icon" class="uk-icon-link" uk-icon="plus-circle"  uk-toggle="target: #table-all"></a></h5>
+		<div id="table-all" class="uk-height-large uk-panel uk-overflow-auto uk-text-small" hidden>
+			<div id="vis_table"></div>
+		</div>
+	</div>
+</div> -->
+
+<div id="methodology-section" class="uk-section uk-section-xsmall uk-section-muted">
+	<div class="uk-container uk-text-small uk-text-muted">
+		<h3 class="uk-h3 uk-text-center uk-margin-small-top"><span>Methodology <a id="methodology-toggle-icon" class="uk-icon-link" uk-icon="plus-circle"  uk-toggle="target: #methodology"></a></span></h3>
+		<div id="methodology" class="uk-grid-divider uk-margin-large-top uk-margin-medium-bottom" uk-grid hidden>
+			<div class="uk-width-3-5@m">
+				<h5 class="uk-h5 uk-text-uppercase">Data Collection</h5>
+				<p>We collected recommendations using a Python script developed by Guillaume Chaslot <a href="https://github.com/pnbt/YouTube-explore" target="_blank">Guillaume Chaslot</a> as part of the Algo Transparency project. The script starts with a search query on YouTube to follow and store the list of recommended videos related to the topic of interest. More specifically, the script 1) gets the [N] first search results, 2) follows the first [M] recommendations, 3) repeats step (2) [P] times, and 4) stores the results in a JSON file.</p>
+				<p>For this research we collected six relevant terms connected to the 2018 Ontario Elections: two broad terms to get the big picture on the elections (“Ontario Politics” and “Ontario Election”); and four specific terms, which are the names of the main candidates (“Kathleen Wynne”, “Doug Ford”, “Andrea Horwath”, “Mike Schreiner”). The collection was made manually running the script every day between 8 and 10 pm, from April 3 to May 8, 2018. We choose to have a narrow but deep look into the recommendation system. Thus we set the algorithm to follow the first four recommended videos and repeat the operation four times for each searched term. This is analogous of a person searching for a topic on YouTube, opening the first four videos, and sequentially following the first four recommended videos for each one of them, repeating the operation four times in the videos that come out from each new recommendation list.</p>
+				<p>This algorithm does not rely on YouTube public API. Instead, it simulates the browser environment, loading and scraping HTML elements present at the YouTube search and watch page. This makes the data collection less prone to social bias, such as user profiling using personal preferences, browser history, and cookies. However, it does not remove all the variable that might disturb the recommendation ranking, such as the location, language, the time of the day, and the machine used in this process, as well as other variables not revealed by YouTube.</p>
+				<p>Each daily search produces a JSON file containing the data for all the six terms. The files are merged into a single dataset, from which new information is derived (<i>e.g.</i>, total time a video was recommended during the period), and the data is organized to create a rank flow visualization.</p>
+			</div>
+			<div class="uk-width-2-5@m">
+				<h5 class="uk-h5 uk-text-uppercase">Visualization</h5>
+				<p>Inspired by <a href="http://labs.polsys.net/tools/rankflow/" target="_blank">Bernhard Rieder's work</a>, we developed a RankFlow visualization that shows a rank of the most recommended videos per day during the period. Built using <a href="https://d3js.org/" target="_blank">D3.js</a>, the visualization displays all videos that reached at least one of the top 5 positions in the rank at any given day of the observed period. The thickness of the line works as a reinforced visual cue for the rank position measure on the vertical axis, and it is set by the best position the video was ranked in the period. By clicking on each line, it is possible to watch the video in context, as well as check the basic metrics (view, likes, dislikes, number of recommendation) per day. Accompanying the graph, there is ranked table listing all videos collected on each searched term.</p>
+				<p>The rank flow allows the analysis of the evolution of each video in the rank, find trends, and observe what has been recommended. This might give us some insights about how YouTube rank system works, what are the most prominent videos on specific topics, and what narrative this rank bring to the political debate in Canada.</p>
+				<p>Although there is no legend (yet), each line is colour-coded by the channel that posted the video, which adds another possible dimension to the analysis: Who produces the videos about each searched term? Is there a dominant channel in the period or the video ecology is diverse?</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="footer-section" class="uk-section uk-section-xsmall uk-section-secondary">
+	<div class="uk-container uk-container-small uk-text-small uk-text-center">
+		<p>Developed by Luciano Frizzera and Fenwick McKelvey | <a href="http://www.amo-oma.ca/en/" target="_blank" class="uk-link-muted">Algorithmic Media Observatory</a></p>
+	</div>
+</div>
+
+</body>
+</html>
+
+                                                                                                         

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <style>
+
+            .bar {
+              fill: steelblue;
+            }
+            
+            .axis path {
+              display: none;
+            }
+            
+            </style>
+</head>
+<body>
+
+<svg width="960" height="500"></svg>
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script>
+
+var svg = d3.select("svg"),
+    margin = {top: 200, right: 60, bottom: 30, left: 200},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+var sentimentTop10Videos = [
+    {  
+        candidate: "Kathleen Wynne",
+        sentiment: [
+            {key: "positive", order: "0", value:5},
+            {key: "neutral", order: "1", value:2},
+            {key: "unknown", order: "2", value:0},
+            {key: "negative", order: "3", value:3}
+        ]
+    },
+    {
+        candidate: "Doug Ford",
+        sentiment: [
+            {key: "positive", order: "0", value:0},
+            {key: "neutral", order: "1", value:7},
+            {key: "unknown", order: "2", value:1},
+            {key: "negative", order: "3", value:2}
+        ]
+    },
+    {
+        candidate: "Andrea Horwath",
+        sentiment: [
+            {key: "positive", order: "0", value:0},
+            {key: "neutral", order: "1", value:4},
+            {key: "unknown", order: "2", value:0},
+            {key: "negative", order: "3", value:6}
+        ]
+    },
+    {
+        candidate: "Mike Schreiner",
+        sentiment: [
+            {key: "positive", order: "0", value:0},
+            {key: "neutral", order: "1", value:1},
+            {key: "unknown", order: "2", value:6},
+            {key: "negative", order: "3", value:3}
+        ]
+    },
+];
+
+var z = d3.scaleOrdinal()
+    .range(["#2c7bb6", "#bcbddc", "#efedf5", "#d7191c"]);
+
+var pieGenerator = d3.pie()
+    .value(function(d) {return d.value;})
+    .sort(function(a, b) {
+        return a.order.localeCompare(b.order);
+    })
+    .startAngle(-0.5 * Math.PI)
+    .endAngle(0.5 * Math.PI);
+
+var cand = 0;
+var arcData = pieGenerator(sentimentTop10Videos[cand].sentiment);
+
+var arcGenerator = d3.arc()
+  .innerRadius(50)
+  .outerRadius(100);
+
+var candidateVis = d3.select('g').append("g");
+
+
+
+var graph = candidateVis.selectAll('path')
+  .data(arcData)
+  .enter()
+  .append('path')
+  .attr('d', arcGenerator)
+  .style('fill', function(d) { return sentimentCoulorTime(d.data.key); })
+  .style('stroke-width',1)
+  .style('stroke',"#ffffff")
+
+var dashboard = candidateVis
+    .append("g")
+    .attr("class", "dashboard");
+    // .attr("transform", "translate(100,100)")
+
+    dashboard.append("text")
+    .attr("y","-150")
+    .style("text-anchor", "middle")
+    .attr("dy", "2em")
+    .style("font", "14px sans-serif")
+    .text(function(d) { return sentimentTop10Videos[cand].candidate; })
+
+
+dashboard.append("text")
+    .attr("x", "-75")
+    .style("text-anchor", "middle")
+    .attr("dy", "2em")
+    .style("font", "10px sans-serif")
+    .text("Positive")
+
+dashboard.append("text")
+    .attr("x", "75")
+    .style("text-anchor", "middle")
+    .attr("dy", "2em")
+    .style("font", "10px sans-serif")
+    .text("Negative")
+
+// var legend = candidateVis
+//     .append("g")
+//     .attr("class", "legend");
+
+
+// legend.append("rect")
+// 		// .attr("x", 675)
+// 		// .attr("y", function(d, i) { return i * 25 + 300 })
+// 		.attr("width", 15)
+// 		.attr("height", 15)
+// 		.style("fill","#000");
+// 		// .attr("fill", function(d) { return z(d.key); });
+
+//   legend.append("text")
+// 	  .attr("x", 18)
+// 	  .attr("y", 8)
+//       .attr("dy", "0.35em")
+//       .attr("fill", "#000	")
+//       .style("font", "10px sans-serif")
+//       .text(function(d) { return d.key; });
+
+
+
+
+function sentimentCoulorTime(type) {
+
+    var c = "";
+
+    switch(type) {
+
+        case "positive":
+            c = "#2c7bb6";
+            break;
+        
+        case "neutral":
+            c = "#bcbddc";
+            break;
+
+        case "negative":
+            c = "#d7191c";
+            break;
+        
+        default:
+            c = "#efedf5";
+            break;
+    }
+
+    return c;
+
+};
+
+</script>
+</body>
+</html>
