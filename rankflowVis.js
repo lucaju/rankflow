@@ -38,13 +38,7 @@ $( document ).ready(function() {
 	margin = {top: 20, right: 30, bottom: 30, left: 50};
 	height = 470 - margin.top - margin.bottom;
 
-	var minVizWidth = (dates.length * minDateWidth) + margin.left + margin.right - 10;
 	
-	if(windowWidth < minVizWidth) {
-		width = minVizWidth - margin.left - margin.right - 10;
-	} else {
-		width = (windowWidth-140) - margin.left - margin.right - 10;
-	}
 	
 
 });
@@ -84,6 +78,14 @@ $( window ).resize(function() {
 
 function setupvis() {
 
+	var minVizWidth = (rankflow.numberDays * minDateWidth) + margin.left + margin.right - 10;
+	
+	if(windowWidth < minVizWidth) {
+		width = minVizWidth - margin.left - margin.right - 10;
+	} else {
+		width = (windowWidth-140) - margin.left - margin.right - 10;
+	}
+
 	parseTime = d3.timeParse("%Y-%m-%d");
 
 	///////////////////// COLOR ////////////////////////// 
@@ -104,9 +106,16 @@ function setupvis() {
 	///////////////////// SCALE & AXES ////////////////////////// 
 
 	var parsedDates = [];
-	$.each(dates, function(i,d) {
-		parsedDates.push(parseTime(d));
-	});
+	// $.each(dates, function(i,d) {
+	// 	parsedDates.push(parseTime(d));
+	// });
+
+	let dayIterator = rankflow.initialDate;
+
+	while (dayIterator <= rankflow.finalDate) {
+		parsedDates.push(parseTime(dayIterator.format('YYYY-MM-DD')));
+		dayIterator.add(1, 'days');
+	}
 	
 
 	// var startDay = parseTime(dates[0]);

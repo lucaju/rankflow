@@ -5,8 +5,6 @@ var showMethodology = false;
 var showScrollHint = false;
 
 $( document ).ready(function() {
-    loadData();
-    setupvis();
 
     $('#methodology-toggle-icon').click(toggleMethodology);
 
@@ -24,6 +22,8 @@ $( document ).ready(function() {
     $("#menu-section").on('inactive', function () {
         UIkit.toggle($("#small-title")).toggle();
     });
+
+
 });
 
 function toggleTableListAll() {
