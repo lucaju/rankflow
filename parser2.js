@@ -155,12 +155,6 @@
             }
 
 
-
-            // dataIsReady();
-
-
-
-
         };
 
         this.getTermByName = function (termName) {
@@ -189,16 +183,25 @@
         };
 
         this.dataIsReady = function() {
-        
-            setupvis();
-            this.parseData();
 
-            builtChart();
-        
-            buildTopTenTable(this.getDatasetByTerm(this.selectedTerm).videos);
+
+            this.parseData();
+            
+            //vis
+            // setupvis();
+            // builtChart();
+            
+            //Top ten
+            let rankedData = this.getDatasetByTerm(this.selectedTerm).videos;
+            rankedData = rankedData.sort(function (b, a) {
+                return a.sumRec - b.sumRec;
+            });
+            let topTen = rankedData.slice(0, 10);
+
+            buildTopTenTable(topTen);
             
             
-            console.log(this.getDatasetByTerm(this.selectedTerm).videos);
+            // console.log(this.getDatasetByTerm(this.selectedTerm).videos);
             // vis(this.getDatasetByTerm(this.selectedTerm).videos);
         
             $('#table-all-toggle-icon').click(toggleTableListAll);
@@ -303,150 +306,3 @@
 
 
 })(window); //Pass in a reference to the global window object
-
-
-
-
-
-
-function buildTopTenTable(d) {
-
-    var rankedData = d.sort(function (b, a) {
-        return a.sumRec - b.sumRec;
-    });
-    var topTen = rankedData.slice(0, 10);
-
-    var divTable = $('#top-ten-recommendations');
-    divTable.empty();
-
-    divTable.append(`<table id="list" class="uk-table uk-table-hover uk-table-divider">`);
-
-    var table = $(divTable.find('#list'));
-
-    var tableHead = `<thead>
-		<tr>
-			<th class="uk-table-shrink">&nbsp;</th>
-			<th class="">Title</th>
-            <th class="">Channel</th>
-            <th class="uk-table-shrink uk-text-right">Views</th>
-            <th class="uk-table-shrink uk-text-right">Likes</th>
-            <th class="uk-table-shrink uk-text-right">Dislikes</th>
-			<th class="uk-table-shrink uk-text-right">Reccomendations</th>
-		</tr>
-    </thead>
-    <tbody>
-    </tbody>`;
-
-    table.append(tableHead);
-
-    var tableBody = table.find('tbody');
-
-    var tableInfo = '';
-
-
-
-    $.each(topTen, function (i, d) {
-
-        tableInfo += `<tr id='${d.id}' class='table-row'>
-            <td class="">${i+1}</td>
-			<td class=""><a href='https://www.youtube.com//watch?v=${d.youtubeID}' target='_blank'>${d.title}</a></td>
-            <td class="">${d.channel}</td>
-            <td class="uk-text-right">${d.dates[d.dates.length-1].views}</td>
-            <td class="uk-text-right">${d.dates[d.dates.length-1].likes}</td>
-            <td class="uk-text-right">${d.dates[d.dates.length-1].dislikes}</td>
-            <td class="uk-text-right">${d.sumRec}</td>
-		</tr>`;
-    });
-
-    tableBody.append(tableInfo);
-
-    var tableRow = table.find('.table-row');
-
-    tableRow.mouseover(function (d) {
-        var t = $(this);
-        highlightOn(t.attr('id'));
-    });
-
-    tableRow.mouseout(function (d) {
-        var t = $(this);
-        highlightOff(t.attr('id'));
-    });
-
-    tableRow.click(function (d) {
-
-        var t = $(this);
-        var data = getFlatDataById(t.attr('id'));
-
-        if (data != null) showDetails(data);
-    });
-
-}
-
-function builtTable(d) {
-    var rankedData = d.sort(function (b, a) {
-        return a.sumRec - b.sumRec;
-    });
-
-    var divTable = $('#vis_table');
-    divTable.empty();
-
-    divTable.append(`<table id="list" class="uk-table uk-table-hover uk-table-divider">`);
-
-    var table = $(divTable.find('#list'));
-
-    var tableHead = `<thead>
-		<tr>
-			<th class="uk-table-shrink">&nbsp;</th>
-			<th class="">Title</th>
-            <th class="">Channel</th>
-            <th class="uk-table-shrink uk-text-right">Views</th>
-            <th class="uk-table-shrink uk-text-right">Likes</th>
-            <th class="uk-table-shrink uk-text-right">Dislikes</th>
-			<th class="uk-table-shrink uk-text-right">Reccomendations</th>
-		</tr>
-    </thead>
-    <tbody>
-    </tbody>`;
-
-    table.append(tableHead);
-
-    var tableBody = table.find('tbody');
-
-    var tableInfo = '';
-
-    $.each(rankedData, function (i, d) {
-
-        tableInfo += `<tr id='${d.id}' class='table-row'>
-            <td class="">${i+1}</td>
-			<td class=""><a href='https://www.youtube.com//watch?v=${d.youtubeID}' target='_blank'>${d.title}</a></td>
-            <td class="">${d.channel}</td>
-            <td class="uk-text-right">${d.dates[d.dates.length-1].views}</td>
-            <td class="uk-text-right">${d.dates[d.dates.length-1].likes}</td>
-            <td class="uk-text-right">${d.dates[d.dates.length-1].dislikes}</td>
-            <td class="uk-text-right">${d.sumRec}</td>
-		</tr>`;
-    });
-
-    tableBody.append(tableInfo);
-
-    var tableRow = table.find('.table-row');
-
-    tableRow.mouseover(function (d) {
-        var t = $(this);
-        highlightOn(t.attr('id'));
-    });
-
-    tableRow.mouseout(function (d) {
-        var t = $(this);
-        highlightOff(t.attr('id'));
-    });
-
-    tableRow.click(function (d) {
-
-        var t = $(this);
-        var data = getFlatDataById(t.attr('id'));
-
-        if (data != null) showDetails(data);
-    });
-
-}
