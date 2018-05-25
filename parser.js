@@ -17,9 +17,6 @@ var terms = [
 
 var selecteTerm = terms[0].slug;
 
-// var initalDate = Moment("2018-04-03");
-// console.log(initalDate);
-
 var dates = ["2018-04-03",
             "2018-04-04",
             "2018-04-05",
