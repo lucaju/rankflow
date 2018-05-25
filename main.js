@@ -23,6 +23,24 @@ $( document ).ready(function() {
         UIkit.toggle($("#small-title")).toggle();
     });
 
+    console.log(rankflowData);
+
+    $(rankflowData).on('success',function() {
+        setupvis();
+        builtChart();
+    });
+
+    // $(rankflowData).on('update',function(e) {
+
+    $(rankflowData).on('update',{data:Object},function(e,data) {
+
+        console.log(e,data);
+        buildTopTenTable(data.topTenVideos);  //buld table        
+        vis(data.videos);
+    
+        // if (showTableAll) builtTable(selectedDataset.videos);
+    });
+
 
 });
 
@@ -61,6 +79,8 @@ function toggleMethodology() {
 
 
 function buildTopTenTable(topTen) {
+
+    console.log(topTen)
 
     // let rankedData = d.sort(function (b, a) {
     //     return a.sumRec - b.sumRec;

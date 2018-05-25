@@ -42,7 +42,7 @@
 
         this.initialDate = moment("2018-04-03");
         this.finalDate = moment("2018-05-24");
-        this.numberDays = this.finalDate.diff(this.initialDate, 'days');
+        this.numberDays = this.finalDate.diff(this.initialDate, 'days')+1;
 
         //##### METHODS
 
@@ -60,11 +60,10 @@
 
             let maxRankIndex = 10; //max videos on the rank
             let daysLoaded = 0; //start counting
-            let dayIterator = this.initialDate;
+            let dayIterator = moment(this.initialDate);
             let videoID = 0;
 
             while (dayIterator <= this.finalDate) {
-
 
                 let file = `${this.PATH}ontario-elections-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
 
@@ -75,7 +74,7 @@
                     //   loop through terms
                     $.each(fileData, function (term, d) {
 
-                        let termVideoCollection = rankflow.getTermByName(term);
+                        let termVideoCollection = rankflowData.getTermByName(term);
                         let rankIndex = 0; //
 
                         //sort by reccomedation
@@ -102,17 +101,16 @@
 
                     });
 
-
                     //advance date
                     daysLoaded++;
 
                     //if it is the last day
-                    if (daysLoaded == rankflow.numberDays) {
+                    if (daysLoaded == rankflowData.numberDays) {
                         reorderByDate();
 
-                        rankflow.dataIsReady();
-                        // console.log(rankflow);
+                        $(rankflowData).trigger('success');
 
+                        // console.log(rankflowData);
                     }
 
                 });
@@ -137,7 +135,7 @@
             function reorderByDate() {
                 /*loading files assyncroniously can make data be placed in diferent order
                 this fuctioon order the data by date (alphabetically)*/
-                $.each(rankflow.terms, function (i, term) {
+                $.each(rankflowData.terms, function (i, term) {
 
                     term.videos.sort(function (a, b) {
                         if (a.date < b.date) {
@@ -182,33 +180,18 @@
             return null;
         };
 
-        this.dataIsReady = function() {
-
+        $(this).on('success',function() {
 
             this.parseData();
             
-            //vis
-            // setupvis();
-            // builtChart();
-            
-            //Top ten
-            let rankedData = this.getDatasetByTerm(this.selectedTerm).videos;
-            rankedData = rankedData.sort(function (b, a) {
-                return a.sumRec - b.sumRec;
-            });
-            let topTen = rankedData.slice(0, 10);
-
-            buildTopTenTable(topTen);
-            
-            
-            // console.log(this.getDatasetByTerm(this.selectedTerm).videos);
-            // vis(this.getDatasetByTerm(this.selectedTerm).videos);
+            this.updateData();
         
             $('#table-all-toggle-icon').click(toggleTableListAll);
         
             $('#rankflow-panel').scrollLeft(300);
-        
-        };
+
+        });
+
 
         this.parseData = function() {
 
@@ -280,18 +263,24 @@
         
         };
 
-
         this.selectTerm = function(term) {
+            this.selectedTerm = term; //new term
+            this.updateData();
+        };
 
-            this.selectedTerm = term;
-        
-            var selectedDataset = this.getTermByName(this.selectedTerm);
-        
-            buildTopTenTable(selectedDataset.videos);
-            // vis(selectedDataset.videos);
-        
-            // if (showTableAll) builtTable(selectedDataset.videos);
-        
+        this.updateData = function() {
+
+            let selectedDataset = this.getTermByName(this.selectedTerm); //get data
+
+            //rank
+            selectedDataset.videos.sort(function (b, a) {
+                return a.sumRec - b.sumRec;
+            });
+
+            selectedDataset.topTenVideos = selectedDataset.videos.slice(0, 10); //reduce
+
+            $(rankflowData).trigger('update',[selectedDataset]);
+
         };
 
 
@@ -299,10 +288,10 @@
 
     $(document).ready(function () {
         
-        rankflow.loadData();
+        rankflowData.loadData();
     });
 
-    window.rankflow = new RankflowData();
+    window.rankflowData = new RankflowData();
 
 
 })(window); //Pass in a reference to the global window object
