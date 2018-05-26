@@ -39,121 +39,11 @@
         ];
 
         this.selectedTerm = this.terms[0].slug;
-
         this.initialDate = moment("2018-04-03");
         this.finalDate = moment("2018-05-24");
         this.numberDays = this.finalDate.diff(this.initialDate, 'days')+1;
 
         //##### METHODS
-
-        this.setInitialDate = function (value) {
-            this.initialDate = moment(value);
-        };
-
-        this.setFinalDate = function (value) {
-            this.finalDate = moment(value);
-        };
-
-        /////
-
-        this.loadData = function () {
-
-            let maxRankIndex = 10; //max videos on the rank
-            let daysLoaded = 0; //start counting
-            let dayIterator = moment(this.initialDate);
-            let videoID = 0;
-
-            while (dayIterator <= this.finalDate) {
-
-                let file = `${this.PATH}ontario-elections-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
-
-                $.getJSON(file, function (fileData) {
-
-                    let raw_date = getDateFromFilename(file); //get date from filename
-
-                    //   loop through terms
-                    $.each(fileData, function (term, d) {
-
-                        let termVideoCollection = rankflowData.getTermByName(term);
-                        let rankIndex = 0; //
-
-                        //sort by reccomedation
-                        d.sort(function (b, a) {
-                            return a.nb_recommendations - b.nb_recommendations;
-                        });
-
-                        // loop through videos
-                        $.each(d, function (i, video) {
-
-                            video.youtubeID = video.id;
-                            video.id = "v" + videoID;
-                            video.date = raw_date[0];
-                            video.moment = moment(raw_date[0]);
-                            video.recRank = i + 1;
-                            video.day = +raw_date[3];
-
-                            termVideoCollection.videos.push(video);
-
-                            //advance index
-                            rankIndex++;
-                            videoID++;
-                        });
-
-                    });
-
-                    //advance date
-                    daysLoaded++;
-
-                    //if it is the last day
-                    if (daysLoaded == rankflowData.numberDays) {
-                        reorderByDate();
-
-                        $(rankflowData).trigger('success');
-
-                        // console.log(rankflowData);
-                    }
-
-                });
-
-                //advance date
-
-                dayIterator.add(1, 'days');
-
-            }
-
-            // end of loop
-
-            function getDateFromFilename(file) {
-
-                //get date from filename
-                const regex = /(\d{4})-(\d{2})-(\d{2})/; // regex find date format "YYYY-MM-DD"
-                const raw_date = file.match(regex);
-
-                return raw_date;
-            }
-
-            function reorderByDate() {
-                /*loading files assyncroniously can make data be placed in diferent order
-                this fuctioon order the data by date (alphabetically)*/
-                $.each(rankflowData.terms, function (i, term) {
-
-                    term.videos.sort(function (a, b) {
-                        if (a.date < b.date) {
-                            return -1;
-                        }
-                        if (a.date > b.date) {
-                            return 1;
-                        }
-                        // names must be equal
-                        return 0;
-                    });
-
-
-                });
-            }
-
-
-        };
 
         this.getTermByName = function (termName) {
 
@@ -167,44 +57,145 @@
             return null;
         };
 
-
-        this.getDatasetByTerm = function (termName) {
-
-            termName = termName.replace(" ", "_"); // replace space with trailing
-
-            for (let i = 0; i < this.terms.length; i++) {
-                if (this.terms[i].slug == termName) {
-                    return this.terms[i];
-                }
-            }
-            return null;
+        this.selectTerm = function(term) {
+            this.selectedTerm = term; //new term
+            this.updateData();
         };
 
-        $(this).on('success',function() {
+        this.updateData = function() {
 
-            this.parseData();
+            let selectedDataset = this.getTermByName(this.selectedTerm); //get data
+
+            //rank
+            selectedDataset.videos.sort(function (b, a) {
+                return a.sumRec - b.sumRec;
+            });
+
+            this.getRankedChannels(this.selectedTerm);
+
+            selectedDataset.topTenVideos = selectedDataset.videos.slice(0, 10); //reduce
+
+            $(rankflowData).trigger('update',[selectedDataset]);
+
+        };
+
+        this._loadData = function () {
+
+            let maxRankIndex = 10; //max videos on the rank
+            let daysLoaded = 0; //start counting
+            let dayIterator = moment(rankflowData.initialDate);
+            let videoID = 0;
+    
+            while (dayIterator <= rankflowData.finalDate) {
+    
+                let file = `${rankflowData.PATH}ontario-elections-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
+    
+                $.getJSON(file, function (fileData) {
+    
+                    let raw_date = getDateFromFilename(file); //get date from filename
+    
+                    //   loop through terms
+                    $.each(fileData, function (term, d) {
+    
+                        let termVideoCollection = rankflowData.getTermByName(term);
+                        let rankIndex = 0; //
+    
+                        //sort by reccomedation
+                        d.sort(function (b, a) {
+                            return a.nb_recommendations - b.nb_recommendations;
+                        });
+    
+                        // loop through videos
+                        $.each(d, function (i, video) {
+    
+                            video.youtubeID = video.id;
+                            video.id = "v" + videoID;
+                            video.date = raw_date[0];
+                            video.moment = moment(raw_date[0]);
+                            video.recRank = i + 1;
+                            video.day = +raw_date[3];
+    
+                            termVideoCollection.videos.push(video);
+    
+                            //advance index
+                            rankIndex++;
+                            videoID++;
+                        });
+    
+                    });
+    
+                    //advance date
+                    daysLoaded++;
+    
+                    //if it is the last day
+                    if (daysLoaded == rankflowData.numberDays) {
+                        reorderByDate();
+    
+                        rankflowData._parseData();
+                        rankflowData.getRankedChannels(rankflowData.selectedTerm);
             
-            this.updateData();
-        
-            $('#table-all-toggle-icon').click(toggleTableListAll);
-        
-            $('#rankflow-panel').scrollLeft(300);
-
-        });
-
-
-        this.parseData = function() {
-
+                        $(rankflowData).trigger('success');
+    
+                        rankflowData.updateData();
+    
+                    }
+    
+                });
+    
+                //advance date
+    
+                dayIterator.add(1, 'days');
+    
+            }
+    
+            // end of loop
+    
+            function getDateFromFilename(file) {
+    
+                //get date from filename
+                const regex = /(\d{4})-(\d{2})-(\d{2})/; // regex find date format "YYYY-MM-DD"
+                const raw_date = file.match(regex);
+    
+                return raw_date;
+            }
+    
+            function reorderByDate() {
+                /*loading files assyncroniously can make data be placed in diferent order
+                this fuctioon order the data by date (alphabetically)*/
+                $.each(rankflowData.terms, function (i, term) {
+    
+                    term.videos.sort(function (a, b) {
+                        if (a.date < b.date) {
+                            return -1;
+                        }
+                        if (a.date > b.date) {
+                            return 1;
+                        }
+                        // names must be equal
+                        return 0;
+                    });
+    
+    
+                });
+            }
+    
+    
+        };
+    
+        this._parseData = function() {
+    
             $.each(this.terms, function (term, t) {
-        
+                
+                //video collection for this term
                 let videos = [];
         
                 $.each(t.videos, function (i, v) {
-        
-                    let video = checkRecurrency(v, videos);
-                    totalRec = 0;
-        
-                    if (video == null) {
+
+                    //get video in the collection
+                    let video = videos.find(vid => vid.youtubeID == v.youtubeID);
+                    
+                    
+                    if (video === undefined) {
         
                         video = {
                             id: v.id,
@@ -243,55 +234,68 @@
         
             });
         
-            function checkRecurrency(video, list) {
-        
-                for (let i = 0; i < list.length; i++) {
-                    if (list[i].youtubeID == video.youtubeID) {
-                        return list[i];
-                    }
-                }
-        
-                return null;
-        
+        };
+
+        this.getRankedChannels = function(term) {
+
+            //select term
+            let dataSet = this.getTermByName(term);
+            
+            //if channle is already parserd
+            if(dataSet.channels) {
+                return dataSet.channels;
             }
-        
-            //init vis
-            $(".spiner").hide();
-        
-            var selectedDataset = this.getTermByName(this.selectedTerm);
-        
-        
-        };
 
-        this.selectTerm = function(term) {
-            this.selectedTerm = term; //new term
-            this.updateData();
-        };
+            const channels = []; // collection
 
-        this.updateData = function() {
+            //loop
+            for (let video of dataSet.videos) {
 
-            let selectedDataset = this.getTermByName(this.selectedTerm); //get data
+                //channel name
+                let channelName = video.channel;
 
-            //rank
-            selectedDataset.videos.sort(function (b, a) {
-                return a.sumRec - b.sumRec;
+                //total video recommendation
+                let videoTotalRecommendation = 0;
+                for (let date of video.dates) {
+                    videoTotalRecommendation += date.nb_recommendations;
+                }
+
+                //get channel in the collection
+                let channel = channels.find(channel => channel.name == channelName);
+
+                //if not there yet, push it // if it is update it
+                if(channel === undefined) {
+                    channel = {
+                        name: channelName,
+                        numberVideos: 1,
+                        numberRecommendations: videoTotalRecommendation
+                    };
+                    channels.push(channel);
+                } else {
+                    //update
+                    channel.numberVideos++;
+                    channel.numberRecommendations += videoTotalRecommendation;
+                }
+            }
+
+            //sort by numbner of recommendation
+            channels.sort(function (b, a) {
+                return a.numberRecommendations - b.numberRecommendations;
             });
 
-            selectedDataset.topTenVideos = selectedDataset.videos.slice(0, 10); //reduce
-
-            $(rankflowData).trigger('update',[selectedDataset]);
-
+            //save;
+            dataSet.channels = channels;
+            return dataSet.channels;
         };
 
 
     }
 
     $(document).ready(function () {
-        
-        rankflowData.loadData();
+        rankflowData._loadData();
     });
 
+    //init
     window.rankflowData = new RankflowData();
-
 
 })(window); //Pass in a reference to the global window object

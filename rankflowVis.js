@@ -43,9 +43,6 @@ $(document).ready(function () {
 	};
 	height = 470 - margin.top - margin.bottom;
 
-
-
-
 });
 
 $(window).resize(function () {
@@ -95,6 +92,7 @@ function setupvis() {
 	parseTime = d3.timeParse("%Y-%m-%d");
 
 	///////////////////// COLOR ////////////////////////// 
+
 	color = d3.scaleOrdinal(d3.schemePaired);
 
 	///////////////////// SCALE & AXES ////////////////////////// 
@@ -106,7 +104,6 @@ function setupvis() {
 		parsedDates.push(parseTime(dayIterac.format('YYYY-MM-DD')));
 		dayIterac.add(1, 'days');
 	}
-
 
 	// xScale = d3.scaleTime().domain([startDay, endDay]).range([40, width-40]);
 	xScale = d3.scaleTime().range([40, width - 40]);
@@ -120,7 +117,6 @@ function setupvis() {
 	xAxis = d3.axisBottom(xScale).scale(xScale).tickFormat(d3.timeFormat("%m/%d")).ticks(20).tickSize(0);
 	// xAxis = d3.axisBottom(xScale).scale(xScale).tickFormat(d3.timeFormat("%a %d")).tickSize(0);
 	yAxis = d3.axisLeft().scale(yScale).tickSize(0);
-
 
 	///////////////////// LINE TYPE  //////////////////////////
 	line = d3.line()

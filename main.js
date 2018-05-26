@@ -26,19 +26,23 @@ $( document ).ready(function() {
     console.log(rankflowData);
 
     $(rankflowData).on('success',function() {
+
+        //vis
         setupvis();
         builtChart();
+
+        //interface
+        $('#table-all-toggle-icon').click(toggleTableListAll);                    
+        $('#rankflow-panel').scrollLeft(300);
+
+        $(".spiner").hide();
     });
 
-    // $(rankflowData).on('update',function(e) {
-
     $(rankflowData).on('update',{data:Object},function(e,data) {
-
-        console.log(e,data);
         buildTopTenTable(data.topTenVideos);  //buld table        
         vis(data.videos);
     
-        // if (showTableAll) builtTable(selectedDataset.videos);
+        if (showTableAll) builtTable(data.videos);
     });
 
 
@@ -79,8 +83,6 @@ function toggleMethodology() {
 
 
 function buildTopTenTable(topTen) {
-
-    console.log(topTen)
 
     // let rankedData = d.sort(function (b, a) {
     //     return a.sumRec - b.sumRec;
