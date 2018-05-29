@@ -1,590 +1,657 @@
 /*jshint esversion: 6 */
 
-var windowWidth;
-var resizeTimer;
+(function (window) {
 
-var margin, width, height;
+    function RankFlowVis() {
 
-var visDataset = [];
-var allVideosIDs = [];
-var namesByID = [];
+        this.windowWidth = 900;
+        this.resizeTimer = null;
 
-var flatData = [];
+        this.margin = {top:0, bottom: 0, left: 0, right: 0};
+        this.width = 800;
+        this.height = 500;
 
-var topN = 5;
+        this.visDataset = [];
+        this.allVideosIDs = [];
+        this.namesByID = [];
 
-var strokeWidth = [8, 6, 5, 5, 4, 4, 3, 3, 2, 2]; //Stroke width per max position
+        this.flatData = [];
 
-var color;
-var xScale, yscale;
-var xAxis, yAxis;
+        this.topN = 5;
 
-var line;
+        this.strokeWidth = [8, 6, 5, 5, 4, 4, 3, 3, 2, 2]; //Stroke width per max position
 
-var focus, focusData;
-var voronoi, voronoiGroup;
+        this.color = null;
+        this.xScale = null;
+        this.yscale = null;
+        this.xAxis = null;
+        this.yAxis = null;
 
-var popUpName;
+        this.line = null;
 
-var parseTime;
+        this.focus = null;
+        this.focusData = null;
+        this.voronoi = null;
+        this.voronoiGroup = null;
 
-var minDateWidth = 35;
+        this.popUpName = null;
 
-$(document).ready(function () {
+        this.parseTime = null;
 
-	windowWidth = document.body.clientWidth;
+        this.minDateWidth = 35;
 
-	//set the context in the DOM
-	margin = {
-		top: 20,
-		right: 30,
-		bottom: 30,
-		left: 50
-	};
-	height = 470 - margin.top - margin.bottom;
 
-});
+        //----- CONSTRUCTOR
+        this.constructor = function () {
 
-$(window).resize(function () {
+            this.windowWidth = document.body.clientWidth;
 
-	//width only
-	if (windowWidth != document.body.clientWidth) {
+            //set the context in the DOM
+            this.margin = {
+                top: 20,
+                right: 30,
+                bottom: 30,
+                left: 50
+            };
 
-		//delauy... end resizing
-		clearTimeout(resizeTimer);
-		resizeTimer = setTimeout(function () {
+            this.height = 470 - this.margin.top - this.margin.bottom;
 
-			windowWidth = document.body.clientWidth;
+        };
 
-			var minVizWidth = (rankflowData.numberDays * minDateWidth) + margin.left + margin.right - 10;
 
+        //---- RESIZE
+        this.resize = function () {
 
-			if (windowWidth < minVizWidth) {
-				width = minVizWidth - margin.left - margin.right - 10;
-				if (!showScrollHint) UIkit.toggle($("#horizontal-scroll-hint")).toggle();
-			} else {
-				width = (windowWidth - 140) - margin.left - margin.right - 10;
-				if (showScrollHint) UIkit.toggle($("#horizontal-scroll-hint")).toggle();
-			}
+            const _this = this;
 
-			setupvis();
-			builtChart();
-			vis(selectedDataset.videos);
+            //width only
+            if (this.windowWidth != document.body.clientWidth) {
 
-		}, 250);
+                //delay... end resizing
+                clearTimeout(this.resizeTimer);
+                this.resizeTimer = setTimeout(function () {
 
-	}
+                    _this.windowWidth = document.body.clientWidth;
 
+                    _this._setWidth();
+                    _this.setupvis();
+                    _this.builtChart();
+                    _this.vis(_this.visDataset);
 
-});
+                }, 250);
 
-function setupvis() {
+            }
 
-	//width
-	var minVizWidth = (rankflowData.numberDays * minDateWidth) + margin.left + margin.right - 10;
 
-	if (windowWidth < minVizWidth) {
-		width = minVizWidth - margin.left - margin.right - 10;
-	} else {
-		width = (windowWidth - 140) - margin.left - margin.right - 10;
-	}
+        };
 
-	parseTime = d3.timeParse("%Y-%m-%d");
+        this._setWidth = function () {
 
-	///////////////////// COLOR ////////////////////////// 
+            let minVizWidth = (rankflowData.numberDays * this.minDateWidth) + this.margin.left + this.margin.right - 10;
 
-	color = d3.scaleOrdinal(d3.schemePaired);
 
-	///////////////////// SCALE & AXES ////////////////////////// 
+            if (this.windowWidth < minVizWidth) {
+                this.width = minVizWidth - this.margin.left - this.margin.right - 10;
+                if (!app.showScrollHint) UIkit.toggle($("#horizontal-scroll-hint")).toggle();
+            } else {
+                this.width = (this.windowWidth - 140) - this.margin.left - this.margin.right - 10;
+                if (showScrollHint) UIkit.toggle($("#horizontal-scroll-hint")).toggle();
+            }
 
-	let parsedDates = [];
-	let dayIterac = moment(rankflowData.initialDate);
+        };
 
-	while (dayIterac <= rankflowData.finalDate) {
-		parsedDates.push(parseTime(dayIterac.format('YYYY-MM-DD')));
-		dayIterac.add(1, 'days');
-	}
-
-	// xScale = d3.scaleTime().domain([startDay, endDay]).range([40, width-40]);
-	xScale = d3.scaleTime().range([40, width - 40]);
-	xScale.domain(d3.extent(parsedDates, function (d) {
-		return d;
-	}));
-
-	yScale = d3.scaleLinear().domain([0.5, 10.5]).range([0, height]);
-
-	// xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.timeFormat("%b %d")).tickSize(0);
-	xAxis = d3.axisBottom(xScale).scale(xScale).tickFormat(d3.timeFormat("%m/%d")).ticks(20).tickSize(0);
-	// xAxis = d3.axisBottom(xScale).scale(xScale).tickFormat(d3.timeFormat("%a %d")).tickSize(0);
-	yAxis = d3.axisLeft().scale(yScale).tickSize(0);
-
-	///////////////////// LINE TYPE  //////////////////////////
-	line = d3.line()
-		// .curve(d3.curveMonotoneX) //Slight rounding without too much deviation
-		.curve(d3.curveStep); //Slight rounding without too much deviation
-
-}
-
-//////////////////////// Create CHART //////////////////////// 
-function builtChart() {
-
-	//clear
-	$("#visualization").empty();
-
-	////////////////////////  Create focus SVG
-	focus = d3.select("#visualization").append("svg")
-		.attr("width", width + margin.left + margin.right)
-		.attr("height", height + margin.top + margin.bottom)
-		.append("g")
-		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-	//Append clippath to focus chart
-	var defs = focus.append("defs");
-
-	defs.append("clipPath")
-		.attr("id", "clip")
-		.append("rect")
-		.attr("width", width)
-		.attr("height", height);
-
-	//Append x axis to focus chart	
-	focus.append("g")
-		.attr("class", "x axis")
-		.style("font-size", 13)
-		.attr("transform", "translate(0," + (height + 9) + ")")
-		// .call(d3.axisBottom(xScale));
-		.call(xAxis);
-
-	//Append y axis to focus chart	
-	focus.append("g")
-		.attr("class", "y axis")
-		.attr("transform", "translate(-10,0)")
-		.call(yAxis)
-		.append("text")
-		.attr("class", "titles")
-		.attr("transform", "rotate(-90)")
-		.attr("x", -(height / 2))
-		.attr("y", -35)
-		.attr("dy", ".71em")
-		.style("font-size", 14)
-		.style("text-anchor", "middle")
-		.text("Position in Top 10");
-
-
-	//////////////////////// Initiate the voronoi function ///////////////////////////// 
-	voronoi = d3.voronoi()
-		.extent([
-			[-margin.left, -margin.top],
-			[width + margin.right, height + margin.bottom]
-		]);
-
-	//Initiate the voronoi group element	
-	voronoiGroup = focus.append("g")
-		.attr("class", "voronoi");
-
-
-	//////////////////////// Tooltip ///////////////////////////// 
-	popUpName = focus.append("g")
-		.attr("transform", "translate(-100,-100)")
-		.attr("class", "popUpName")
-		.style("pointer-events", "none");
-
-	popUpName.append("circle")
-		.attr("class", "tooltipCircle")
-		.attr("r", 30.5);
-
-	popUpName.append("text")
-		.style("font-size", 12)
-		.attr("class", "titles")
-		.attr("y", -15);
-
-}
-
-//////////////////////// Reduce dataset to TOP N
-function reduceToTopN(data) {
-
-	var array = [];
-
-	// reduce: find top 10
-	data.forEach(function (t, i) {
-
-		var isTopN = false;
-
-		t.dates.forEach(function (d, j) {
-			if (d.recRank <= topN) {
-				isTopN = true;
-				return;
-			}
-		});
-
-		if (isTopN) array.push(t);
-
-	});
-
-	return array;
-
-}
-
-
-//////////////////////// UPDATE VIS
-function vis(data) {
-
-	visDataset = [];
-	allVideosIDs = [];
-	channels = [];
-	namesByID = [];
-
-	//reduce and load dataset
-	visDataset = reduceToTopN(data, 1);
-
-	/////////////////////  gather data
-	visDataset.forEach(function (d, i) {
-		allVideosIDs[i] = d.id;
-		namesByID[d.id] = i;
-		saveChannel(d.channel);
-	});
-
-	// SAVE a list of Channels
-	function saveChannel(channel) {
-		var hasChannel = false;
-		channels.forEach(function (c) {
-			if (c == channel) hasChannel = true;
-		});
-
-		if (!hasChannel) {
-			channels.push(channel);
-		}
-	}
-
-
-	///////////////////// redefine color
-	// color.domain(allVideosIDs);
-	color.domain(channels);
-
-	///////////////////// Line type: Change data ////////////////////////// 
-	line.x(function (d) {
-			return xScale(parseTime(d.date));
-		})
-		.y(function (d) {
-			return yScale(d.recRank);
-		});
-
-
-	///////////////////////// Voronoi //////////////////////////// 
-
-	//Create a flat data version for the Voronoi
-	/*************************************************************/
-	flatData = [];
-	for (var k in visDataset) {
-		var k_data = visDataset[k];
-		k_data.dates.forEach(function (d) {
-			if (d.recRank <= 10) flatData.push({
-				id: k_data.id,
-				title: k_data.title,
-				date: d.date,
-				moment: d.moment,
-				channel: k_data.channel,
-				nb_recommendations: d.nb_recommendations,
-				sumRec: k_data.sumRec,
-				recRank: d.recRank,
-				data: k_data
-			});
-		});
-	}
-
-	//Max position
-	var maxPosition = d3.nest()
-		.key(function (d) {
-			return d.id;
-		})
-		.rollup(function (d) {
-			return d3.min(d, function (g) {
-				return g.recRank;
-			});
-		})
-		// .rollup(function(d) {return d3.max(d, function(g) {return g.sumRec;});})
-		.entries(flatData);
-
-	var nestedFlatData = d3.nest().key(function (d) {
-		return d.id;
-	}).entries(flatData);
-	// /*************************************************************/
-
-	// ///////////////////////// Reinitiate the voronoi function
-	voronoi.x(function (d) {
-			return xScale(parseTime(d.date));
-		})
-		.y(function (d) {
-			return yScale(d.recRank);
-		});
-
-
-	// DRAW VORONOI
-	var voronoiGrid = voronoiGroup.selectAll("path")
-		.data(voronoi.polygons(flatData.filter(function (d) {
-			return parseTime(d.date) >= xScale.domain()[0] & parseTime(d.date) <= xScale.domain()[1];
-		})));
-
-	voronoiGrid.exit().remove();
-
-	voronoiGrid.enter().append("path")
-		.attr("d", function (d) {
-			return "M" + d.join("L") + "Z";
-		})
-		.datum(function (d) {
-			return d.data;
-		})
-		.attr("class", "voronoiCells")
-		.on("mouseover", mouseover)
-		.on("mouseout", mouseout)
-		.on("click", mouseClick);
-
-	voronoiGrid.attr("d", function (d) {
-			return "M" + d.join("L") + "Z";
-		})
-		.datum(function (d) {
-			return d.data;
-		})
-		.on("mouseover", mouseover)
-		.on("mouseout", mouseout)
-		.on("click", mouseClick);
-
-
-	//Move selected element to the front
-	d3.selection.prototype.moveToFront = function () {
-		return this.each(function () {
-			this.parentNode.appendChild(this);
-		});
-	};
-
-
-	//////////////////////// Create PLOT //////////////////////// 
-	//data
-	focusData = focus.selectAll(".focus")
-		.data(visDataset);
-
-	//remove previous
-	focusData.exit().remove();
-
-	//add news
-	var newDataPoints = focusData.enter().append("g")
-		.attr("class", function (d) {
-			return "focus " + d.id;
-		});
-
-	d3.selectAll(".focus")
-		.attr("class", function (d) {
-			return "focus " + d.id;
-		});
-
-	// LINES
-	var pathLine = newDataPoints.append("path")
-		.attr("class", "line")
-		.attr("clip-path", "url(#clip)")
-		.style("pointer-events", "none")
-		.style("stroke-linejoin", "round")
-		.style("opacity", 0)
-		.attr("d", function (d) {
-			return line(d.dates);
-		})
-		// .style("stroke-width", function(d) {return 4;})
-		.style("stroke-width", function (d) {
-			return strokeWidth[maxPosition[namesByID[d.id]].value - 1];
-		})
-		// .style("stroke-width", function(d) {return maxPosition[namesByID[d.id]].value/10;})
-		.style("stroke", function (d, i) {
-			return color(d.channel);
-		})
-		// .style("stroke", function(d,i) {return "#000"; })
-		// .transition().duration(750).delay(500)
-		.transition().duration(750).delay(function (d, i) {
-			return i * 100;
-		})
-		.style("opacity", 0.6);
-
-	pathLine = focusData.select("path");
-
-	pathLine.transition()
-		.duration(2000).delay(1500)
-		.attr("d", function(d) { return line(d.dates); })
-		// .style("stroke-width", function(d) {return 4;})
-		.style("stroke-width", function(d) {return strokeWidth[maxPosition[namesByID[d.id]].value-1];})
-		// .style("stroke-width", function(d) {return maxPosition[namesByID[d.id]].value/10;})
-		.style("stroke", function(d,i) {return color(d.channel); });
-
-
-	//CIRCLE
-	var circles = newDataPoints.append("circle")
-		.attr("class", "circle")
-		.attr("clip-path", "url(#clip)")
-		.attr("cx", function(d) { return xScale(parseTime(d.dates[0].date)); })
-		.attr("cy", function(d) { return yScale(d.dates[0].recRank); })
-		.style("opacity", 0)
-		.style("stroke", function(d,i) {return color(d.channel); })
-		.style("fill", function(d,i) {
-			if(d.dates[0].views == -1) {
-				return "white"; 
-			} else {
-				return color(d.channel); 
-			}
-		})
-		.style("stroke-width", 4)
-		// .attr("r", 10)
-		.attr("r", function(d) {return strokeWidth[maxPosition[namesByID[d.id]].value-1];})
-		.transition().duration(750).delay(function(d,i) { return i*100;})
-		.style("opacity", 1);
-
-	circles = focusData.select("circle");
-
-	circles.transition()
-		.duration(2000).delay(1500)
-		.attr("cx", function(d) { return xScale(parseTime(d.dates[0].date)); })
-		.attr("cy", function(d) { return yScale(d.dates[0].recRank); })
-		.attr("r", function(d) {return strokeWidth[maxPosition[namesByID[d.id]].value-1];})
-		.style("stroke", function(d,i) {return color(d.channel); })
-		.style("fill", function(d,i) {
-			if(d.dates[0].views == -1) {
-				return "white"; 
-			} else {
-				return color(d.channel); 
-			}
-		});
-
-}
-
-function getFlatDataById(id) {
-
-	// $.each(flatData,function(i,d) {
-	// 	console.log(d.id,id,d.id==id);
-	// 	if(d.id == id) return d;
-	// });
-
-	for (var i = 0; i < flatData.length; i++) {
-		if (flatData[i].id == id) return flatData[i];
-	}
-
-	return null;
-}
-
-///////////////////////// Voronoi mouseover and mouseout functions	
-function mouseover(d) {
-	// focus.selectAll(".focus").style("opacity", 0.07);
-	// focus.selectAll("."+d.id).style("opacity", 1);
-
-	highlightOn(d.id);
-
-	d3.select(".popUpName").moveToFront(); //Move the tooltip to the front
-
-	popUpName.attr("transform", "translate(" + xScale(parseTime(d.date)) + "," + yScale(d.recRank) + ")"); //Change position, size of circle and text of tooltip
-
-	// var circleSize = parseInt(d3.selectAll(".focus." + d.id).selectAll(".line").style("stroke-width"));
-	var circleSize = 10;
-
-	popUpName.select(".tooltipCircle").style("fill", color(d.channel)).attr("r", circleSize);
-	// popUpName.select(".tooltipCircle").style("fill", "#000").attr("r", circleSize);
-
-	popUpName.select("text").text(d.moment.format("MMM D") + ": " + d.title + " (Rank: " + d.recRank + ")");
-
-	//fix popuop position if text is out of boundaries to tlef or ti the right
-	if ((popUpName.node().getCTM().e - margin.left) - (popUpName.node().getBBox().width / 2) < 0) {
-		popUpName.select("text").style('text-anchor', 'start');
-	} else if ((popUpName.node().getCTM().e - margin.left) + (popUpName.node().getBBox().width / 2) > width) {
-		popUpName.select("text").style('text-anchor', 'end');
-	}
-
-}
-
-function mouseout(d) {
-	highlightOff(d.id);
-}
-
-function highlightOn(id) {
-	focus.selectAll(".focus").style("opacity", 0.07);
-	focus.selectAll("." + id).style("opacity", 1);
-}
-
-function highlightOff(id) {
-	focus.selectAll(".focus").style("opacity", 1);
-	popUpName.attr("transform", "translate(-100,-100)");
-	popUpName.select("text").style('text-anchor', 'middle');
-}
-
-
-///////////////////////// VORONOI CLICK - ADD MODAL
-function mouseClick(d) {
-	showDetails(d);
-}
-
-function showDetails(d) {
-
-	var html = `<div class="uk-modal-dialog">
-		<button class="uk-modal-close-default" type="button" uk-close></button>
-		<div class="uk-modal-header uk-background-muted">
-			<div class="uk-grid-small uk-flex-middle" uk-grid>
-				<!-- <div class="uk-width-auto">
-					<img class="uk-border-circle" width="40" height="40" src="../docs/images/avatar.jpg">
-				</div> -->
-				<div class="uk-width-expand">
-					<h3 class="uk-card-title uk-margin-remove-bottom">${d.data.title}</h3>
-					<p class="uk-text-meta uk-margin-remove-top">${d.data.channel}</p>
-				</div>
-			</div>
-		</div>
-		<div class="uk-modal-body">
-			<iframe width="540" height="310" src="https://www.youtube.com/embed/${d.data.youtubeID}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-		</div>
-		<div class="uk-modal-footer" uk-overflow-auto>
-			<table id="video-dates-details" class="uk-table uk-table-small uk-table-hover uk-table-divider"></table>
-		</div>
-	</div>`;
-
-
-	var vDetails = $("#modal-video-details");
-	vDetails.append(html);
-
-	//table
-	var videoTable = $("#video-dates-details");
-
-	var tableHead = `<thead>
-		<tr>
-			<th class="">&nbsp;</th>
-			<th class="uk-table-shrink uk-text-right">Views</th>
-			<th class="uk-table-shrink uk-text-right">Likes</th>
-			<th class="uk-table-shrink uk-text-right">Dislikes</th>
-			<th class="uk-table-shrink uk-text-right">Recomm</th>
-			<th class="uk-table-shrink uk-text-right"><span class="uk-text-small">Recomm Rank</span></th>
-		</tr>
-	</thead>
-	<tbody>
-	</tbody>`;
-
-	videoTable.append(tableHead);
-
-	var tableBody = videoTable.find('tbody');
-
-	var tableInfo = '';
-
-	//clone to revert order
-	var dataDate = d.data.dates.slice(0);
-	dataDate.reverse();
-
-	$.each(dataDate, function (i, d) {
-		tableInfo += `<tr>
-			<td>${d.moment.format("MMM D")}</td>
-			<td class="uk-text-right">${d.views}</td>
-			<td class="uk-text-right">${d.likes}</td>
-			<td class="uk-text-right">${d.dislikes}</td>
-			<td class="uk-text-right">${d.nb_recommendations}</td>
-			<td class="uk-text-right">${d.recRank}</td>
-		</tr>`;
-	});
-
-	tableBody.append(tableInfo);
-
-
-	UIkit.modal(vDetails).show();
-
-	vDetails.on('hidden', function () {
-		$(this).html("");
-	});
-}
+        //---- SETUP VIS
+        this.setupvis = function () {
+
+            //width
+            this._setWidth();
+
+            this.parseTime = d3.timeParse("%Y-%m-%d");
+
+            ///////////////////// COLOR ////////////////////////// 
+
+            this.color = d3.scaleOrdinal(d3.schemePaired);
+
+            ///////////////////// SCALE & AXES ////////////////////////// 
+
+            let parsedDates = [];
+            let dayIterac = moment(rankflowData.initialDate);
+
+            while (dayIterac <= rankflowData.finalDate) {
+                parsedDates.push(this.parseTime(dayIterac.format('YYYY-MM-DD')));
+                dayIterac.add(1, 'days');
+            }
+
+            // xScale = d3.scaleTime().domain([startDay, endDay]).range([40, width-40]);
+            this.xScale = d3.scaleTime().range([40, this.width - 40]);
+            this.xScale.domain(d3.extent(parsedDates, function (d) {
+                return d;
+            }));
+
+            this.yScale = d3.scaleLinear().domain([0.5, 10.5]).range([0, this.height]);
+
+            // xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.timeFormat("%b %d")).tickSize(0);
+            this.xAxis = d3.axisBottom(this.xScale).scale(this.xScale).tickFormat(d3.timeFormat("%m/%d")).ticks(20).tickSize(0);
+            // xAxis = d3.axisBottom(xScale).scale(xScale).tickFormat(d3.timeFormat("%a %d")).tickSize(0);
+            this.yAxis = d3.axisLeft().scale(this.yScale).tickSize(0);
+
+            ///////////////////// LINE TYPE  //////////////////////////
+            this.line = d3.line()
+                // .curve(d3.curveMonotoneX) //Slight rounding without too much deviation
+                .curve(d3.curveStep); //Slight rounding without too much deviation
+
+        };
+
+        //////////////////////// Create CHART //////////////////////// 
+        this.builtChart = function () {
+
+            //clear
+            $("#visualization").empty();
+
+            ////////////////////////  Create focus SVG
+            this.focus = d3.select("#visualization").append("svg")
+                .attr("width", this.width + this.margin.left + this.margin.right)
+                .attr("height", this.height + this.margin.top + this.margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+            //Append clippath to focus chart
+            let defs = this.focus.append("defs");
+
+            defs.append("clipPath")
+                .attr("id", "clip")
+                .append("rect")
+                .attr("width", this.width)
+                .attr("height", this.height);
+
+            //Append x axis to focus chart	
+            this.focus.append("g")
+                .attr("class", "x axis")
+                .style("font-size", 13)
+                .attr("transform", "translate(0," + (this.height + 9) + ")")
+                // .call(d3.axisBottom(xScale));
+                .call(this.xAxis);
+
+            //Append y axis to focus chart	
+            this.focus.append("g")
+                .attr("class", "y axis")
+                .attr("transform", "translate(-10,0)")
+                .call(this.yAxis)
+                .append("text")
+                .attr("class", "titles")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -(this.height / 2))
+                .attr("y", -35)
+                .attr("dy", ".71em")
+                .style("font-size", 14)
+                .style("text-anchor", "middle")
+                .text("Position in Top 10");
+
+
+            //////////////////////// Initiate the voronoi function ///////////////////////////// 
+            this.voronoi = d3.voronoi()
+                .extent([
+                    [-this.margin.left, -this.margin.top],
+                    [this.width + this.margin.right, this.height + this.margin.bottom]
+                ]);
+
+            //Initiate the voronoi group element	
+            this.voronoiGroup = this.focus.append("g")
+                .attr("class", "voronoi");
+
+
+            //////////////////////// Tooltip ///////////////////////////// 
+            this.popUpName = this.focus.append("g")
+                .attr("transform", "translate(-100,-100)")
+                .attr("class", "popUpName")
+                .style("pointer-events", "none");
+
+            this.popUpName.append("circle")
+                .attr("class", "tooltipCircle")
+                .attr("r", 30.5);
+
+            this.popUpName.append("text")
+                .style("font-size", 12)
+                .attr("class", "titles")
+                .attr("y", -15);
+
+        };
+
+        //////////////////////// Reduce dataset to TOP N
+        this._reduceToTopN = function (data) {
+
+            let _topN = this.topN;
+            let array = [];
+
+            // reduce: find top 10
+            data.forEach(function (v, i) {
+
+                let isTopN = false;
+
+                v.dates.forEach(function (d, j) {
+                    if (d.recRank <= _topN) {
+                        isTopN = true;
+                        return;
+                    }
+                });
+
+                if (isTopN) array.push(v);
+
+            });
+
+            return array;
+
+        };
+
+        //////////////////////// UPDATE VIS
+        this.vis = function (data) {
+
+            const _this = this;
+
+            //reset
+            this.visDataset = [];
+            this.allVideosIDs = [];
+            this.namesByID = [];
+
+            let channels = [];
+
+
+            //reduce and load dataset
+            this.visDataset = this._reduceToTopN(data, 1);
+
+
+            /////////////////////  gather data
+            for(let d of this.visDataset) {
+
+                let i = this.visDataset.indexOf(d);
+
+                this.allVideosIDs[i] = d.id;
+                this.namesByID[d.id] = i;
+                saveChannel(d.channel);
+            }
+            
+
+            // SAVE a list of Channels
+            function saveChannel(channel) {
+                let hasChannel = false;
+                channels.forEach(function (c) {
+                    if (c == channel) hasChannel = true;
+                });
+
+                if (!hasChannel) {
+                    channels.push(channel);
+                }
+            }
+
+
+            ///////////////////// redefine color
+            // this.color.domain(this.allVideosIDs);
+            this.color.domain(channels);
+
+            ///////////////////// Line type: Change data ////////////////////////// 
+            this.line.x(function (d) {
+                    return _this.xScale(_this.parseTime(d.date));
+                })
+                .y(function (d) {
+                    return _this.yScale(d.recRank);
+                });
+
+
+            ///////////////////////// Voronoi //////////////////////////// 
+
+            //Create a flat data version for the Voronoi
+            /*************************************************************/
+            this.flatData = [];
+            for (let k in this.visDataset) {
+                let k_data = this.visDataset[k];
+                for (let d of k_data.dates) {
+                // k_data.dates.forEach(function (d) {
+                    if (d.recRank <= 10) this.flatData.push({
+                        id: k_data.id,
+                        title: k_data.title,
+                        date: d.date,
+                        moment: d.moment,
+                        channel: k_data.channel,
+                        nb_recommendations: d.nb_recommendations,
+                        sumRec: k_data.sumRec,
+                        recRank: d.recRank,
+                        data: k_data
+                    });
+                }
+            }
+            
+
+            //Max position
+            let maxPosition = d3.nest()
+                .key(function (d) {
+                    return d.id;
+                })
+                .rollup(function (d) {
+                    return d3.min(d, function (g) {
+                        return g.recRank;
+                    });
+                })
+                // .rollup(function(d) {return d3.max(d, function(g) {return g.sumRec;});})
+                .entries(this.flatData);
+
+            let nestedFlatData = d3.nest().key(function (d) {
+                return d.id;
+            }).entries(this.flatData);
+            // /*************************************************************/
+
+            
+            // ///////////////////////// Reinitiate the voronoi function
+            
+            this.voronoi.x(function (d) {
+                    return _this.xScale(_this.parseTime(d.date));
+                })
+                .y(function (d) {
+                    return _this.yScale(d.recRank);
+                });
+
+
+            // DRAW VORONOI
+            let voronoiGrid = this.voronoiGroup.selectAll("path")
+                .data(this.voronoi.polygons(this.flatData.filter(function (d) {
+                    return _this.parseTime(d.date) >= _this.xScale.domain()[0] & _this.parseTime(d.date) <= _this.xScale.domain()[1];
+                })));
+
+            voronoiGrid.exit().remove();
+
+            //new data
+            voronoiGrid.enter().append("path")
+                .attr("d", function (d) {
+                    return "M" + d.join("L") + "Z";
+                })
+                .datum(function (d) { return d.data; })
+                .attr("class", "voronoiCells")
+                .on("mouseover", this._mouseover)
+                .on("mouseout", this._mouseout)
+                .on("click", this._mouseClick);
+
+            //update existing data
+            voronoiGrid
+                .attr("d", function (d) {
+                    return "M" + d.join("L") + "Z";
+                })
+                .datum(function (d) { return d.data; });
+                // .on("mouseover", this._mouseover)
+                // .on("mouseout", this._mouseout)
+                // .on("click", this._mouseClick);
+
+
+            //Move selected element to the front
+            d3.selection.prototype.moveToFront = function () {
+                return this.each(function () {
+                    this.parentNode.appendChild(this);
+                });
+            };
+
+
+            //////////////////////// Create PLOT //////////////////////// 
+            //data
+            this.focusData = this.focus.selectAll(".focus")
+                .data(this.visDataset);
+
+            //remove previous
+            this.focusData.exit().remove();
+
+            //add news
+            let newDataPoints = this.focusData.enter().append("g")
+                .attr("class", function (d) {
+                    return "focus " + d.id;
+                });
+
+            d3.selectAll(".focus")
+                .attr("class", function (d) {
+                    return "focus " + d.id;
+                });
+
+            // LINES
+            let pathLine = newDataPoints.append("path")
+                .attr("class", "line")
+                .attr("clip-path", "url(#clip)")
+                .style("pointer-events", "none")
+                .style("stroke-linejoin", "round")
+                .style("opacity", 0)
+                .attr("d", function (d) {
+                    return _this.line(d.dates);
+                })
+                // .style("stroke-width", function(d) {return 4;})
+                .style("stroke-width", function (d) {
+                    return _this.strokeWidth[maxPosition[_this.namesByID[d.id]].value - 1];
+                })
+                // .style("stroke-width", function(d) {return maxPosition[_this.namesByID[d.id]].value/10;})
+                .style("stroke", function (d, i) {
+                    return _this.color(d.channel);
+                })
+                // .style("stroke", function(d,i) {return "#000"; })
+                // .transition().duration(750).delay(500)
+                .transition().duration(750).delay(function (d, i) {
+                    return i * 100;
+                })
+                .style("opacity", 0.6);
+
+            pathLine = this.focusData.select("path");
+
+            pathLine.transition()
+                .duration(2000).delay(1500)
+                .attr("d", function (d) {
+                    return _this.line(d.dates);
+                })
+                // .style("stroke-width", function(d) {return 4;})
+                .style("stroke-width", function (d) {
+                    return _this.strokeWidth[maxPosition[_this.namesByID[d.id]].value - 1];
+                })
+                // .style("stroke-width", function(d) {return maxPosition[this.namesByID[d.id]].value/10;})
+                .style("stroke", function (d, i) {
+                    return _this.color(d.channel);
+                });
+
+
+            //CIRCLE
+            let circles = newDataPoints.append("circle")
+                .attr("class", "circle")
+                .attr("clip-path", "url(#clip)")
+                .attr("cx", function (d) {
+                    return _this.xScale(_this.parseTime(d.dates[0].date));
+                })
+                .attr("cy", function (d) {
+                    return _this.yScale(d.dates[0].recRank);
+                })
+                .style("opacity", 0)
+                .style("stroke", function (d, i) {
+                    return _this.color(d.channel);
+                })
+                .style("fill", function (d, i) {
+                    if (d.dates[0].views == -1) {
+                        return "white";
+                    } else {
+                        return _this.color(d.channel);
+                    }
+                })
+                .style("stroke-width", 4)
+                // .attr("r", 10)
+                .attr("r", function (d) {
+                    return _this.strokeWidth[maxPosition[_this.namesByID[d.id]].value - 1];
+                })
+                .transition().duration(750).delay(function (d, i) {
+                    return i * 100;
+                })
+                .style("opacity", 1);
+
+            circles = this.focusData.select("circle");
+
+            circles.transition()
+                .duration(2000).delay(1500)
+                .attr("cx", function (d) {
+                    return _this.xScale(_this.parseTime(d.dates[0].date));
+                })
+                .attr("cy", function (d) {
+                    return _this.yScale(d.dates[0].recRank);
+                })
+                .attr("r", function (d) {
+                    return _this.strokeWidth[maxPosition[_this.namesByID[d.id]].value - 1];
+                })
+                .style("stroke", function (d, i) {
+                    return _this.color(d.channel);
+                })
+                .style("fill", function (d, i) {
+                    if (d.dates[0].views == -1) {
+                        return "white";
+                    } else {
+                        return _this.color(d.channel);
+                    }
+                });
+
+        };
+
+        this.getFlatDataById = function (id) {
+
+            for (var i = 0; i < this.flatData.length; i++) {
+                if (this.flatData[i].id == id) return this.flatData[i];
+            }
+
+            return null;
+        };
+
+        ///////////////////////// Voronoi mouseover and mouseout functions	
+        this._mouseover = function (d) {
+            rankFlowVis._mouseOverSelection(d);
+        };
+
+        this._mouseout = function (d) {
+            rankFlowVis.highlightOff(d.id);
+        };
+
+        this._mouseOverSelection = function(d) {
+            // this.focus.selectAll(".focus").style("opacity", 0.07);
+            // this.focus.selectAll("."+d.id).style("opacity", 1);
+
+            this.highlightOn(d.id);
+
+            d3.select(".popUpName").moveToFront(); //Move the tooltip to the front
+
+            this.popUpName.attr("transform", "translate(" + this.xScale(this.parseTime(d.date)) + "," + this.yScale(d.recRank) + ")"); //Change position, size of circle and text of tooltip
+
+            // var circleSize = parseInt(d3.selectAll(".focus." + d.id).selectAll(".line").style("stroke-width"));
+            let circleSize = 10;
+
+            this.popUpName.select(".tooltipCircle").style("fill", this.color(d.channel)).attr("r", circleSize);
+            // popUpName.select(".tooltipCircle").style("fill", "#000").attr("r", circleSize);
+
+            this.popUpName.select("text").text(d.moment.format("MMM D") + ": " + d.title + " (Rank: " + d.recRank + ")");
+
+            //fix popuop position if text is out of boundaries to tlef or ti the right
+            if ((this.popUpName.node().getCTM().e - this.margin.left) - (this.popUpName.node().getBBox().width / 2) < 0) {
+                this.popUpName.select("text").style('text-anchor', 'start');
+            } else if ((this.popUpName.node().getCTM().e - this.margin.left) + (this.popUpName.node().getBBox().width / 2) > this.width) {
+                this.popUpName.select("text").style('text-anchor', 'end');
+            }
+        };
+
+        this.highlightOn = function (id) {
+            this.focus.selectAll(".focus").style("opacity", 0.07);
+            this.focus.selectAll("." + id).style("opacity", 1);
+        };
+
+        this.highlightOff = function (id) {
+            this.focus.selectAll(".focus").style("opacity", 1);
+            this.popUpName.attr("transform", "translate(-100,-100)");
+            this.popUpName.select("text").style('text-anchor', 'middle');
+        };
+
+
+        ///////////////////////// VORONOI CLICK - ADD MODAL
+        this._mouseClick = function (d) {
+            rankFlowVis.showDetails(d);
+        };
+
+        this.showDetails = function (d) {
+
+            let html = `<div class="uk-modal-dialog">
+                            <button class="uk-modal-close-default" type="button" uk-close></button>
+                            <div class="uk-modal-header uk-background-muted">
+                                <div class="uk-grid-small uk-flex-middle" uk-grid>
+                                    <!-- <div class="uk-width-auto">
+                                        <img class="uk-border-circle" width="40" height="40" src="../docs/images/avatar.jpg">
+                                    </div> -->
+                                    <div class="uk-width-expand">
+                                        <h3 class="uk-card-title uk-margin-remove-bottom">${d.data.title}</h3>
+                                        <p class="uk-text-meta uk-margin-remove-top">${d.data.channel}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="uk-modal-body">
+                                <iframe width="540" height="310" src="https://www.youtube.com/embed/${d.data.youtubeID}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                            </div>
+                            <div class="uk-modal-footer" uk-overflow-auto>
+                                <table id="video-dates-details" class="uk-table uk-table-small uk-table-hover uk-table-divider"></table>
+                            </div>
+                        </div>`;
+
+
+            let vDetails = $("#modal-video-details");
+            vDetails.append(html);
+
+            //table
+            let videoTable = $("#video-dates-details");
+
+            let tableHead = `<thead>
+                                <tr>
+                                    <th class="">&nbsp;</th>
+                                    <th class="uk-table-shrink uk-text-right">Views</th>
+                                    <th class="uk-table-shrink uk-text-right">Likes</th>
+                                    <th class="uk-table-shrink uk-text-right">Dislikes</th>
+                                    <th class="uk-table-shrink uk-text-right">Recomm</th>
+                                    <th class="uk-table-shrink uk-text-right"><span class="uk-text-small">Recomm Rank</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>`;
+
+            videoTable.append(tableHead);
+
+            let tableBody = videoTable.find('tbody');
+
+            let tableInfo = '';
+
+            //clone to revert order
+            let dataDate = d.data.dates.slice(0);
+            dataDate.reverse();
+
+            $.each(dataDate, function (i, d) {
+                tableInfo += `<tr>
+                                <td>${d.moment.format("MMM D")}</td>
+                                <td class="uk-text-right">${d.views}</td>
+                                <td class="uk-text-right">${d.likes}</td>
+                                <td class="uk-text-right">${d.dislikes}</td>
+                                <td class="uk-text-right">${d.nb_recommendations}</td>
+                                <td class="uk-text-right">${d.recRank}</td>
+                            </tr>`;
+            });
+
+            tableBody.append(tableInfo);
+
+            UIkit.modal(vDetails).show();
+
+            vDetails.on('hidden', function () {
+                $(this).html("");
+            });
+        };
+
+    }
+
+
+    $(document).ready(function () {
+        rankFlowVis.constructor();
+    });
+
+    $(window).resize(function () {
+        rankFlowVis.resize();
+    });
+
+    //init
+    window.rankFlowVis = new RankFlowVis();
+
+})(window); //Pass in a reference to the global window object
