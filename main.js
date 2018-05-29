@@ -28,8 +28,8 @@ $( document ).ready(function() {
     $(rankflowData).on('success',function() {
 
         //vis
-        setupvis();
-        builtChart();
+        rankFlowVis.setupvis();
+        rankFlowVis.builtChart();
 
         //interface
         $('#table-all-toggle-icon').click(toggleTableListAll);                    
@@ -39,9 +39,11 @@ $( document ).ready(function() {
     });
 
     $(rankflowData).on('update',{data:Object},function(e,data) {
+        
+        rankFlowVis.vis(data.videos);
+        
         buildTopTenTable(data.topTenVideos);  //buld table        
-        vis(data.videos);
-    
+        
         if (showTableAll) builtTable(data.videos);
     });
 
@@ -137,12 +139,12 @@ function buildTopTenTable(topTen) {
 
     tableRow.mouseover(function (d) {
         let t = $(this);
-        highlightOn(t.attr('id'));
+        rankFlowVis.highlightOn(t.attr('id'));
     });
 
     tableRow.mouseout(function (d) {
         let t = $(this);
-        highlightOff(t.attr('id'));
+        rankFlowVis.highlightOff(t.attr('id'));
     });
 
     tableRow.click(function (d) {

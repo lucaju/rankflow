@@ -56,7 +56,7 @@ $(window).resize(function () {
 
 			windowWidth = document.body.clientWidth;
 
-			var minVizWidth = (dates.length * minDateWidth) + margin.left + margin.right - 10;
+			var minVizWidth = (rankflowData.numberDays * minDateWidth) + margin.left + margin.right - 10;
 
 
 			if (windowWidth < minVizWidth) {
