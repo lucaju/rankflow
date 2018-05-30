@@ -8,6 +8,7 @@
         this.constructor = function () {
 
             let windowWidth = (document.body.clientWidth * 2) / 3;
+            
 
             let margin = {
                     top: 30,

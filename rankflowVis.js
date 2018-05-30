@@ -23,7 +23,7 @@
 
         this.color = null;
         this.xScale = null;
-        this.yscale = null;
+        this.yScale = null;
         this.xAxis = null;
         this.yAxis = null;
 
@@ -76,7 +76,9 @@
                     _this._setWidth();
                     _this.setupvis();
                     _this.builtChart();
-                    _this.vis(_this.visDataset);
+
+
+                    _this.vis(_this.visDataset, "resize");
 
                 }, 250);
 
@@ -89,13 +91,12 @@
 
             let minVizWidth = (rankflowData.numberDays * this.minDateWidth) + this.margin.left + this.margin.right - 10;
 
-
             if (this.windowWidth < minVizWidth) {
                 this.width = minVizWidth - this.margin.left - this.margin.right - 10;
                 if (!app.showScrollHint) UIkit.toggle($("#horizontal-scroll-hint")).toggle();
             } else {
                 this.width = (this.windowWidth - 140) - this.margin.left - this.margin.right - 10;
-                if (showScrollHint) UIkit.toggle($("#horizontal-scroll-hint")).toggle();
+                if (app.showScrollHint) UIkit.toggle($("#horizontal-scroll-hint")).toggle();
             }
 
         };
@@ -115,23 +116,34 @@
             ///////////////////// SCALE & AXES ////////////////////////// 
 
             let parsedDates = [];
-            let dayIterac = moment(rankflowData.initialDate);
+            let dayIterac = moment(rankflowData.period.startDate);
+            
 
-            while (dayIterac <= rankflowData.finalDate) {
+            while (dayIterac <= rankflowData.period.endDate) {
                 parsedDates.push(this.parseTime(dayIterac.format('YYYY-MM-DD')));
                 dayIterac.add(1, 'days');
             }
+            
 
-            // xScale = d3.scaleTime().domain([startDay, endDay]).range([40, width-40]);
+            // this.xScale = d3.scaleTime().domain([startDay, endDay]).range([40, width-40]);
+            // this.xScale = d3.scaleTime().range([40, this.width - 40]);
             this.xScale = d3.scaleTime().range([40, this.width - 40]);
             this.xScale.domain(d3.extent(parsedDates, function (d) {
                 return d;
             }));
 
+            var ticksNumber;
+            if (parsedDates.length<10) {
+                ticksNumber = parsedDates.length;
+            } else {
+                ticksNumber = null;
+            }
+
             this.yScale = d3.scaleLinear().domain([0.5, 10.5]).range([0, this.height]);
 
             // xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.timeFormat("%b %d")).tickSize(0);
-            this.xAxis = d3.axisBottom(this.xScale).scale(this.xScale).tickFormat(d3.timeFormat("%m/%d")).ticks(20).tickSize(0);
+            // this.xAxis = d3.axisBottom(this.xScale).scale(this.xScale).tickFormat(d3.timeFormat("%m/%d")).tickSize(0)//.ticks(20);
+            this.xAxis = d3.axisBottom(this.xScale).tickFormat(d3.timeFormat("%m/%d")).tickSize(0).ticks(ticksNumber);
             // xAxis = d3.axisBottom(xScale).scale(xScale).tickFormat(d3.timeFormat("%a %d")).tickSize(0);
             this.yAxis = d3.axisLeft().scale(this.yScale).tickSize(0);
 
@@ -141,6 +153,18 @@
                 .curve(d3.curveStep); //Slight rounding without too much deviation
 
         };
+
+        // this.updateDates = function () {
+
+        //     let parsedDates = [];
+        //     let dayIterac = moment(rankflowData.period.startDate);
+
+        //     while (dayIterac <= rankflowData.period.endDate) {
+        //         parsedDates.push(this.parseTime(dayIterac.format('YYYY-MM-DD')));
+        //         dayIterac.add(1, 'days');
+        //     }
+
+        // };
 
         //////////////////////// Create CHART //////////////////////// 
         this.builtChart = function () {
@@ -244,20 +268,22 @@
         };
 
         //////////////////////// UPDATE VIS
-        this.vis = function (data) {
+        this.vis = function (data, resize) {
 
             const _this = this;
 
-            //reset
-            this.visDataset = [];
-            this.allVideosIDs = [];
-            this.namesByID = [];
+            if(resize != "resize") {
+
+                //reset
+                this.visDataset = [];
+                this.allVideosIDs = [];
+                this.namesByID = [];
+
+                //reduce and load dataset
+                this.visDataset = this._reduceToTopN(data.videos, 1);
+            }
 
             let channels = [];
-
-
-            //reduce and load dataset
-            this.visDataset = this._reduceToTopN(data, 1);
 
 
             /////////////////////  gather data
@@ -503,7 +529,7 @@
                         return _this.color(d.channel);
                     }
                 });
-
+                
         };
 
         this.getFlatDataById = function (id) {
@@ -564,7 +590,8 @@
 
         ///////////////////////// VORONOI CLICK - ADD MODAL
         this._mouseClick = function (d) {
-            rankFlowVis.showDetails(d);
+            console.log(d);
+            rankFlowVis.showDetails(d.data);
         };
 
         this.showDetails = function (d) {
@@ -577,13 +604,13 @@
                                         <img class="uk-border-circle" width="40" height="40" src="../docs/images/avatar.jpg">
                                     </div> -->
                                     <div class="uk-width-expand">
-                                        <h3 class="uk-card-title uk-margin-remove-bottom">${d.data.title}</h3>
-                                        <p class="uk-text-meta uk-margin-remove-top">${d.data.channel}</p>
+                                        <h3 class="uk-card-title uk-margin-remove-bottom">${d.title}</h3>
+                                        <p class="uk-text-meta uk-margin-remove-top">${d.channel}</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="uk-modal-body">
-                                <iframe width="540" height="310" src="https://www.youtube.com/embed/${d.data.youtubeID}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                <iframe width="540" height="310" src="https://www.youtube.com/embed/${d.youtubeID}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                             </div>
                             <div class="uk-modal-footer" uk-overflow-auto>
                                 <table id="video-dates-details" class="uk-table uk-table-small uk-table-hover uk-table-divider"></table>
@@ -617,7 +644,7 @@
             let tableInfo = '';
 
             //clone to revert order
-            let dataDate = d.data.dates.slice(0);
+            let dataDate = d.dates.slice(0);
             dataDate.reverse();
 
             $.each(dataDate, function (i, d) {

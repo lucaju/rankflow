@@ -40,8 +40,12 @@
 
         this.selectedTerm = this.terms[2].slug;
         this.initialDate = moment("2018-04-03");
-        this.finalDate = moment("2018-05-28");
-        this.numberDays = this.finalDate.diff(this.initialDate, 'days')+1;
+        this.finalDate = moment("2018-05-29");
+        this.period = {
+            startDate: this.initialDate,
+            endDate: this.finalDate
+        };
+        this.numberDays = this.period.endDate.diff(this.period.startDate, 'days')+1;
 
         //##### METHODS
 
@@ -67,13 +71,14 @@
             let selectedDataset = this.getTermByName(this.selectedTerm); //get data
 
             //rank
-            selectedDataset.videos.sort(function (b, a) {
+            console.log(selectedDataset);
+            selectedDataset.filteredPeriod.videos.sort(function (b, a) {
                 return a.sumRec - b.sumRec;
             });
 
             this.getRankedChannels(this.selectedTerm);
 
-            selectedDataset.topTenVideos = selectedDataset.videos.slice(0, 10); //reduce
+            // selectedDataset.topTenVideos = selectedDataset.filteredPeriod.videos.slice(0, 10); //reduce
 
             $(rankflowData).trigger('update',[selectedDataset]);
 
@@ -178,19 +183,25 @@
         this.allFilesLoaded = function() {
     
             this._parseData();
-            this.getRankedChannels(rankflowData.selectedTerm);
 
-            //test
-            this.filterVidesByPeriod("kathleen_wynne",moment('2018-05-25'),moment('2018-05-28'));
+            
+
+           
 
             $(this).trigger('success');
 
-            this.updateData();
+            // this.updateData();
 
+            
+            this.changePeriod("kathleen_wynne",moment('2018-05-25'),moment('2018-05-29'));
+
+            
             
         };
     
         this._parseData = function() {
+
+            const _this = this;
     
             $.each(this.terms, function (term, t) {
                 
@@ -239,6 +250,13 @@
                 });
         
                 t.videos = videos;
+
+                    
+                t.filteredPeriod  = {
+                    startDate: _this.period.startDate,
+                    endDate: _this.period.endDate,
+                    videos: videos
+                };
         
             });
         
@@ -246,18 +264,23 @@
 
         this.getRankedChannels = function(term) {
 
+            
+
             //select term
             let dataSet = this.getTermByName(term);
+
+            // console.log(dataSet);
             
-            //if channle is already parserd
-            if(dataSet.channels) {
-                return dataSet.channels;
-            }
+            //if Channel is already parserd
+            // if(dataSet.channels) {
+            //     return dataSet.channels;
+            // }
 
             const channels = []; // collection
 
             //loop
-            for (let video of dataSet.videos) {
+
+            for (let video of dataSet.filteredPeriod.videos) {
 
                 //channel name
                 let channelName = video.channel;
@@ -296,22 +319,51 @@
             return dataSet.channels;
         };
 
+        this.changePeriod = function(term,start, end) {
+
+            let startDate = moment(start);
+            let endDate = moment(end);
+
+            // inverse order if the dates are switched
+            if (startDate.isAfter(endDate)) {
+                let t = startDate;
+                startDate = endDate;
+                endDate = t;
+            }
+
+            //date limits
+            if (startDate.isBefore(this.initialDate)) { startDate = this.initialDate; }
+            if (endDate.isAfter(this.finallDate)) { endDate = this.finallDate; }
+
+            //update period
+            this.period.startDate = startDate;
+            this.period.endDate = endDate;
+
+            //update numbr of days
+            this.numberDays = this.period.endDate.diff(this.period.startDate, 'days')+1;
+
+             //test
+             this.filterVidesByPeriod(term,start,end);
+
+        };
+
         this.filterVidesByPeriod = function(tSlug, start,end) {
 
-            const termSelected = this.terms.find(term => term.slug == tSlug);
-            const startDate = moment(start);
-            const endDate = moment(end);
+            const _this = this;
+            
 
-            const filteredData = termSelected;
+            const termSelected = this.terms.find(term => term.slug == tSlug);
+
+            // const filteredData = termSelected;
 
             //filter data
-            filteredData.filteredPeriod = {
-                startDate: startDate,
-                endDate: endDate,
+            termSelected.filteredPeriod = {
+                startDate: this.period.startDate,
+                endDate: this.period.endDate,
                 videos: []
             };
             
-            for(const video of filteredData.videos) {
+            for(const video of termSelected.videos) {
                 let filteredDates = video.dates.filter(isBetweenDates);
                 
                 //if any, add to the list
@@ -323,7 +375,7 @@
                         youtubeID: video.youtubeID
                     };
                     filteredVideo.dates = filteredDates;
-                    filteredData.filteredPeriod.videos.push(filteredVideo);
+                    termSelected.filteredPeriod.videos.push(filteredVideo);
 
                     //check the sum of recommendation for the period
                     filteredVideo.sumRec = 0;
@@ -334,10 +386,15 @@
             }
 
             function isBetweenDates(element, index, array) {
-                return element.moment.isBetween(startDate,endDate, 'day','[]');
+                return element.moment.isBetween(_this.period.startDate,_this.period.endDate, 'day','[]');
             }
 
-            console.log(filteredData);    
+            console.log(termSelected); 
+            
+            //update channel list
+            this.getRankedChannels(rankflowData.selectedTerm);
+
+            this.updateData();
 
         };
 
