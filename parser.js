@@ -40,7 +40,7 @@
 
         this.selectedTerm = this.terms[2].slug;
         this.initialDate = moment("2018-04-03");
-        this.finalDate = moment("2018-05-29");
+        this.finalDate = moment("2018-06-01");
         this.period = {
             startDate: this.initialDate,
             endDate: this.finalDate
@@ -82,6 +82,14 @@
 
             $(rankflowData).trigger('update',[selectedDataset]);
 
+        };
+
+        this.displayPeriodStartDate = function() {
+            return this.period.startDate.format("MMMM Do");
+        };
+
+        this.displayPeriodEndDate = function() {
+            return this.period.endDate.format("MMMM Do");
         };
 
         this._loadData = function () {
@@ -184,18 +192,11 @@
     
             this._parseData();
 
-            
-
-           
-
             $(this).trigger('success');
 
             // this.updateData();
 
-            
-            this.changePeriod("kathleen_wynne",moment('2018-05-25'),moment('2018-05-29'));
-
-            
+            this.changePeriod("kathleen_wynne",moment('2018-05-09'),moment('2018-06-01'));
             
         };
     

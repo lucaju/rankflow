@@ -69,6 +69,11 @@
 
                     topVideosVis.init(data.filteredPeriod);
                     topChannelsVis.init(data.channels);
+
+                    //update html
+                    let html = rankflowData.displayPeriodStartDate() + " to " + rankflowData.displayPeriodEndDate();
+                    
+                    $("#data-range").find("p").html(html);
                 });
 
         };
