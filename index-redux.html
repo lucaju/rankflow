@@ -13,10 +13,12 @@
 	<script type="text/javascript" src="js/uikit.min.js"></script>
 	<script type="text/javascript" src="js/uikit-icons.min.js"></script>
 
-	<script type="text/javascript" src="./main.js"></script>
+	<script type="text/javascript" src="./App.js"></script>
 	<script type="text/javascript" src="./parser.js"></script>
 	<script type="text/javascript" src="./rankflowVis.js"></script>
-	<script type="text/javascript" src="./top10SentimentVis.js"></script>
+	<!-- <script type="text/javascript" src="./top10SentimentVis.js"></script> -->
+	<script type="text/javascript" src="./TopChannelsVis.js"></script>
+	<script type="text/javascript" src="./TopVideosVis.js"></script>
 	
     <link rel="stylesheet" href="css/uikit.min.css" />
     <link rel="stylesheet" href="css/main.css" />
@@ -37,8 +39,8 @@
 	</div>
 </div> -->
 
-<div id="introduction-section" class="uk-section">
-	<div class="uk-container">
+<!-- <div id="introduction-section" class="uk-section">
+	<div class="uk-container"> -->
 		<!-- <h2 class="uk-h2 uk-text-center">Findings</h2> -->
 		<!-- <p class="uk-text-lead">What videos does YouTube recommend about Ontario party leaders? In the first study of its kind, we have identified the most recommended videos by YouTube for the pre-writ period from April 3 to May 8, 2018. Data was collected through tools developed by Guillaume Chaslot and the Algo Transparency project.</p>
 		<p>After watching any video on YouTube, the platform automatically recommends other videos based on a ranking produced by a deep learning neural network. Like search results, recommendations are a judgment made by a platform about the relevance of content. In recent months, The Guardian, The Washington Post and the New York Times have raised concerns about YouTube’s judgment. Its recommendation system might promote harmful or disturbing content particularly on YouTube Kids, their platform for young audiences. Data + Society, a US-based research centre, has also observed YouTube recommending extreme content based on benign queries.</p>			
@@ -55,7 +57,7 @@
 				<p>TVO has uploaded the most videos recommended by YouTube (7 recommendations), part of the overall popularity of mainstream media outlets.</p>
 			</div>
 		</div>-->
-		<div class="uk-text-center uk-margin-large-top" uk-grid>
+		<!-- <div class="uk-text-center uk-margin-large-top" uk-grid>
 			<div class="uk-width-auto"></div>
 			<div class="uk-width-expand">
 				<div id="rankflow-panel" class="uk-panel uk-overflow-auto">
@@ -66,7 +68,7 @@
 		</div>
 		
 	</div>
-</div>
+</div> -->
 
 <div id="menu-section" class="uk-section uk-section-xsmall uk-background-muted uk-padding-remove-top uk-padding-remove-bottom uk-box-shadow-small" uk-sticky="media: 640" style="z-index: 980;" >
 	<div class="uk-container uk-text-center">
@@ -76,23 +78,45 @@
 		</div>
 	
 		<nav class="uk-navbar-container" uk-navbar>
-			<div class="uk-navbar-center">
+            <div class="uk-navbar-center">
 
-				<ul class="uk-navbar-nav" uk-switcher>
-					<!-- <li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('ontario_politics')">Ontario Politics</a></li>
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('ontario_election')">Ontario Election</a></li> -->
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('kathleen_wynne')">Kathleen Wynne</a></li>
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('doug_ford')">Doug Ford</a></li>
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('andrea_horwath')">Andrea Horwath</a></li>
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('mike_schreiner')">Mike Schreiner</a></li>
-				</ul>
-		
-			</div>
-		</nav>
+                <ul class="uk-navbar-nav" uk-switcher>
+                    <!-- <li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('ontario_politics')">Ontario Politics</a></li>
+                    <li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('ontario_election')">Ontario Election</a></li> -->
+                    <li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('kathleen_wynne')">Kathleen Wynne</a></li>
+                    <li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('doug_ford')">Doug Ford</a></li>
+                    <li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('andrea_horwath')">Andrea Horwath</a></li>
+                    <li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('mike_schreiner')">Mike Schreiner</a></li>
+                </ul>
+            </div>
+        </nav>
+        <p class="uk-margin-remove-top uk-margin-small-bottom">From May 25 to May 29</p>
 	</div>
 </div>
 
-<div id="top10-section" class="uk-section">
+<div id="top10Videos-section" class="uk-section">
+    <div class="uk-container">
+        <h2 class="uk-h2 uk-text-center">Top 10 Recommended Videos</h2>
+        <div class="uk-text-small">
+            <div class="spiner uk-position-absolute uk-transform-center uk-margin-large-bottom" style="left: 50%;" uk-spinner="ratio: 1"></div>
+            <div id="top-ten-videos"></div>
+        </div>
+    </div>
+    <hr>
+</div>
+
+<div id="top10Channels-section" class="uk-section">
+    <div class="uk-container">
+        <h2 class="uk-h2 uk-text-center">Top 10 Recommended Channels</h2>
+        <div class="uk-text-small">
+            <div class="spiner uk-position-absolute uk-transform-center uk-margin-large-bottom" style="left: 50%;" uk-spinner="ratio: 1"></div>
+            <div id="top-ten-channels"></div>
+        </div>
+    </div>
+    <hr>
+</div>
+
+<!-- <div id="top10-section" class="uk-section">
 	<div class="uk-container">
 		<h2 class="uk-h2 uk-text-center">Top 10 YouTube Recommendations</h2>
 		<div class="uk-text-small">
@@ -101,27 +125,27 @@
 		</div>
 	</div>
 	<hr>
-</div>
+</div> -->
 
 <div id="rankflow-section" class="uk-section uk-section-xsmall">
-	<div class="uk-container uk-container-expand">
-		<h2 class="uk-h2 uk-text-center">YouTube Recommendations Over Time</h2>
-		<div class="uk-text-center" uk-grid>
-			<div class="uk-width-auto"></div>
-			<div class="uk-width-expand">
-				<div class="spiner" uk-spinner="ratio: 3"></div>
-				<div id="rankflow-panel" class="uk-panel uk-overflow-auto">
-					<div id="visualization"></div>
-				</div>
-				<div class="uk-text-meta uk-margin-medium-top">
-					<p><span uk-icon="chevron-left"></span> Scroll <span uk-icon="chevron-right"></span></p>
-				</div>
-				<div id="modal-video-details" uk-modal></div>
+    <div class="uk-container uk-container-expand">
+        <h2 class="uk-h2 uk-text-center">Top Recommendations Over Time</h2>
+        <div class="uk-text-center" uk-grid>
+            <div class="uk-width-auto"></div>
+            <div class="uk-width-expand">
+                <div class="spiner" uk-spinner="ratio: 3"></div>
+                <div id="rankflow-panel" class="uk-panel uk-overflow-auto">
+                    <div id="visualization"></div>
+                </div>
+                <div id="horizontal-scroll-hint" class="uk-text-meta uk-margin-medium-top" hidden>
+                    <p><span uk-icon="chevron-left"></span> Scroll <span uk-icon="chevron-right"></span></p>
+                </div>
+                <div id="modal-video-details" uk-modal></div>
 
-			</div>
-			<div class="uk-width-auto"></div>
-		</div>
-	</div>
+            </div>
+            <div class="uk-width-auto"></div>
+        </div>
+    </div>
 </div>
 
 <!-- <div id="methodology-section" class="uk-section uk-section-xsmall uk-section-muted">

@@ -13,15 +13,17 @@
 	<script type="text/javascript" src="js/uikit.min.js"></script>
 	<script type="text/javascript" src="js/uikit-icons.min.js"></script>
 
-	<script type="text/javascript" src="./main.js"></script>
+	<script type="text/javascript" src="./App.js"></script>
 	<script type="text/javascript" src="./parser.js"></script>
 	<script type="text/javascript" src="./rankflowVis.js"></script>
-	<script type="text/javascript" src="./top10SentimentVis.js"></script>
+	<!-- <script type="text/javascript" src="./top10SentimentVis.js"></script> -->
+	<script type="text/javascript" src="./TopChannelsVis.js"></script>
+	<script type="text/javascript" src="./TopVideosVis.js"></script>
 	
     <link rel="stylesheet" href="css/uikit.min.css" />
     <link rel="stylesheet" href="css/main.css" />
     
-</head>
+</head> 
 
 <body>
 
@@ -33,7 +35,8 @@
 
 <div id="header-section" class="uk-section uk-section-muted uk-background-fixed uk-background-bottom-center" style="background-image: url(img/background-green-blue-strips1.jpg);">
 	<div class="uk-container uk-container-small uk-text-center">
-		<h1 class="uk-heading-primary">Ontario Elections 2018<br/><span class="uk-h2">YouTube Recommendation RankFlow</span></h1>
+		<h1 class="uk-heading-primary">Ontario Elections 2018
+		<br/><span class="uk-h2">YouTube Recommendation RankFlow</span></h1>
 	</div>
 </div>
 
@@ -79,20 +82,66 @@
 			<div class="uk-navbar-center">
 
 				<ul class="uk-navbar-nav" uk-switcher>
-					<!-- <li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('ontario_politics')">Ontario Politics</a></li>
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('ontario_election')">Ontario Election</a></li> -->
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('kathleen_wynne')">Kathleen Wynne</a></li>
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('doug_ford')">Doug Ford</a></li>
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('andrea_horwath')">Andrea Horwath</a></li>
-					<li><a href="#" class="uk-button uk-button-text" onclick="selectTerm('mike_schreiner')">Mike Schreiner</a></li>
+					<!-- <li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('ontario_politics')">Ontario Politics</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('ontario_election')">Ontario Election</a></li> -->
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('kathleen_wynne')">Kathleen Wynne</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('doug_ford')">Doug Ford</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('andrea_horwath')">Andrea Horwath</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('mike_schreiner')">Mike Schreiner</a></li>
 				</ul>
-		
 			</div>
 		</nav>
+		<p class="uk-margin-remove-top uk-margin-small-bottom">From May 25 to May 29</p>
 	</div>
 </div>
 
-<div id="top10-section" class="uk-section">
+<!-- <div id="date-range-form" class="uk-section">
+	<div class="uk-container">
+		<div class="uk-grid-small" uk-grid>
+			<div class="uk-width-1-2@s">
+				from: <div class="uk-margin">
+						<select id="form-date-filter-start" class="uk-select">
+							<option>Option 01</option>
+							<option>Option 02</option>
+						</select>
+					</div>
+			</div>
+			<div class="uk-width-1-2@s">
+				to: <div class="uk-margin">
+						<select class="uk-select">
+							<option>Option 01</option>
+							<option>Option 02</option>
+						</select>
+					</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+</div> -->
+
+<div id="top10Videos-section" class="uk-section">
+	<div class="uk-container">
+		<h2 class="uk-h2 uk-text-center">Top 10 Recommended Videos</h2>
+		<div class="uk-text-small">
+			<div class="spiner uk-position-absolute uk-transform-center uk-margin-large-bottom" style="left: 50%;" uk-spinner="ratio: 1"></div>
+			<div id="top-ten-videos"></div>
+		</div>
+	</div>
+	<hr>
+</div>
+
+<div id="top10Channels-section" class="uk-section">
+	<div class="uk-container">
+		<h2 class="uk-h2 uk-text-center">Top 10 Recommended Channels</h2>
+		<div class="uk-text-small">
+			<div class="spiner uk-position-absolute uk-transform-center uk-margin-large-bottom" style="left: 50%;" uk-spinner="ratio: 1"></div>
+			<div id="top-ten-channels"></div>
+		</div>
+	</div>
+	<hr>
+</div>
+
+<!-- <div id="top10-section" class="uk-section">
 	<div class="uk-container">
 		<h2 class="uk-h2 uk-text-center">Top 10 YouTube Recommendations</h2>
 		<div class="uk-text-small">
@@ -101,11 +150,11 @@
 		</div>
 	</div>
 	<hr>
-</div>
+</div> -->
 
 <div id="rankflow-section" class="uk-section uk-section-xsmall">
 	<div class="uk-container uk-container-expand">
-		<h2 class="uk-h2 uk-text-center">YouTube Recommendations Over Time</h2>
+		<h2 class="uk-h2 uk-text-center">Top Recommendations Over Time</h2>
 		<div class="uk-text-center" uk-grid>
 			<div class="uk-width-auto"></div>
 			<div class="uk-width-expand">
