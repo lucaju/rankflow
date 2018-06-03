@@ -25,6 +25,7 @@ RESULTS_PER_SEARCH = 1
 # NUMBER OF MIN LIKES ON A VIDEO TO COMPUTE A LIKE RATIO
 MIN_LIKES_FOR_LIKE_RATIO = 5
 
+
 class YoutubeFollower():
     def __init__(self, verbose=False, name='', alltime=True, gl=None, language=None, recent=False, loopok=True):
         # Name
@@ -36,16 +37,17 @@ class YoutubeFollower():
         #                   'dislikes': ,
         #                   'views': ,
         #                   'recommendations': []}
-        self._video_infos = {} # self.try_to_load_video_infos()
+        self._video_infos = {}  # self.try_to_load_video_infos()
 
         # Dict search terms to [video_ids]
         self._search_infos = {}
         self._gl = gl
         self._language = language
-        self._recent=recent
-        self._loopok=loopok
+        self._recent = recent
+        self._loopok = loopok
 
-        print ('Location = ' + repr(self._gl) + ' Language = ' + repr(self._language))
+        print ('Location = ' + repr(self._gl) +
+               ' Language = ' + repr(self._language))
 
     def clean_count(self, text_count):
         # Ignore non ascii
@@ -77,7 +79,8 @@ class YoutubeFollower():
             else:
                 filter = "EgIQAQ%253D%253D"
 
-        url = "https://www.youtube.com/results?sp=" + filter + "&q=" + escaped_search_terms
+        url = "https://www.youtube.com/results?sp=" + \
+            filter + "&q=" + escaped_search_terms
         if self._gl:
             url = url + '&gl=' + self._gl
 
@@ -101,7 +104,8 @@ class YoutubeFollower():
     def get_recommendations(self, video_id, nb_recos_wanted, depth, key):
         if video_id in self._video_infos:
             # Updating the depth if this video was seen.
-            self._video_infos[video_id]['depth'] = min(self._video_infos[video_id]['depth'], depth)
+            self._video_infos[video_id]['depth'] = min(
+                self._video_infos[video_id]['depth'], depth)
             print ('a video was seen at a lower depth')
 
             video = self._video_infos[video_id]
@@ -114,7 +118,8 @@ class YoutubeFollower():
                         break
             if self._loopok:
                 video['key'].append(key)
-            print ('\n Following recommendations ' + repr(recos_returned) + '\n')
+            print ('\n Following recommendations ' +
+                   repr(recos_returned) + '\n')
             return recos_returned
 
         url = "https://www.youtube.com/watch?v=" + video_id
@@ -169,22 +174,27 @@ class YoutubeFollower():
             if upnext:
                 # Up Next recommendation
                 try:
-                    recos.append(video_list.contents[1].contents[1].contents[1]['href'].replace('/watch?v=', ''))
+                    recos.append(
+                        video_list.contents[1].contents[1].contents[1]['href'].replace('/watch?v=', ''))
                 except IndexError:
-                    print ('WARNING Could not get a up next recommendation because of malformed content')
+                    print (
+                        'WARNING Could not get a up next recommendation because of malformed content')
                     pass
                 upnext = False
             else:
                 # 19 Others
                 for i in range(1, 19):
                     try:
-                        recos.append(video_list.contents[i].contents[1].contents[1]['href'].replace('/watch?v=', ''))
+                        recos.append(
+                            video_list.contents[i].contents[1].contents[1]['href'].replace('/watch?v=', ''))
                     except IndexError:
                         if self._verbose:
-                            print ('Could not get a recommendation because there are not enough')
+                            print (
+                                'Could not get a recommendation because there are not enough')
                     except AttributeError:
                         if self._verbose:
-                            print ('WARNING Could not get a recommendation because of malformed content')
+                            print (
+                                'WARNING Could not get a recommendation because of malformed content')
 
         title = ''
         for eow_title in soup.findAll('span', {'id': 'eow-title'}):
@@ -207,7 +217,8 @@ class YoutubeFollower():
                 self._video_infos[video_id]['key'].append(key)
 
         video = self._video_infos[video_id]
-        print (repr(video_id + ': ' + video['title'] + ' [' + channel + ']{' + repr(key) +'} ' + str(video['views']) + ' views , depth: ' + str(video['depth'])))
+        print (repr(video_id + ': ' + video['title'] + ' [' + channel + ']{' + repr(
+            key) + '} ' + str(video['views']) + ' views , depth: ' + str(video['depth'])))
         # print (repr(video['recommendations']))
         return recos[:nb_recos_wanted]
 
@@ -219,7 +230,8 @@ class YoutubeFollower():
         index = 0
         for video in self.get_recommendations(current_video, branching, depth, key):
             code = chr(index + 97)
-            all_recos.extend(self.get_n_recommendations(video, branching, depth - 1, key + code))
+            all_recos.extend(self.get_n_recommendations(
+                video, branching, depth - 1, key + code))
             index = index + 1
         return all_recos
 
@@ -231,7 +243,8 @@ class YoutubeFollower():
         ind = 0
         for video in search_results:
             ind += 1
-            all_recos.extend(self.get_n_recommendations(video, branching, depth, str(ind)))
+            all_recos.extend(self.get_n_recommendations(
+                video, branching, depth, str(ind)))
             print ('\n\n\nNext search: ')
         all_recos.extend(search_results)
         return all_recos
@@ -243,7 +256,8 @@ class YoutubeFollower():
         return counts
 
     def go_deeper_from(self, search_term, search_results, branching, depth):
-        all_recos = self.compute_all_recommendations_from_search(search_term, search_results, branching, depth)
+        all_recos = self.compute_all_recommendations_from_search(
+            search_term, search_results, branching, depth)
         counts = self.count(all_recos)
         print ('\n\n\nSearch term = ' + search_term + '\n')
         print ('counts: ' + repr(counts))
@@ -256,7 +270,7 @@ class YoutubeFollower():
         with open('data/video-infos-' + keyword + '-' + date + '.json', 'w') as fp:
             json.dump(self._video_infos, fp)
 
-    def try_to_load_video_infos(self):
+    def try_to_load_video_infos(self): 
         try:
             with open('data/video-infos-' + self._name + '.json', 'r') as fp:
                 return json.load(fp)
@@ -287,13 +301,16 @@ class YoutubeFollower():
             if self.like_ratio_is_computed(video):
                 popularity = 0
             else:
-                popularity = video['likes'] / float(video['likes'] + video['dislikes'])
+                popularity = video['likes'] / \
+                    float(video['likes'] + video['dislikes'])
 
-            nodes.append({'id': video_id, 'size': input_links_counts.get(video_id, 0), 'popularity': popularity, 'type': 'circle', 'likes': video['likes'], 'dislikes': video['dislikes'], 'views': video['views'], 'depth': video['depth']})
+            nodes.append({'id': video_id, 'size': input_links_counts.get(video_id, 0), 'popularity': popularity, 'type': 'circle',
+                          'likes': video['likes'], 'dislikes': video['dislikes'], 'views': video['views'], 'depth': video['depth']})
             link = 0
             for reco in self._video_infos[video_id]['recommendations']:
                 if reco in self._video_infos:
-                    links.append({'source': video_id, 'target': reco, 'value': 1})
+                    links.append(
+                        {'source': video_id, 'target': reco, 'value': 1})
                     link += 1
                     if link >= links_per_video:
                         break
@@ -304,8 +321,8 @@ class YoutubeFollower():
         date = time.strftime('%Y-%m-%d')
         with open('./graph-' + self._name + '-' + date + '.json', 'w') as fp:
             json.dump(graph, fp)
-        print ('Wrote graph as: ' + './graph-' + self._name + '-' + date + '.json')
-
+        print ('Wrote graph as: ' + './graph-' +
+               self._name + '-' + date + '.json')
 
     def print_videos(self, videos, counts, max_length):
         idx = 1
@@ -313,7 +330,7 @@ class YoutubeFollower():
             try:
                 current_title = self._video_infos[video]['title']
                 print (str(idx) + ') Recommended ' + str(counts[video]) + ' times: '
-                    ' https://www.youtube.com/watch?v=' + video + ' , Title: ' + repr(current_title))
+                       ' https://www.youtube.com/watch?v=' + video + ' , Title: ' + repr(current_title))
                 if idx % 20 == 0:
                     print ('')
                 idx += 1
@@ -341,17 +358,19 @@ class YoutubeFollower():
             video['mult'] = video['nb_recommendations'] / avg
         return video_infos[:max_length_count]
 
+
 def compare_keywords(query, search_results, branching, depth, name, gl, language, recent, loopok):
     date = time.strftime('%Y-%m-%d')
     file_name = 'results/' + name + '-' + date + '.json'
     print ('Running, will save the resulting json to:' + file_name)
     top_videos = {}
     for keyword in query.split(','):
-        yf = YoutubeFollower(verbose=True, name=keyword, alltime=False, gl=gl, language=language, recent=recent, loopok=loopok)
+        yf = YoutubeFollower(verbose=True, name=keyword, alltime=False,
+                             gl=gl, language=language, recent=recent, loopok=loopok)
         top_recommended, counts = yf.go_deeper_from(keyword,
-                          search_results=search_results,
-                          branching=branching,
-                          depth=depth)
+                                                    search_results=search_results,
+                                                    branching=branching,
+                                                    depth=depth)
         top_videos[keyword] = yf.get_top_videos(top_recommended, counts, 1000)
         yf.print_videos(top_recommended, counts, 50)
         yf.save_video_infos(name + '-' + keyword)
@@ -359,21 +378,30 @@ def compare_keywords(query, search_results, branching, depth, name, gl, language
     with open(file_name, 'w') as fp:
         json.dump(top_videos, fp)
 
+
 def main():
     global parser
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--query', help='The start search query')
     parser.add_argument('--name', help='Name given to the file')
-    parser.add_argument('--searches', default='5', type=int, help='The number of search results to start the exploration')
-    parser.add_argument('--branch', default='3', type=int, help='The branching factor of the exploration')
-    parser.add_argument('--depth', default='5', type=int, help='The depth of the exploration')
-    parser.add_argument('--alltime', default=False, type=bool, help='If we get search results ordered by highest number of views')
-    parser.add_argument('--gl', help='Location passed to YouTube e.g. US, FR, GB, DE...')
-    parser.add_argument('--language', help='Languaged passed to HTML header, en, fr, en-US, ...')
-    parser.add_argument('--recent', default=False, type=bool, help='Keep only videos that have less than 1000 views')
-    parser.add_argument('--loopok', default=False, type=bool, help='Never loops back to the same videos.')
+    parser.add_argument('--searches', default='5', type=int,
+                        help='The number of search results to start the exploration')
+    parser.add_argument('--branch', default='3', type=int,
+                        help='The branching factor of the exploration')
+    parser.add_argument('--depth', default='5', type=int,
+                        help='The depth of the exploration')
+    parser.add_argument('--alltime', default=False, type=bool,
+                        help='If we get search results ordered by highest number of views')
+    parser.add_argument(
+        '--gl', help='Location passed to YouTube e.g. US, FR, GB, DE...')
+    parser.add_argument(
+        '--language', help='Languaged passed to HTML header, en, fr, en-US, ...')
+    parser.add_argument('--recent', default=False, type=bool,
+                        help='Keep only videos that have less than 1000 views')
+    parser.add_argument('--loopok', default=False, type=bool,
+                        help='Never loops back to the same videos.')
     parser.add_argument('--makehtml', default=False, type=bool,
-        help='If true, writes a .html page with the name which compare most recommended videos and top rated ones.')
+                        help='If true, writes a .html page with the name which compare most recommended videos and top rated ones.')
 
     args = parser.parse_args()
 
@@ -382,9 +410,11 @@ def main():
     else:
         print('INFO We will NOT be printing keys - ' + repr(args.loopok))
 
-    compare_keywords(args.query, args.searches, args.branch, args.depth, args.name, args.gl, args.language, args.recent, args.loopok)
+    compare_keywords(args.query, args.searches, args.branch, args.depth,
+                     args.name, args.gl, args.language, args.recent, args.loopok)
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
