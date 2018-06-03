@@ -48,7 +48,7 @@
                 // rankFlowVis.builtChart();
 
                 //interface
-                $('#table-all-toggle-icon').click(_this.toggleTableListAll);
+                // $('#table-all-toggle-icon').click(_this.toggleTableListAll);
                 $('#rankflow-panel').scrollLeft(300);
 
                 $(".spiner").hide();

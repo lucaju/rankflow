@@ -6,16 +6,7 @@
 
         this.PATH = "dataset/"; // Define files paths
 
-        this.terms = [{
-                name: "Ontario Politics",
-                slug: "ontario_politics",
-                videos: []
-            },
-            {
-                name: "Ontario Election",
-                slug: "ontario_election",
-                videos: []
-            },
+        this.terms = [
             {
                 name: "Kathleen Wynne",
                 slug: "kathleen_wynne",
@@ -38,7 +29,7 @@
             }
         ];
 
-        this.selectedTerm = this.terms[2].slug;
+        this.selectedTerm = this.terms[0].slug;
         this.initialDate = moment("2018-04-03");
         this.finalDate = moment("2018-06-02");
         this.period = {
@@ -99,14 +90,13 @@
             let dayIterator = moment(rankflowData.initialDate);
             let videoID = 0;
 
-            let termName = "kathleen wynne";
-            let termVideoCollection = rankflowData.getTermByName(termName);
+            let termVideoCollection = rankflowData.getTermByName(this.selectedTerm);
     
             while (dayIterator <= rankflowData.finalDate) {
 
                 
                 // let file = `${rankflowData.PATH}ontario-elections-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
-                let file = `${rankflowData.PATH}video-infos-ontario-elections-${termName}-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
+                let file = `${rankflowData.PATH}video-infos-ontario-elections-${this.selectedTerm}-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
     
                 $.getJSON(file, function (fileData) {
 
@@ -151,9 +141,8 @@
     
                     //if it is the last day
                     if (daysLoaded == rankflowData.numberDays) {
-                        console.log(rankflowData);
-                        // reorderByDate();
-                        // rankflowData.allFilesLoaded();
+                        reorderByDate();
+                        rankflowData.allFilesLoaded();
                     }
     
                 });
@@ -201,6 +190,8 @@
         this.allFilesLoaded = function() {
     
             this._parseData();
+
+            console.log(rankflowData);
 
             $(this).trigger('success');
 
