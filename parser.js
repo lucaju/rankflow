@@ -40,7 +40,7 @@
 
         this.selectedTerm = this.terms[2].slug;
         this.initialDate = moment("2018-04-03");
-        this.finalDate = moment("2018-06-01");
+        this.finalDate = moment("2018-06-02");
         this.period = {
             startDate: this.initialDate,
             endDate: this.finalDate
@@ -196,7 +196,7 @@
 
             // this.updateData();
 
-            this.changePeriod("kathleen_wynne",moment('2018-05-09'),moment('2018-06-01'));
+            this.changePeriod("kathleen_wynne",moment('2018-05-09'),moment('2018-06-02'));
             
         };
     

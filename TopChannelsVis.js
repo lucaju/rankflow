@@ -12,19 +12,18 @@
 
             let topTenData = data.slice(0,10);
 
+            let visContainer = $("#top-ten-channels"); 
+            visContainer.empty();  //clear
 
-            //clear
-            $("#top-ten-channels").empty();
-
-            // let windowWidth = (document.body.clientWidth * 2) / 3;
-            let windowWidth = document.body.clientWidth -100;
+            // let windowWidth = document.body.clientWidth -100;
+            let windowWidth = visContainer.width();
             
 
             let margin = {
                 top: 30,
-                right: 300,
+                right: 200,
                 bottom: 30,
-                left: 90
+                left: 10
             };
 
             // let colour = d3.scaleOrdinal(d3.schemePaired);
