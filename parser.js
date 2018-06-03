@@ -4,7 +4,7 @@
 
     function RankflowData() {
 
-        this.PATH = "data/"; // Define files paths
+        this.PATH = "dataset/"; // Define files paths
 
         this.terms = [{
                 name: "Ontario Politics",
@@ -71,7 +71,7 @@
             let selectedDataset = this.getTermByName(this.selectedTerm); //get data
 
             //rank
-            console.log(selectedDataset);
+            // console.log(selectedDataset);
             selectedDataset.filteredPeriod.videos.sort(function (b, a) {
                 return a.sumRec - b.sumRec;
             });
@@ -98,52 +98,62 @@
             let daysLoaded = 0; //start counting
             let dayIterator = moment(rankflowData.initialDate);
             let videoID = 0;
+
+            let termName = "kathleen wynne";
+            let termVideoCollection = rankflowData.getTermByName(termName);
     
             while (dayIterator <= rankflowData.finalDate) {
-    
-                let file = `${rankflowData.PATH}ontario-elections-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
+
+                
+                // let file = `${rankflowData.PATH}ontario-elections-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
+                let file = `${rankflowData.PATH}video-infos-ontario-elections-${termName}-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
     
                 $.getJSON(file, function (fileData) {
-    
+
+                   
                     let raw_date = getDateFromFilename(file); //get date from filename
-    
-                    //   loop through terms
-                    $.each(fileData, function (term, d) {
-    
-                        let termVideoCollection = rankflowData.getTermByName(term);
-                        let rankIndex = 0; //
-    
-                        //sort by reccomedation
-                        d.sort(function (b, a) {
-                            return a.nb_recommendations - b.nb_recommendations;
-                        });
-    
-                        // loop through videos
-                        $.each(d, function (i, video) {
-    
-                            video.youtubeID = video.id;
-                            video.id = "v" + videoID;
-                            video.date = raw_date[0];
-                            video.moment = moment(raw_date[0]);
-                            video.recRank = i + 1;
-                            video.day = +raw_date[3];
-    
-                            termVideoCollection.videos.push(video);
-    
-                            //advance index
-                            rankIndex++;
-                            videoID++;
-                        });
-    
+                    let rankIndex = 0; //
+
+                    
+                    // transform into an array
+                    let arrayFileData = $.map(fileData, function(value, index) {
+                        return [value];
                     });
+                    
+                    //     //sort by reccomedation
+                    arrayFileData.sort(function (b, a) {
+                        return a.nb_recommendations - b.nb_recommendations;
+                    });
+    
+                     //     // loop through videos - manipulate and add information
+                    for (let video of arrayFileData) {
+                   
+    
+                        video.youtubeID = video.id;
+                        video.id = "v" + videoID;
+                        video.date = raw_date[0];
+                        video.moment = moment(raw_date[0]);
+                        video.recRank = rankIndex + 1;
+                        video.day = +raw_date[3];
+
+                        delete video.key;
+
+                        termVideoCollection.videos.push(video);
+
+                        //advance index
+                        rankIndex++;
+                        videoID++;
+    
+                    }
     
                     //advance date
                     daysLoaded++;
     
                     //if it is the last day
                     if (daysLoaded == rankflowData.numberDays) {
-                        reorderByDate();
-                        rankflowData.allFilesLoaded();
+                        console.log(rankflowData);
+                        // reorderByDate();
+                        // rankflowData.allFilesLoaded();
                     }
     
                 });
