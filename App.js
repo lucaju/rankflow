@@ -41,6 +41,13 @@
                 UIkit.toggle($("#small-title")).toggle();
             });
 
+            $(rankflowData).on('load', function () {
+                $("#visualization").empty();
+                $("#top-ten-videos").empty();
+                $("#top-ten-channels").empty();
+                $(".spiner").show();
+            });
+
             $(rankflowData).on('success', function () {
 
                 //vis
@@ -66,7 +73,7 @@
 
                     if (_this.showTableAll) _this.builtTable(data.filteredPeriod);
 
-
+                    console.log(data)
                     topVideosVis.init(data.filteredPeriod);
                     topChannelsVis.init(data.channels);
 

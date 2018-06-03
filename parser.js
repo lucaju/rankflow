@@ -33,64 +33,22 @@
         this.initialDate = moment("2018-04-03");
         this.finalDate = moment("2018-06-02");
         this.period = {
-            startDate: this.initialDate,
+            startDate:  moment("2018-05-09"), //this.initialDate,
             endDate: this.finalDate
         };
+        this.totalNumberDays = this.finalDate.diff(this.initialDate, 'days')+1;
         this.numberDays = this.period.endDate.diff(this.period.startDate, 'days')+1;
 
         //##### METHODS
-
-        this.getTermByName = function (termName) {
-
-            termName = termName.replace(" ", "_"); // replace space with trailing
-
-            for (let i = 0; i < this.terms.length; i++) {
-                if (this.terms[i].slug == termName) {
-                    return this.terms[i];
-                }
-            }
-            return null;
-        };
-
-        this.selectTerm = function(term) {
-            this.selectedTerm = term; //new term
-            this.updateData();
-        };
-
-        this.updateData = function() {
-
-            let selectedDataset = this.getTermByName(this.selectedTerm); //get data
-
-            //rank
-            // console.log(selectedDataset);
-            selectedDataset.filteredPeriod.videos.sort(function (b, a) {
-                return a.sumRec - b.sumRec;
-            });
-
-            this.getRankedChannels(this.selectedTerm);
-
-            // selectedDataset.topTenVideos = selectedDataset.filteredPeriod.videos.slice(0, 10); //reduce
-
-            $(rankflowData).trigger('update',[selectedDataset]);
-
-        };
-
-        this.displayPeriodStartDate = function() {
-            return this.period.startDate.format("MMMM Do");
-        };
-
-        this.displayPeriodEndDate = function() {
-            return this.period.endDate.format("MMMM Do");
-        };
 
         this._loadData = function () {
 
             let maxRankIndex = 10; //max videos on the rank
             let daysLoaded = 0; //start counting
-            let dayIterator = moment(rankflowData.initialDate);
+            let dayIterator = moment(this.initialDate);
             let videoID = 0;
 
-            let termVideoCollection = rankflowData.getTermByName(this.selectedTerm);
+            let termVideoCollection = this.getTermByName(this.selectedTerm);
     
             while (dayIterator <= rankflowData.finalDate) {
 
@@ -120,11 +78,12 @@
                    
     
                         video.youtubeID = video.id;
-                        video.id = "v" + videoID;
+                        // video.id = "v" + videoID;
                         video.date = raw_date[0];
                         video.moment = moment(raw_date[0]);
                         video.recRank = rankIndex + 1;
                         video.day = +raw_date[3];
+                        video.id = "_" + video.id;
 
                         delete video.key;
 
@@ -140,7 +99,7 @@
                     daysLoaded++;
     
                     //if it is the last day
-                    if (daysLoaded == rankflowData.numberDays) {
+                    if (daysLoaded == rankflowData.totalNumberDays) {
                         reorderByDate();
                         rankflowData.allFilesLoaded();
                     }
@@ -191,82 +150,76 @@
     
             this._parseData();
 
-            console.log(rankflowData);
-
             $(this).trigger('success');
 
-            // this.updateData();
 
-            this.changePeriod("kathleen_wynne",moment('2018-05-09'),moment('2018-06-02'));
+
+            // this.changePeriod(this.selectedTerm,moment('2018-05-09'),this.finalDate);
+            this.filterVidesByPeriod(this.selectedTerm,this.period.startDate,this.period.endDate);
             
         };
-    
+
         this._parseData = function() {
 
             const _this = this;
+
+            const selectedDataset = this.terms.find(term => term.slug == this.selectedTerm);
+
+
+            //video collection for this term
+            let videos = [];
     
-            $.each(this.terms, function (term, t) {
+            $.each(selectedDataset.videos, function (i, v) {
+
+                //get video in the collection
+                let video = videos.find(vid => vid.youtubeID == v.youtubeID);
                 
-                //video collection for this term
-                let videos = [];
-        
-                $.each(t.videos, function (i, v) {
-
-                    //get video in the collection
-                    let video = videos.find(vid => vid.youtubeID == v.youtubeID);
-                    
-                    
-                    if (video === undefined) {
-        
-                        video = {
-                            id: v.id,
-                            youtubeID: v.youtubeID,
-                            title: v.title,
-                            channel: v.channel,
-                            sumRec: 0,
-                            dates: []
-                        };
-        
-                        videos.push(video);
-        
-                    }
-        
-                    let day = {
-                        date: v.date,
-                        day: v.day,
-                        moment: v.moment,
-                        depth: v.depth,
-                        dislikes: v.dislikes,
-                        likes: v.likes,
-                        mult: v.mult,
-                        nb_recommendations: v.nb_recommendations,
-                        recommendations: v.recommendations,
-                        views: v.views,
-                        recRank: v.recRank
+                
+                if (video === undefined) {
+    
+                    video = {
+                        id: v.id,
+                        youtubeID: v.youtubeID,
+                        title: v.title,
+                        channel: v.channel,
+                        sumRec: 0,
+                        dates: []
                     };
-        
-                    video.sumRec += v.nb_recommendations;
-        
-                    video.dates.push(day);
-        
-                });
-        
-                t.videos = videos;
-
-                    
-                t.filteredPeriod  = {
-                    startDate: _this.period.startDate,
-                    endDate: _this.period.endDate,
-                    videos: videos
+    
+                    videos.push(video);
+    
+                }
+    
+                let day = {
+                    date: v.date,
+                    day: v.day,
+                    moment: v.moment,
+                    depth: v.depth,
+                    dislikes: v.dislikes,
+                    likes: v.likes,
+                    mult: v.mult,
+                    nb_recommendations: v.nb_recommendations,
+                    recommendations: v.recommendations,
+                    views: v.views,
+                    recRank: v.recRank
                 };
-        
+    
+                video.sumRec += v.nb_recommendations;
+    
+                video.dates.push(day);
+    
+            });
+    
+            selectedDataset.videos = videos;
+
+            //Rorder
+            selectedDataset.videos.sort(function (b, a) {
+                return a.sumRec - b.sumRec;
             });
         
         };
 
         this.getRankedChannels = function(term) {
-
-            
 
             //select term
             let dataSet = this.getTermByName(term);
@@ -323,6 +276,7 @@
 
         this.changePeriod = function(term,start, end) {
 
+
             let startDate = moment(start);
             let endDate = moment(end);
 
@@ -349,11 +303,10 @@
 
         };
 
-        this.filterVidesByPeriod = function(tSlug, start,end) {
+        this.filterVidesByPeriod = function(tSlug, start, end) {
 
             const _this = this;
             
-
             const termSelected = this.terms.find(term => term.slug == tSlug);
 
             // const filteredData = termSelected;
@@ -391,7 +344,10 @@
                 return element.moment.isBetween(_this.period.startDate,_this.period.endDate, 'day','[]');
             }
 
-            console.log(termSelected); 
+            //Rorder
+            termSelected.filteredPeriod.videos.sort(function (b, a) {
+                return a.sumRec - b.sumRec;
+            });
             
             //update channel list
             this.getRankedChannels(rankflowData.selectedTerm);
@@ -400,7 +356,46 @@
 
         };
 
+        this.selectTerm = function(term) {
+            this.selectedTerm = term; //new term
+            const termSelected = this.terms.find(term => term.slug == this.selectedTerm);
 
+            if(termSelected.videos.length == 0) {
+                $(rankflowData).trigger('load');
+                this._loadData();
+            } else {
+                this.updateData();
+            }
+            
+        };
+
+        this.updateData = function() {
+
+            const selectedDataset = this.terms.find(term => term.slug == this.selectedTerm);
+
+            $(rankflowData).trigger('update',[selectedDataset]);
+
+        };
+
+        this.getTermByName = function (termName) {
+
+            termName = termName.replace(" ", "_"); // replace space with trailing
+
+            for (let i = 0; i < this.terms.length; i++) {
+                if (this.terms[i].slug == termName) {
+                    return this.terms[i];
+                }
+            }
+            return null;
+        };
+
+        this.displayPeriodStartDate = function() {
+            return this.period.startDate.format("MMMM Do");
+        };
+
+        this.displayPeriodEndDate = function() {
+            return this.period.endDate.format("MMMM Do");
+        };
     }
 
     $(document).ready(function () {
