@@ -73,7 +73,7 @@
 
                     if (_this.showTableAll) _this.builtTable(data.filteredPeriod);
 
-                    console.log(data)
+                    // console.log(data);
                     topVideosVis.init(data.filteredPeriod);
                     topChannelsVis.init(data.channels);
 
