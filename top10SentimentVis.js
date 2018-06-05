@@ -42,7 +42,7 @@
             let stack = d3.stack()
                 .offset(d3.stackOffsetExpand);
 
-            d3.csv('data/topTenVideoSentiment.csv')
+            d3.csv('dataset/topTenVideoSentiment.csv')
                 .then(function (data) {
 
                     y.domain(data.map(function (d) {
