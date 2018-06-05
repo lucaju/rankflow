@@ -28,10 +28,11 @@
                 videos: []
             }
         ];
-
+        
+        // console.log(startPeriod);
         this.selectedTerm = this.terms[0].slug;
         this.initialDate = moment("2018-04-03");
-        this.finalDate = moment("2018-06-02");
+        this.finalDate = moment("2018-06-04");
         this.period = {
             startDate:  moment("2018-05-09"), //this.initialDate,
             endDate: this.finalDate
@@ -40,6 +41,17 @@
         this.numberDays = this.period.endDate.diff(this.period.startDate, 'days')+1;
 
         //##### METHODS
+
+        this.constructor = function () {
+
+            //temporary hack for a version
+            if($("#startPeriod").html()) {
+                this.period.startDate = moment($("#startPeriod").html());
+                this.numberDays = this.period.endDate.diff(this.period.startDate, 'days')+1;
+            }
+
+            this._loadData();
+        };
 
         this._loadData = function () {
 
@@ -399,7 +411,7 @@
     }
 
     $(document).ready(function () {
-        rankflowData._loadData();
+        rankflowData.constructor();
     });
 
     //init

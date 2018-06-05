@@ -51,8 +51,7 @@
             $(rankflowData).on('success', function () {
 
                 //vis
-                // rankFlowVis.setupvis();
-                // rankFlowVis.builtChart();
+
 
                 //interface
                 // $('#table-all-toggle-icon').click(_this.toggleTableListAll);
@@ -69,7 +68,7 @@
                     rankFlowVis.builtChart();
                     rankFlowVis.vis(data.filteredPeriod);
 
-                    // _this.buildTopTenTable(data.topTenVideos); //buld table        
+                    _this.buildTopTenTable(data.filteredPeriod); //buld table        
 
                     if (_this.showTableAll) _this.builtTable(data.filteredPeriod);
 
@@ -121,12 +120,16 @@
 
         };
 
-        this.buildTopTenTable = function(topTen) {
+        this.buildTopTenTable = function(data) {
+
+            
 
             // let rankedData = d.sort(function (b, a) {
             //     return a.sumRec - b.sumRec;
             // });
-            // let topTen = rankedData.slice(0, 10);
+            let topTen = data.videos.slice(0, 10);
+
+            console.log(topTen);
 
             let divTable = $('#top-ten-recommendations');
             divTable.empty();
