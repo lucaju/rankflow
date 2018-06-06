@@ -454,7 +454,8 @@
                 })
                 // .style("stroke-width", function(d) {return maxPosition[_this.namesByID[d.id]].value/10;})
                 .style("stroke", function (d, i) {
-                    return _this.color(d.channel);
+                    // return _this.color(d.channel);
+                    return rankflowData.getChannelByName(d.channel).colour;
                 })
                 // .style("stroke", function(d,i) {return "#000"; })
                 // .transition().duration(750).delay(500)
@@ -476,7 +477,8 @@
                 })
                 // .style("stroke-width", function(d) {return maxPosition[this.namesByID[d.id]].value/10;})
                 .style("stroke", function (d, i) {
-                    return _this.color(d.channel);
+                    // return _this.color(d.channel);
+                    return rankflowData.getChannelByName(d.channel).colour;
                 });
 
 
@@ -492,13 +494,15 @@
                 })
                 .style("opacity", 0)
                 .style("stroke", function (d, i) {
-                    return _this.color(d.channel);
+                    // return _this.color(d.channel);
+                    return rankflowData.getChannelByName(d.channel).colour;
                 })
                 .style("fill", function (d, i) {
                     if (d.dates[0].views == -1) {
                         return "white";
                     } else {
-                        return _this.color(d.channel);
+                        // return _this.color(d.channel);
+                        return rankflowData.getChannelByName(d.channel).colour;
                     }
                 })
                 .style("stroke-width", 4)
@@ -525,13 +529,15 @@
                     return _this.strokeWidth[maxPosition[_this.namesByID[d.id]].value - 1];
                 })
                 .style("stroke", function (d, i) {
-                    return _this.color(d.channel);
+                    // return _this.color(d.channel);
+                    return rankflowData.getChannelByName(d.channel).colour;
                 })
                 .style("fill", function (d, i) {
                     if (d.dates[0].views == -1) {
                         return "white";
                     } else {
-                        return _this.color(d.channel);
+                        // return _this.color(d.channel);
+                        return rankflowData.getChannelByName(d.channel).colour;
                     }
                 });
                 
@@ -568,7 +574,10 @@
             // var circleSize = parseInt(d3.selectAll(".focus." + d.id).selectAll(".line").style("stroke-width"));
             let circleSize = 10;
 
-            this.popUpName.select(".tooltipCircle").style("fill", this.color(d.channel)).attr("r", circleSize);
+            this.popUpName.select(".tooltipCircle")
+                // .style("fill", this.color(d.channel))
+                .style("fill", rankflowData.getChannelByName(d.channel).colour)
+                .attr("r", circleSize);
             // popUpName.select(".tooltipCircle").style("fill", "#000").attr("r", circleSize);
 
             this.popUpName.select("text").text(d.moment.format("MMM D") + ": " + d.title + " (Rank: " + d.recRank + ")");

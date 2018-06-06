@@ -32,13 +32,15 @@
         // console.log(startPeriod);
         this.selectedTerm = this.terms[0].slug;
         this.initialDate = moment("2018-04-03");
-        this.finalDate = moment("2018-06-04");
+        this.finalDate = moment("2018-06-05");
         this.period = {
             startDate:  moment("2018-05-09"), //this.initialDate,
             endDate: this.finalDate
         };
         this.totalNumberDays = this.finalDate.diff(this.initialDate, 'days')+1;
         this.numberDays = this.period.endDate.diff(this.period.startDate, 'days')+1;
+
+        this.topChannels = [];
 
         //##### METHODS
 
@@ -236,13 +238,6 @@
             //select term
             let dataSet = this.getTermByName(term);
 
-            // console.log(dataSet);
-            
-            //if Channel is already parserd
-            // if(dataSet.channels) {
-            //     return dataSet.channels;
-            // }
-
             const channels = []; // collection
 
             //loop
@@ -281,9 +276,65 @@
                 return a.numberRecommendations - b.numberRecommendations;
             });
 
+
+            //add colour based on pallete 
+            if (app.channelColours) this._setChannelColour(channels);
+            
+
             //save;
             dataSet.channels = channels;
             return dataSet.channels;
+        };
+
+        this._setChannelColour = function(channels) {
+            channels.forEach( function(c,i) {
+
+                //top ten color /// more on gray
+                if (i < 10) {
+                    // c.colour = app.channelColours[i];
+                    let colour = checkChannelColour(c.name);
+                    if (colour) {
+                        c.colour = colour;
+                    } else {
+
+                        colour = chroma(app.channelColours[i]).hex();
+                        let testDuplication = true;
+                        let multiplier = 1;
+                        while (testDuplication) {
+                            testDuplication = checkColourDuplicationTopTen(colour);
+                            if (testDuplication) {
+                                colour = chroma(colour).saturate(multiplier).hex();
+                                multiplier++;
+                            }
+                        }
+                        
+                        c.colour = colour;
+
+
+                        rankflowData.topChannels.push(c); 
+                    }
+                   
+                } else {
+                    // c.colour = "#ccc";
+                    c.colour = chroma("lightgray").hex();
+                }
+
+            });
+
+            function checkChannelColour(channelName) {
+                const channel = rankflowData.topChannels.find(c => c.name == channelName);
+                if (channel) return channel.colour;
+                return null;
+            }
+
+            function checkColourDuplicationTopTen(colour) {
+                const colourChannel = rankflowData.topChannels.find(c => c.colour == colour);
+                if (colourChannel) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         };
 
         this.changePeriod = function(term,start, end) {
@@ -399,6 +450,12 @@
                 }
             }
             return null;
+        };
+
+        this.getChannelByName = function(channelName) {
+            const term = this.terms.find(t => t.slug == this.selectedTerm);
+            const channel = term.channels.find(c => c.name == channelName);
+            return channel;
         };
 
         this.displayPeriodStartDate = function() {

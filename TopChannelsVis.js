@@ -80,7 +80,9 @@
 
             bar.append("rect")
                 .attr("class", "bar")
-                .attr("fill", function(d) { return colour(d.name); })
+                // .attr("fill", function(d) { return colour(d.name); })
+                .attr("fill", function(d) { 
+                    return d.colour; })
                 .attr("x", 0)
                 .attr("height", y.bandwidth())
                 .attr("y", function (d) {
@@ -140,6 +142,12 @@
                 .attr("text-anchor", "end")
                 .style("font", "12px sans-serif")
                 .style("font-weight", "bold")
+                .style("fill", function(d){
+                    let textColour = chroma(0,0,0,0.9).hex();
+                    let contrast = chroma.contrast( d.colour, textColour);
+                    if(contrast < 4.5) textColour = chroma(255,255,255,0.85).hex();
+                    return textColour;
+                })
                 .style("opacity", 0)
                 .text(function(d){
                     return (d.numberRecommendations);
