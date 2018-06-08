@@ -32,7 +32,7 @@
         // console.log(startPeriod);
         this.selectedTerm = this.terms[0].slug;
         this.initialDate = moment("2018-04-03");
-        this.finalDate = moment("2018-06-06");
+        this.finalDate = moment("2018-06-07");
         this.period = {
             startDate:  moment("2018-05-09"), //this.initialDate,
             endDate: this.finalDate
