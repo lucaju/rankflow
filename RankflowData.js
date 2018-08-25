@@ -8,33 +8,18 @@
 
         this.terms = [
             {
-                name: "Kathleen Wynne",
-                slug: "kathleen_wynne",
-                videos: []
-            },
-            {
-                name: "Doug Ford",
-                slug: "doug_ford",
-                videos: []
-            },
-            {
-                name: "Andrea Horwath",
-                slug: "andrea_horwath",
-                videos: []
-            },
-            {
-                name: "Mike Schreiner",
-                slug: "mike_schreiner",
+                name: "Lula Livre",
+                slug: "lula-livre-lulalivre",
                 videos: []
             }
         ];
         
         // console.log(startPeriod);
         this.selectedTerm = this.terms[0].slug;
-        this.initialDate = moment("2018-04-03");
-        this.finalDate = moment("2018-06-08");
+        this.initialDate = moment("2018-08-03");
+        this.finalDate = moment("2018-08-16");
         this.period = {
-            startDate:  moment("2018-05-09"), //this.initialDate,
+            startDate:  moment("2018-08-03"), //this.initialDate,
             endDate: this.finalDate
         };
         this.totalNumberDays = this.finalDate.diff(this.initialDate, 'days')+1;
@@ -68,57 +53,71 @@
 
                 
                 // let file = `${rankflowData.PATH}ontario-elections-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
-                let file = `${rankflowData.PATH}video-infos-ontario-elections-${this.selectedTerm}-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
+                let file = `${rankflowData.PATH}video-infos-${this.selectedTerm}-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
     
-                $.getJSON(file, function (fileData) {
+                $.getJSON(file)
+                    .done(function (fileData) {
 
-                   
-                    let raw_date = getDateFromFilename(file); //get date from filename
-                    let rankIndex = 0; //
+                        console.log(fileData);
 
                     
-                    // transform into an array
-                    let arrayFileData = $.map(fileData, function(value, index) {
-                        return [value];
-                    });
+                        let raw_date = getDateFromFilename(file); //get date from filename
+                        let rankIndex = 0; //
+
+                        
+                        // transform into an array
+                        let arrayFileData = $.map(fileData, function(value, index) {
+                            return [value];
+                        });
+                        
+                        //     //sort by reccomedation
+                        arrayFileData.sort(function (b, a) {
+                            return a.nb_recommendations - b.nb_recommendations;
+                        });
+        
+                        //     // loop through videos - manipulate and add information
+                        for (let video of arrayFileData) {
                     
-                    //     //sort by reccomedation
-                    arrayFileData.sort(function (b, a) {
-                        return a.nb_recommendations - b.nb_recommendations;
+        
+                            video.youtubeID = video.id;
+                            // video.id = "v" + videoID;
+                            video.date = raw_date[0];
+                            video.moment = moment(raw_date[0]);
+                            video.recRank = rankIndex + 1;
+                            video.day = +raw_date[3];
+                            video.id = "_" + video.id;
+
+                            delete video.key;
+
+                            termVideoCollection.videos.push(video);
+
+                            //advance index
+                            rankIndex++;
+                            videoID++;
+        
+                        }
+        
+                        //advance date
+                        daysLoaded++;
+        
+                        //if it is the last day
+                        if (daysLoaded == rankflowData.totalNumberDays) {
+                            reorderByDate();
+                            rankflowData.allFilesLoaded();
+                        }
+        
+                    }).fail( function() {
+                        console.log("error")
+
+                        //advance date
+                        daysLoaded++;
+        
+                        //if it is the last day
+                        if (daysLoaded == rankflowData.totalNumberDays) {
+                            reorderByDate();
+                            rankflowData.allFilesLoaded();
+                        }
                     });
-    
-                     //     // loop through videos - manipulate and add information
-                    for (let video of arrayFileData) {
-                   
-    
-                        video.youtubeID = video.id;
-                        // video.id = "v" + videoID;
-                        video.date = raw_date[0];
-                        video.moment = moment(raw_date[0]);
-                        video.recRank = rankIndex + 1;
-                        video.day = +raw_date[3];
-                        video.id = "_" + video.id;
-
-                        delete video.key;
-
-                        termVideoCollection.videos.push(video);
-
-                        //advance index
-                        rankIndex++;
-                        videoID++;
-    
-                    }
-    
-                    //advance date
-                    daysLoaded++;
-    
-                    //if it is the last day
-                    if (daysLoaded == rankflowData.totalNumberDays) {
-                        reorderByDate();
-                        rankflowData.allFilesLoaded();
-                    }
-    
-                });
     
                 //advance date
     
