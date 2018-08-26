@@ -8,18 +8,86 @@
 
         this.terms = [
             {
-                name: "Lula Livre",
-                slug: "lula-livre-lulalivre",
+                name: "Lula",
+                slug: "Lula-Lula",
                 videos: []
-            }
+            },{
+                name: "Lula Presidente",
+                slug: "Lula-Lula Presidente",
+                videos: []
+            },{
+                name: "Fernando Haddad",
+                slug: "Haddad-Fernando Haddad",
+                videos: []
+            },{
+                name: "Haddad Presidente",
+                slug: "Haddad-Haddad Presidente",
+                videos: []
+            },{
+                name: "Geraldo Alckmin",
+                slug: "Alckmin-Geraldo Alckmin",
+                videos: []
+            },{
+                name: "Alckmin Presidente",
+                slug: "Alckmin-Alckmin Presidente",
+                videos: []
+            },{
+                name: "Jair Bolsonaro",
+                slug: "Bolsonaro-Jair Bolsonaro",
+                videos: []
+            },{
+                name: "Bolsonaro Presidente",
+                slug: "Bolsonaro-Bolsonaro Presidente",
+                videos: []
+            },{
+                name: "Guilherme Boulos",
+                slug: "Boulos-Guilherme Boulos",
+                videos: []
+            },{
+                name: "Boulos Presidente",
+                slug: "Boulos-Boulos Presidente",
+                videos: []
+            },{
+                name: "Ciro Gomes",
+                slug: "Ciro Gomes-Ciro Gomes",
+                videos: []
+            },{
+                name: "Ciro Gomes Presidente",
+                slug: "Ciro Gomes-Ciro Gomes Presidente",
+                videos: []
+            },{
+                name: "Marina Silva",
+                slug: "Marina Silva-Marina Silva",
+                videos: []
+            },{
+                name: "Marina Presidente",
+                slug: "Marina Silva-Marina Presidente",
+                videos: []
+            },{
+                name: "Henrique Meirelles",
+                slug: "Meirelles-Henrique Meirelles",
+                videos: []
+            },{
+                name: "Meirelles Presidente",
+                slug: "Meirelles-Meirelles Presidente",
+                videos: []
+            },{
+                name: "Eleições 2018",
+                slug: "Eleicoes-Eleicoes 2018",
+                videos: []
+            },{
+                name: "Brazil Elections",
+                slug: "Eleicoes-Brazil Elections",
+                videos: []
+            },
         ];
         
         // console.log(startPeriod);
         this.selectedTerm = this.terms[0].slug;
-        this.initialDate = moment("2018-08-03");
-        this.finalDate = moment("2018-08-16");
+        this.initialDate = moment("2018-08-23");
+        this.finalDate = moment("2018-08-25");
         this.period = {
-            startDate:  moment("2018-08-03"), //this.initialDate,
+            startDate:  moment("2018-08-23"), //this.initialDate,
             endDate: this.finalDate
         };
         this.totalNumberDays = this.finalDate.diff(this.initialDate, 'days')+1;
@@ -53,17 +121,16 @@
 
                 
                 // let file = `${rankflowData.PATH}ontario-elections-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
-                let file = `${rankflowData.PATH}video-infos-${this.selectedTerm}-${dayIterator.format('YYYY-MM-DD')}.json`; //get file name
+                let file = `${rankflowData.PATH}video-infos-${this.selectedTerm}-${dayIterator.format('YYYYMMDD')}.json`; //get file name
+
+                
     
                 $.getJSON(file)
                     .done(function (fileData) {
 
-                        console.log(fileData);
-
                     
                         let raw_date = getDateFromFilename(file); //get date from filename
                         let rankIndex = 0; //
-
                         
                         // transform into an array
                         let arrayFileData = $.map(fileData, function(value, index) {
@@ -81,8 +148,8 @@
         
                             video.youtubeID = video.id;
                             // video.id = "v" + videoID;
-                            video.date = raw_date[0];
-                            video.moment = moment(raw_date[0]);
+                            video.date = `${raw_date[1]}-${raw_date[2]}-${raw_date[3]}`;
+                            video.moment = moment(`${raw_date[1]}-${raw_date[2]}-${raw_date[3]}`);
                             video.recRank = rankIndex + 1;
                             video.day = +raw_date[3];
                             video.id = "_" + video.id;
@@ -107,7 +174,7 @@
                         }
         
                     }).fail( function() {
-                        console.log("error")
+                        console.log("error");
 
                         //advance date
                         daysLoaded++;
@@ -130,7 +197,7 @@
             function getDateFromFilename(file) {
     
                 //get date from filename
-                const regex = /(\d{4})-(\d{2})-(\d{2})/; // regex find date format "YYYY-MM-DD"
+                const regex = /(\d{4})(\d{2})(\d{2})/; // regex find date format "YYYY-MM-DD"
                 const raw_date = file.match(regex);
     
                 return raw_date;
@@ -441,7 +508,7 @@
 
         this.getTermByName = function (termName) {
 
-            termName = termName.replace(" ", "_"); // replace space with trailing
+            // termName = termName.replace(" ", "_"); // replace space with trailing
 
             for (let i = 0; i < this.terms.length; i++) {
                 if (this.terms[i].slug == termName) {
