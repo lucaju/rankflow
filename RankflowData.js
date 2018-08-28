@@ -85,7 +85,7 @@
         // console.log(startPeriod);
         this.selectedTerm = this.terms[0].slug;
         this.initialDate = moment("2018-08-23");
-        this.finalDate = moment("2018-08-26");
+        this.finalDate = moment("2018-08-27");
         this.period = {
             startDate:  moment("2018-08-23"), //this.initialDate,
             endDate: this.finalDate
@@ -525,11 +525,12 @@
         };
 
         this.displayPeriodStartDate = function() {
-            return this.period.startDate.format("MMMM Do");
+
+            return this.period.startDate.locale("pt").format("DD MMMM ");
         };
 
         this.displayPeriodEndDate = function() {
-            return this.period.endDate.format("MMMM Do");
+            return this.period.endDate.locale("pt").format("DD MMMM");
         };
     }
 

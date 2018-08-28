@@ -88,7 +88,7 @@
                     topChannelsVis.init(data.channels);
 
                     //update html
-                    let html = rankflowData.displayPeriodStartDate() + " to " + rankflowData.displayPeriodEndDate();
+                    let html = rankflowData.displayPeriodStartDate() + " a " + rankflowData.displayPeriodEndDate();
                     
                     $("#data-range").find("p").html(html);
                 });

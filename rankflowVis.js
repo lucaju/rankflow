@@ -148,7 +148,7 @@
 
             // xAxis = d3.axisBottom().scale(xScale).tickFormat(d3.timeFormat("%b %d")).tickSize(0);
             // this.xAxis = d3.axisBottom(this.xScale).scale(this.xScale).tickFormat(d3.timeFormat("%m/%d")).tickSize(0)//.ticks(20);
-            this.xAxis = d3.axisBottom(this.xScale).tickFormat(d3.timeFormat("%m/%d")).tickSize(0).ticks(ticksNumber);
+            this.xAxis = d3.axisBottom(this.xScale).tickFormat(d3.timeFormat("%d/%m")).tickSize(0).ticks(ticksNumber);
             // xAxis = d3.axisBottom(xScale).scale(xScale).tickFormat(d3.timeFormat("%a %d")).tickSize(0);
             this.yAxis = d3.axisLeft().scale(this.yScale).tickSize(0);
 
@@ -214,7 +214,7 @@
                 .attr("dy", ".71em")
                 .style("font-size", 14)
                 .style("text-anchor", "middle")
-                .text("Position in Top 10");
+                .text("Posição no ranking");
 
 
             //////////////////////// Initiate the voronoi function ///////////////////////////// 
