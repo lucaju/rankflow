@@ -36,3 +36,24 @@
     pointer-events: all;
     /* stroke: #ddd; */
 }
+
+.tm-sidebar-left {
+    position: fixed;
+    top: 0px;
+    bottom: 0;
+    box-sizing: border-box;
+    width: 230px !important;
+    
+    border-right: 1px #e5e5e5 solid;
+    overflow: auto;
+    background-color: white;
+    z-index: 100;
+}
+
+#main-menu {
+    padding: 150px 40px 60px 40px;
+}
+
+.tm-main {
+    padding-left: 230px;
+}

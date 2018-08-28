@@ -94,7 +94,7 @@
 
         this._setWidth = function () {
 
-            let minVizWidth = (rankflowData.numberDays * this.minDateWidth) + this.margin.left + this.margin.right - 10;
+            let minVizWidth = (rankflowData.numberDays * this.minDateWidth) + this.margin.left + this.margin.right - 10 - 240; //240 is the width of side bar. Better to get this by code
 
             if (this.windowWidth < minVizWidth) {
                 this.width = minVizWidth - this.margin.left - this.margin.right - 10;
@@ -179,7 +179,7 @@
 
             ////////////////////////  Create focus SVG
             this.focus = d3.select("#visualization").append("svg")
-                .attr("width", this.width + this.margin.left + this.margin.right)
+                .attr("width", this.width + this.margin.left + this.margin.right - 240) //240 is the width of side bar. Better to get this by code
                 .attr("height", this.height + this.margin.top + this.margin.bottom)
                 .append("g")
                 .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");

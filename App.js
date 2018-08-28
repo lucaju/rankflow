@@ -90,7 +90,10 @@
                     //update html
                     let html = rankflowData.displayPeriodStartDate() + " a " + rankflowData.displayPeriodEndDate();
                     
-                    $("#data-range").find("p").html(html);
+                    $("#current-view").find("#current-period").html(html);
+
+                    const termSelected = rankflowData.terms.find(term => term.slug == this.selectedTerm);
+                    $("#current-view").find("#current-term").html(termSelected.name);
                 });
 
         };

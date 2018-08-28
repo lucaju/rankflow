@@ -489,6 +489,8 @@
             this.selectedTerm = term; //new term
             const termSelected = this.terms.find(term => term.slug == this.selectedTerm);
 
+            $("#current-view").find("#current-tern").html(termSelected.name);
+
             if(termSelected.videos.length == 0) {
                 $(rankflowData).trigger('load');
                 this._loadData();

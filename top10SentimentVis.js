@@ -17,7 +17,7 @@
                     left: 90
                 };
 
-            let width = windowWidth - margin.left - margin.right;
+            let width = windowWidth - margin.left - margin.right - 240;
             let height = 180 - margin.top - margin.bottom;
 
             let svg = d3.select("#top-10-setiment-visualization").append("svg")

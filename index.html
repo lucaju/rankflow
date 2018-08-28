@@ -28,59 +28,73 @@
 
 <body>
 
-<div id="header-section" class="uk-section uk-section-muted uk-background-fixed uk-background-bottom-center" style="background-image: url(img/header-bg.jpg);">
+<div id="header-section" class="uk-section uk-section-muted uk-padding-small tm-main">
 	<div class="uk-container uk-container-small uk-text-center">
 		<h1 class="uk-heading-primary">Eleições Brasil 2018
 		<br/><span class="uk-h2">RankFlow das Recomendações do YouTube</span></h1>
 	</div>
 </div>
 
-<!--
-<div id="introduction-section" class="uk-section">
-	<div class="uk-container">
-		 <h2 class="uk-h2 uk-text-center">Findings</h2> -->
-		<!--<p class="uk-text-lead">What videos does YouTube recommend about Ontario party leaders? In the first study of its kind, we have identified the most recommended videos by YouTube for the pre-writ period from April 3 to May 8, 2018. Data was collected through tools developed by Guillaume Chaslot and the Algo Transparency project.</p>
-		<p>After watching any video on YouTube, the platform automatically recommends other videos based on a ranking produced by a deep learning neural network. Like search results, recommendations are a judgment made by a platform about the relevance of content. In recent months, The Guardian, The Washington Post and the New York Times have raised concerns about YouTube’s judgment. Its recommendation system might promote harmful or disturbing content particularly on YouTube Kids, their platform for young audiences. Data + Society, a US-based research centre, has also observed YouTube recommending extreme content based on benign queries.</p>	
-		<p>We cannot know for sure what has caused these recommendations. Likely the recommendations are a combination of public opinion, algorithmic design and possibly the work of partisan communities amplifying certain voices (also called media manipulation). This study prototypes a political discoverability audit, a tool to assess what content is being recommended online before and during an election, that has been called for in the lead-up to elections. These audits could become an important tool in understanding the role of social media platforms in elections.</p>
-		<div class="uk-text-center uk-margin-large-top" uk-grid>
-			<div class="uk-width-auto"></div>
-			<div class="uk-width-expand">
-				<div id="rankflow-panel" class="uk-panel uk-overflow-auto">
-					<div id="top-10-setiment-visualization"></div>
-				</div>
-			</div>
-			<div class="uk-width-auto"></div>
+<div class="tm-sidebar-left">
+
+	<div id="main-menu">
+		<ul class="uk-nav uk-nav-default" uk-switcher>
+			<p class="uk-text-lead">Candidatos</p>
+			<li><a href="" onclick="rankflowData.selectTerm('Lula-Lula')">Lula</a></li>
+			<li><a href="" onclick="rankflowData.selectTerm('Lula-Lula Presidente')">Lula Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Haddad-Fernando Haddad')">Fernando Haddad</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Haddad-Haddad Presidente')">Haddad Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Alckmin-Geraldo Alckmin')">Geraldo Alckmin</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Alckmin-Alckmin Presidente')">Alckmin Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Bolsonaro-Jair Bolsonaro')">Jair Bolsonaro</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Bolsonaro-Bolsonaro Presidente')">Bolsonaro Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Boulos-Guilherme Boulos')">Guilherme Boulos</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Boulos-Boulos Presidente')">Boulos Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Ciro Gomes-Ciro Gomes')">Ciro Gomes</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Ciro Gomes-Ciro Gomes Presidente')">Ciro Gomes Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Marina Silva-Marina Silva')">Marina Silva</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Marina Silva-Marina Presidente')">Marina Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Meirelles-Henrique Meirelles')">Henrique Meirelles</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Meirelles-Meirelles Presidente')">Meirelles Presidente</a></li>
+			<li class="uk-nav-divider"></li>
+			<li class="uk-nav-header">Termos relacionados</li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Eleicoes-Eleicoes 2018')">Eleições 2018</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Eleicoes-Brazil Elections')">Brazil Elections</a></li>
+		</ul>
+	</div>
+	
+	<div id="footer-section" class="uk-section uk-section-xsmall uk-section-secondary">
+		<div class="uk-container uk-container-small uk-text-small uk-text-center">
+			<p>Developed by<br/><a href="https://luciano.fluxo.art.br" target="_blank">Luciano Frizzera</a></p>
 		</div>
-		
 	</div>
 </div>
--->
 
-<!-- <div id="date-range-form" class="uk-section">
-	<div class="uk-container">
-		<div class="uk-grid-small" uk-grid>
-			<div class="uk-width-1-2@s">
-				from: <div class="uk-margin">
-						<select id="form-date-filter-start" class="uk-select">
-							<option>Option 01</option>
-							<option>Option 02</option>
-						</select>
-					</div>
-			</div>
-			<div class="uk-width-1-2@s">
-				to: <div class="uk-margin">
-						<select class="uk-select">
-							<option>Option 01</option>
-							<option>Option 02</option>
-						</select>
-					</div>
-			</div>
+<div id="menu-section" class="uk-section uk-section-xsmall uk-background-muted uk-padding-remove-top uk-padding-remove-bottom uk-box-shadow-small tm-main" uk-sticky="media: 640" style="z-index: 980;" >
+	<div class="uk-container uk-container-expand uk-text-center"">
+
+		<div id="small-title" class="uk-clear-fix uk-margin-top" hidden>
+			<h4 class="uk-h4 uk-margin-remove-bottom">Eleições Brasil 2018: RankFlow das Recomendações do YouTube</h4>
+		</div>
+	
+		<div id="current-view">
+			<p class="uk-margin-top uk-text-lead">
+				<span id="current-term""></span>
+				<span> | </span>
+				<span id="current-period" ></span>
+			</p>
 		</div>
 	</div>
-	<hr>
-</div> -->
+</div>
 
-<div id="menu-section" class="uk-section uk-section-xsmall uk-background-muted uk-padding-remove-top uk-padding-remove-bottom uk-box-shadow-small" uk-sticky="media: 640" style="z-index: 980;" >
+<!-- <div id="menu-section" class="uk-section uk-section-xsmall uk-background-muted uk-padding-remove-top uk-padding-remove-bottom uk-box-shadow-small" uk-sticky="media: 640" style="z-index: 980;" >
 	<div class="uk-container uk-container-expand uk-text-center"">
 
 		<div id="small-title" class="uk-clear-fix uk-margin-top" hidden>
@@ -116,9 +130,9 @@
 			<p class="uk-margin-remove-top uk-margin-small-bottom"></p>
 		</div>
 	</div>
-</div>
+</div> -->
 
-<div id="top10Videos-section" class="uk-section">
+<div id="top10Videos-section" class="uk-section tm-main">
 	<div class="uk-container">
 		<h2 class="uk-h2 uk-text-center">Videos mais recomendados</h2>
 		<div class="uk-text-small">
@@ -129,7 +143,7 @@
 	<hr>
 </div>
 
-<div id="top10Channels-section" class="uk-section">
+<div id="top10Channels-section" class="uk-section tm-main">
 	<div class="uk-container">
 		<h2 class="uk-h2 uk-text-center">Canais mais recomendados</h2>
 		<div class="uk-text-small">
@@ -151,7 +165,7 @@
 	<hr>
 </div> -->
 
-<div id="rankflow-section" class="uk-section uk-section-xsmall">
+<div id="rankflow-section" class="uk-section uk-section-xsmall tm-main">
 	<div class="uk-container uk-container-expand">
 		<h2 class="uk-h2 uk-text-center">Videos mais recomendados no período</h2>
 		<div class="uk-text-center" uk-grid>
@@ -203,11 +217,11 @@
 	</div>
 </div> -->
 
-<div id="footer-section" class="uk-section uk-section-xsmall uk-section-secondary">
+<!-- <div id="footer-section" class="uk-section uk-section-xsmall uk-section-secondary tm-main">
 	<div class="uk-container uk-container-small uk-text-small uk-text-center">
 		<p>Developed by Luciano Frizzera</p>
 	</div>
-</div>
+</div> -->
 
 </body>
 </html>
