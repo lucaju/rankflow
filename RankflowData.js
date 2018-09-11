@@ -72,6 +72,14 @@
                 slug: "Meirelles-Meirelles Presidente",
                 videos: []
             },{
+                name: "Amoêdo",
+                slug: "Amoedo-Amoedo",
+                videos: []
+            },{
+                name: "Amoêdo Presidente",
+                slug: "Amoedo-Amoedo Presidente",
+                videos: []
+            },{
                 name: "Eleições 2018",
                 slug: "Eleicoes-Eleicoes 2018",
                 videos: []
@@ -85,9 +93,9 @@
         // console.log(startPeriod);
         this.selectedTerm = this.terms[0].slug;
         this.initialDate = moment("2018-08-23");
-        this.finalDate = moment("2018-08-28");
+        this.finalDate = moment("2018-09-10");
         this.period = {
-            startDate:  moment("2018-08-23"), //this.initialDate,
+            startDate: moment("2018-08-23"), //this.initialDate,
             endDate: this.finalDate
         };
         this.totalNumberDays = this.finalDate.diff(this.initialDate, 'days')+1;

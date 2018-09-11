@@ -97,10 +97,10 @@
             let minVizWidth = (rankflowData.numberDays * this.minDateWidth) + this.margin.left + this.margin.right - 10 - 240; //240 is the width of side bar. Better to get this by code
 
             if (this.windowWidth < minVizWidth) {
-                this.width = minVizWidth - this.margin.left - this.margin.right - 10;
+                this.width = minVizWidth - this.margin.left - this.margin.right - 10 - 120;
                 if (!app.showScrollHint) UIkit.toggle($("#horizontal-scroll-hint")).toggle();
             } else {
-                this.width = (this.windowWidth - 140) - this.margin.left - this.margin.right - 10;
+                this.width = (this.windowWidth - 140) - this.margin.left - this.margin.right - 10 - 120;
                 if (app.showScrollHint) UIkit.toggle($("#horizontal-scroll-hint")).toggle();
             }
 
@@ -132,7 +132,7 @@
 
             // this.xScale = d3.scaleTime().domain([startDay, endDay]).range([40, width-40]);
             // this.xScale = d3.scaleTime().range([40, this.width - 40]);
-            this.xScale = d3.scaleTime().range([40, this.width - 40]);
+            this.xScale = d3.scaleTime().range([40, this.width - 40 - 240]);
             this.xScale.domain(d3.extent(parsedDates, function (d) {
                 return d;
             }));
@@ -585,7 +585,7 @@
             //fix popuop position if text is out of boundaries to tlef or ti the right
             if ((this.popUpName.node().getCTM().e - this.margin.left) - (this.popUpName.node().getBBox().width / 2) < 0) {
                 this.popUpName.select("text").style('text-anchor', 'start');
-            } else if ((this.popUpName.node().getCTM().e - this.margin.left) + (this.popUpName.node().getBBox().width / 2) > this.width) {
+            } else if ((this.popUpName.node().getCTM().e - this.margin.left) + (this.popUpName.node().getBBox().width / 2) > this.width - 120) {
                 this.popUpName.select("text").style('text-anchor', 'end');
             }
         };
