@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Eleições Brasil 2018: RankFlow das Recomendações do YouTube</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="js/d3.min.js"></script>
+	<!-- <script type="text/javascript" src="js/moment.js"></script> -->
+	<script type="text/javascript" src="js/moment-with-locales.min.js"></script>
+
+	<script type="text/javascript" src="js/uikit.min.js"></script>
+	<script type="text/javascript" src="js/uikit-icons.min.js"></script>
+	<script type="text/javascript" src="js/chroma.min.js"></script>
+
+	<script type="text/javascript" src="./App.js"></script>
+	<script type="text/javascript" src="./RankflowData.js"></script>
+	<script type="text/javascript" src="./RankflowVis.js"></script>
+	<script type="text/javascript" src="./TopChannelsVis.js"></script>
+	<script type="text/javascript" src="./TopVideosVis.js"></script>
+	
+    <link rel="stylesheet" href="css/uikit.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    
+</head> 
+
+<body>
+
+<div id="header-section" class="uk-section uk-section-muted uk-padding-small tm-main">
+	<div class="uk-container uk-container-small uk-text-center">
+		<h1 class="uk-heading-primary">Eleições Brasil 2018
+		<br/><span class="uk-h2">RankFlow das Recomendações do YouTube</span></h1>
+	</div>
+</div>
+
+<div class="tm-sidebar-left">
+
+	<div id="main-menu">
+		<ul class="uk-nav uk-nav-default" uk-switcher>
+			<p class="uk-text-lead">Candidatos</p>
+			<li><a href="" onclick="rankflowData.selectTerm('Lula-Lula')">Lula</a></li>
+			<li><a href="" onclick="rankflowData.selectTerm('Lula-Lula Presidente')">Lula Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Haddad-Fernando Haddad')">Fernando Haddad</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Haddad-Haddad Presidente')">Haddad Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Alckmin-Geraldo Alckmin')">Geraldo Alckmin</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Alckmin-Alckmin Presidente')">Alckmin Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Bolsonaro-Jair Bolsonaro')">Jair Bolsonaro</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Bolsonaro-Bolsonaro Presidente')">Bolsonaro Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Boulos-Guilherme Boulos')">Guilherme Boulos</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Boulos-Boulos Presidente')">Boulos Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Ciro Gomes-Ciro Gomes')">Ciro Gomes</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Ciro Gomes-Ciro Gomes Presidente')">Ciro Gomes Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Marina Silva-Marina Silva')">Marina Silva</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Marina Silva-Marina Presidente')">Marina Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Meirelles-Henrique Meirelles')">Henrique Meirelles</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Meirelles-Meirelles Presidente')">Meirelles Presidente</a></li>
+			<p></p>
+			<li><a href="#" onclick="rankflowData.selectTerm('Amoedo-Amoedo')">Amoêdo</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Amoedo-Amoedo Presidente')">Amoêdo Presidente</a></li>
+			<li class="uk-nav-divider"></li>
+			<li class="uk-nav-header">Termos relacionados</li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Eleicoes-Eleicoes 2018')">Eleições 2018</a></li>
+			<li><a href="#" onclick="rankflowData.selectTerm('Eleicoes-Brazil Elections')">Brazil Elections</a></li>
+		</ul>
+	</div>
+	
+	<div id="footer-section" class="uk-section uk-section-xsmall uk-section-secondary">
+		<div class="uk-container uk-container-small uk-text-small uk-text-center">
+			<p>Developed by<br/><a href="https://luciano.fluxo.art.br" target="_blank">Luciano Frizzera</a></p>
+		</div>
+	</div>
+</div>
+
+<div id="menu-section" class="uk-section uk-section-xsmall uk-background-muted uk-padding-remove-top uk-padding-remove-bottom uk-box-shadow-small tm-main" uk-sticky="media: 640" style="z-index: 980;" >
+	<div class="uk-container uk-container-expand uk-text-center"">
+
+		<div id="small-title" class="uk-clear-fix uk-margin-top" hidden>
+			<h4 class="uk-h4 uk-margin-remove-bottom">Eleições Brasil 2018: RankFlow das Recomendações do YouTube</h4>
+		</div>
+	
+		<div id="current-view">
+			<p class="uk-margin-top uk-text-lead">
+				<span id="current-term""></span>
+				<span> | </span>
+				<span id="current-period" ></span>
+			</p>
+		</div>
+	</div>
+</div>
+
+<!-- <div id="menu-section" class="uk-section uk-section-xsmall uk-background-muted uk-padding-remove-top uk-padding-remove-bottom uk-box-shadow-small" uk-sticky="media: 640" style="z-index: 980;" >
+	<div class="uk-container uk-container-expand uk-text-center"">
+
+		<div id="small-title" class="uk-clear-fix uk-margin-top" hidden>
+			<h4 class="uk-h4 uk-margin-remove-bottom">Eleições Brasil 2018: RankFlow das Recomendações do YouTube</h4>
+		</div>
+	
+		<nav class="uk-navbar-container uk-overflow-auto" uk-navbar>
+			<div class="uk-navbar-left">
+
+				<ul class="uk-navbar-nav" uk-switcher>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Lula-Lula')">Lula</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Lula-Lula Presidente')">Lula Presidente</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Haddad-Fernando Haddad')">Fernando Haddad</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Haddad-Haddad Presidente')">Haddad Presidente</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Alckmin-Geraldo Alckmin')">Geraldo Alckmin</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Alckmin-Alckmin Presidente')">Alckmin Presidente</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Bolsonaro-Jair Bolsonaro')">Jair Bolsonaro</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Bolsonaro-Bolsonaro Presidente')">Bolsonaro Presidente</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Boulos-Guilherme Boulos')">Guilherme Boulos</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Boulos-Boulos Presidente')">Boulos Presidente</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Ciro Gomes-Ciro Gomes')">Ciro Gomes</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Ciro Gomes-Ciro Gomes Presidente')">Ciro Gomes Presidente</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Marina Silva-Marina Silva')">Marina Silva</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Marina Silva-Marina Presidente')">Marina Presidente</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Meirelles-Henrique Meirelles')">Henrique Meirelles</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Meirelles-Meirelles Presidente')">Meirelles Presidente</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Eleicoes-Eleicoes 2018')">Eleições 2018</a></li>
+					<li><a href="#" class="uk-button uk-button-text" onclick="rankflowData.selectTerm('Eleicoes-Brazil Elections')">Brazil Elections</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div id="data-range">
+			<p class="uk-margin-remove-top uk-margin-small-bottom"></p>
+		</div>
+	</div>
+</div> -->
+
+<div id="top10Videos-section" class="uk-section tm-main">
+	<div class="uk-container">
+		<h2 class="uk-h2 uk-text-center">Videos mais recomendados</h2>
+		<div class="uk-text-small">
+			<div class="spiner uk-position-absolute uk-transform-center uk-margin-large-bottom" style="left: 50%;" uk-spinner="ratio: 1"></div>
+			<div id="top-ten-videos"></div>
+		</div>
+	</div>
+	<hr>
+</div>
+
+<div id="top10Channels-section" class="uk-section tm-main">
+	<div class="uk-container">
+		<h2 class="uk-h2 uk-text-center">Canais mais recomendados</h2>
+		<div class="uk-text-small">
+			<div class="spiner uk-position-absolute uk-transform-center uk-margin-large-bottom" style="left: 50%;" uk-spinner="ratio: 1"></div>
+			<div id="top-ten-channels"></div>
+		</div>
+	</div>
+	<hr>
+</div>
+
+<!-- <div id="top10-section" class="uk-section">
+	<div class="uk-container">
+		<h2 class="uk-h2 uk-text-center">Top 10 YouTube Recommendations</h2>
+		<div class="uk-text-small">
+			<div class="spiner uk-position-absolute uk-transform-center uk-margin-large-bottom" style="left: 50%;" uk-spinner="ratio: 1"></div>
+			<div id="top-ten-recommendations"></div>
+		</div>
+	</div>
+	<hr>
+</div> -->
+
+<div id="rankflow-section" class="uk-section uk-section-xsmall tm-main">
+	<div class="uk-container uk-container-expand">
+		<h2 class="uk-h2 uk-text-center">Videos mais recomendados no período</h2>
+		<div class="uk-text-center" uk-grid>
+			<div class="uk-width-auto"></div>
+			<div class="uk-width-expand">
+				<div class="spiner" uk-spinner="ratio: 3"></div>
+				<div id="rankflow-panel" class="uk-panel uk-overflow-auto">
+					<div id="visualization"></div>
+				</div>
+				<div id="horizontal-scroll-hint" class="uk-text-meta uk-margin-medium-top" hidden>
+					<p><span uk-icon="chevron-left"></span> Role <span uk-icon="chevron-right"></span></p>
+				</div>
+				<div id="modal-video-details" uk-modal></div>
+
+			</div>
+			<div class="uk-width-auto"></div>
+		</div>
+	</div>
+</div>
+
+<!-- <div id="list-all-section" class="uk-section uk-section-xsmall uk-section">
+	<hr>
+	<div class="uk-container">	
+		<h5 class="uk-h5 uk-text-center">List all videos <a id="table-all-toggle-icon" class="uk-icon-link" uk-icon="plus-circle"  uk-toggle="target: #table-all"></a></h5>
+		<div id="table-all" class="uk-height-large uk-panel uk-overflow-auto uk-text-small" hidden>
+			<div id="vis_table"></div>
+		</div>
+	</div>
+</div> -->
+
+<!-- <div id="methodology-section" class="uk-section uk-section-xsmall uk-section-muted">
+	<div class="uk-container uk-text-small uk-text-muted">
+		<h3 class="uk-h3 uk-text-center uk-margin-small-top"><span>Methodology <a id="methodology-toggle-icon" class="uk-icon-link" uk-icon="plus-circle"  uk-toggle="target: #methodology"></a></span></h3>
+		<div id="methodology" class="uk-grid-divider uk-margin-large-top uk-margin-medium-bottom" uk-grid hidden>
+			<div class="uk-width-3-5@m">
+				<h5 class="uk-h5 uk-text-uppercase">Data Collection</h5>
+				<p>We collected recommendations using a Python script developed by Guillaume Chaslot <a href="https://github.com/pnbt/YouTube-explore" target="_blank">Guillaume Chaslot</a> as part of the Algo Transparency project. The script starts with a search query on YouTube to follow and store the list of recommended videos related to the topic of interest. More specifically, the script 1) gets the [N] first search results, 2) follows the first [M] recommendations, 3) repeats step (2) [P] times, and 4) stores the results in a JSON file.</p>
+				<p>For this research we collected six relevant terms connected to the 2018 Ontario Elections: two broad terms to get the big picture on the elections (“Ontario Politics” and “Ontario Election”); and four specific terms, which are the names of the main candidates (“Kathleen Wynne”, “Doug Ford”, “Andrea Horwath”, “Mike Schreiner”). The collection was made manually running the script every day between 8 and 10 pm, from April 3 to May 8, 2018. We choose to have a narrow but deep look into the recommendation system. Thus we set the algorithm to follow the first four recommended videos and repeat the operation four times for each searched term. This is analogous of a person searching for a topic on YouTube, opening the first four videos, and sequentially following the first four recommended videos for each one of them, repeating the operation four times in the videos that come out from each new recommendation list.</p>
+				<p>This algorithm does not rely on YouTube public API. Instead, it simulates the browser environment, loading and scraping HTML elements present at the YouTube search and watch page. This makes the data collection less prone to social bias, such as user profiling using personal preferences, browser history, and cookies. However, it does not remove all the variable that might disturb the recommendation ranking, such as the location, language, the time of the day, and the machine used in this process, as well as other variables not revealed by YouTube.</p>
+				<p>Each daily search produces a JSON file containing the data for all the six terms. The files are merged into a single dataset, from which new information is derived (<i>e.g.</i>, total time a video was recommended during the period), and the data is organized to create a rank flow visualization.</p>
+			</div>
+			<div class="uk-width-2-5@m">
+				<h5 class="uk-h5 uk-text-uppercase">Visualization</h5>
+				<p>Inspired by <a href="http://labs.polsys.net/tools/rankflow/" target="_blank">Bernhard Rieder's work</a>, we developed a RankFlow visualization that shows a rank of the most recommended videos per day during the period. Built using <a href="https://d3js.org/" target="_blank">D3.js</a>, the visualization displays all videos that reached at least one of the top 5 positions in the rank at any given day of the observed period. The thickness of the line works as a reinforced visual cue for the rank position measure on the vertical axis, and it is set by the best position the video was ranked in the period. By clicking on each line, it is possible to watch the video in context, as well as check the basic metrics (view, likes, dislikes, number of recommendation) per day. Accompanying the graph, there is ranked table listing all videos collected on each searched term.</p>
+				<p>The rank flow allows the analysis of the evolution of each video in the rank, find trends, and observe what has been recommended. This might give us some insights about how YouTube rank system works, what are the most prominent videos on specific topics, and what narrative this rank bring to the political debate in Canada.</p>
+				<p>Although there is no legend (yet), each line is colour-coded by the channel that posted the video, which adds another possible dimension to the analysis: Who produces the videos about each searched term? Is there a dominant channel in the period or the video ecology is diverse?</p>
+			</div>
+		</div>
+	</div>
+</div> -->
+
+<!-- <div id="footer-section" class="uk-section uk-section-xsmall uk-section-secondary tm-main">
+	<div class="uk-container uk-container-small uk-text-small uk-text-center">
+		<p>Developed by Luciano Frizzera</p>
+	</div>
+</div> -->
+
+</body>
+</html>
+
+                                                                                                         
