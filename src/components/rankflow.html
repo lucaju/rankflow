@@ -1,0 +1,20 @@
+<div id="rankflow-section" class="uk-section uk-section-xsmall tm-main">
+    <div class="uk-container uk-container-expand">
+        <h2 class="uk-h2 uk-text-center">{{title}}</h2>
+        <div class="uk-text-center" uk-grid>
+            <div class="uk-width-auto"></div>
+            <div class="uk-width-expand">
+                <div class="spiner" uk-spinner="ratio: 3"></div>
+                <div id="rankflow-panel" class="uk-panel uk-overflow-auto">
+                    <div id="visualization"></div>
+                </div>
+                <div id="horizontal-scroll-hint" class="uk-text-meta uk-margin-medium-top" hidden>
+                    <p><span uk-icon="chevron-left"></span> {{scrollText}} <span uk-icon="chevron-right"></span></p>
+                </div>
+                <div id="modal-video-details" uk-modal></div>
+
+            </div>
+            <div class="uk-width-auto"></div>
+        </div>
+    </div>
+</div>

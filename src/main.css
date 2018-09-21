@@ -44,7 +44,7 @@
     box-sizing: border-box;
     width: 230px !important;
     
-    border-right: 1px #e5e5e5 solid;
+    /* border-right: 1px #e5e5e5 solid; */
     overflow: auto;
     background-color: white;
     z-index: 100;
@@ -56,4 +56,8 @@
 
 .tm-main {
     padding-left: 230px;
+}
+
+.spiner {
+    left: 60%;
 }

@@ -1,0 +1,72 @@
+{
+    "period" : {
+        "start": "2018-08-23",
+        "end": "2018-09-02"
+    },
+    "terms": [
+        {
+            "name": "Lula",
+            "slug": "Lula-Lula"
+        },{
+            "name": "Lula Presidente",
+            "slug": "Lula-Lula Presidente"
+        },{
+            "name": "Fernando Haddad",
+            "slug": "Haddad-Fernando Haddad"
+        },{
+            "name": "Haddad Presidente",
+            "slug": "Haddad-Haddad Presidente"
+        },{
+            "name": "Geraldo Alckmin",
+            "slug": "Alckmin-Geraldo Alckmin"
+        },{
+            "name": "Alckmin Presidente",
+            "slug": "Alckmin-Alckmin Presidente"
+        },{
+            "name": "Jair Bolsonaro",
+            "slug": "Bolsonaro-Jair Bolsonaro"
+        },{
+            "name": "Bolsonaro Presidente",
+            "slug": "Bolsonaro-Bolsonaro Presidente"
+        },{
+            "name": "Guilherme Boulos",
+            "slug": "Boulos-Guilherme Boulos"
+        },{
+            "name": "Boulos Presidente",
+            "slug": "Boulos-Boulos Presidente"
+        },{
+            "name": "Ciro Gomes",
+            "slug": "Ciro Gomes-Ciro Gomes"
+        },{
+            "name": "Ciro Gomes Presidente",
+            "slug": "Ciro Gomes-Ciro Gomes Presidente"
+        },{
+            "name": "Marina Silva",
+            "slug": "Marina Silva-Marina Silva"
+        },{
+            "name": "Marina Presidente",
+            "slug": "Marina Silva-Marina Presidente"
+        },{
+            "name": "Henrique Meirelles",
+            "slug": "Meirelles-Henrique Meirelles"
+        },{
+            "name": "Meirelles Presidente",
+            "slug": "Meirelles-Meirelles Presidente"
+        },{
+            "name": "Amoêdo",
+            "slug": "Amoedo-Amoedo"
+        },{
+            "name": "Amoêdo Presidente",
+            "slug": "Amoedo-Amoedo Presidente"
+        }
+    ],
+    "relatedTerms": [
+        {
+            "name": "Eleições 2018",
+            "slug": "Eleicoes-Eleicoes 2018"
+        },{
+            "name": "Brazil Elections",
+            "slug": "Eleicoes-Brazil Elections"
+        }
+    ]
+}
