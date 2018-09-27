@@ -3,13 +3,13 @@
 		<ul class="uk-nav uk-nav-default" uk-switcher>
             <p class="uk-text-lead">{{termsTitle}}</p>
             {{#terms}}
-			<li><a href="" onclick="rankflowData.selectTerm('{{slug}}')">{{name}}</a></li>
+			<li><a href="" onclick="app.selectTerm('{{slug}}')">{{name}}</a></li>
             {{/terms}}
             
             <li class="uk-nav-divider"></li>
             <li class="uk-nav-header">{{relatedTermsTitle}}</li>
             {{#relatedTerms}}
-			<li><a href="" onclick="rankflowData.selectTerm('{{slug}}')">{{name}}</a></li>
+			<li><a href="" onclick="app.selectTerm('{{slug}}')">{{name}}</a></li>
             {{/relatedTerms}}
 		</ul>
 	</div>

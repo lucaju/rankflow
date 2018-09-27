@@ -1,6 +1,6 @@
-import $ from 'jquery';
 import UIkit from 'uikit/dist/js/uikit.min';
 import methodologyMustache from './methodology.html';
+import {select} from 'd3-selection';
 
 export default function Methodology(app) {
 	this.app = app;
@@ -15,9 +15,12 @@ export default function Methodology(app) {
 
 		// buid page
 		const html = methodologyMustache(pageData);
-		$(html).appendTo($('#app'));
+		// $(html).appendTo($('#app'));
+		select('#app').append('div').attr('id','methodology-section');
+		select('#methodology-section').html(html);
 
-		$('#methodology-toggle-icon').click(this.toggleMethodology);
+		select('#methodology-section').on('click', this.toggleMethodology);
+
 	};
 
 	this.toggleMethodology = function toggleMethodology() {

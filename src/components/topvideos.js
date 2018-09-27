@@ -1,15 +1,14 @@
-import $ from 'jquery';
 import topvideosMustache from './topvideos.html';
 import topVideoVis from './TopVideosVis';
+
+import {select} from 'd3-selection';
 
 
 export default function Topvideos(app) {
 	this.app = app;
+	this.vis;
 
 	this.init = function init() {
-
-		this.vis = new topVideoVis(this);
-
 
 		// data
 		const pageData = {
@@ -18,22 +17,28 @@ export default function Topvideos(app) {
 
 		// buid page
 		const html = topvideosMustache(pageData);
-		$(html).appendTo($('#app'));
+		select('#app').append('div').attr('id','topvideos-section');
+		select('#topvideos-section').html(html);
+
+		this.vis = new topVideoVis(this.app);
+		this.vis.init();
 	};
 
-	this.update = function(period) {
-		// topChannelsVis.init(data.channels);
+	this.load = function(data) {
+		select('#topvideos-section').select('.spiner').hide();
+		this.vis.update(data);
 	};
 
-	this.success = function(data) {
-		//- > make it local
-		this.vis.init(data);
-		$('.spiner').hide();
+	this.loading = function() {
+		select('#topvideos-section').select('.spiner').show();
+		this.vis.exit();
 	};
 
-	this.load = function() {
-		//- > make it local
-		$('#top-ten-videos').empty();
-		$('.spiner').show();
+	this.highlightOn = function (id, sourceType) {
+		this.vis.highlightOn(id, sourceType);
+	};
+
+	this.highlightOff = function (youtubeID) {
+		this.vis.highlightOff(youtubeID);
 	};
 }

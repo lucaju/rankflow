@@ -9,6 +9,7 @@ import UIkit from 'uikit/dist/js/uikit.min';
 import uikiticons from 'uikit/dist/js/uikit-icons.min';
 
 // import d3 from 'd3';
+import {selection} from 'd3-selection';
 // import chroma from 'chroma';
 
 // import moment from 'moment-with-locales-es6';
@@ -28,6 +29,8 @@ import Topchannels from './components/topchannels';
 import Rankflow from './components/rankflow';
 import Methodology from './components/methodology';
 
+
+
 // APP
 
 function App() {
@@ -36,7 +39,7 @@ function App() {
 	this.relatedTerms = visconfig.relatedTerms;
 	this.period = visconfig.period;
 
-	this.currentTerm = 'Lula-Lula';
+	this.selectedTerm = this.terms[0];
 
 	this.showTableAll = false;
 
@@ -52,6 +55,17 @@ function App() {
 		'#e565a4',
 		'#8fdc8c',
 	];
+
+	// add functionality to D3 Selection
+	selection.prototype.show = function() {  
+		this.style('display', 'initial');
+		return this;
+	};
+
+	selection.prototype.hide = function() {  
+		this.style('display', 'none');
+		return this;
+	};
 
 	this.init = function () {
 		// methods
@@ -85,55 +99,81 @@ function App() {
 		// });
 			
 
-		this.datamodel.loadData(this.currentTerm)
+		this.datamodel.loadData(this.selectedTerm)
 			.then(function (r) {
 				console.log(r);
-				app.topVideos.success(r);
-				// app.topChannels.success();
-				// this.rankflow.success();
+				app.topVideos.load(r);
+				app.topChannels.load(r);
+				app.rankflow.load(r);
 			});
 	};
 
-	this.datamodelOnLoad = function () {
-
+	this.selectTerm = function(term) {
 		
-		this.topVideos.load();
-		// this.topChannels.load();
-		// this.rankflow.load();
+		const termSelected = this.terms.find(t => t.slug == term);
+		this.selectedTerm = termSelected; //new term
 
-		// $('#visualization').empty();
-		// $('#top-ten-videos').empty();
-		// $('#top-ten-channels').empty();
-		// $('.spiner').show();
+		this.topMenu.updateTerm(termSelected);
+
+		this.datamodelOnLoad();
+
+		this.datamodel.loadData(this.selectedTerm)
+			.then(function (r) {
+				// console.log(r);
+				app.topVideos.load(r);
+				app.topChannels.load(r);
+				app.rankflow.load(r);
+			});
+		
 	};
 
-	this.datamodelOnLoad = function (data) {
+	this.datamodelOnLoad = function () {
+		this.topVideos.loading();
+		this.topChannels.loading();
+		this.rankflow.loading();
+	};
 
-		// _this.buildTopTenTable(data.filteredPeriod); //buld table        
-		// if (_this.showTableAll) _this.builtTable(data.filteredPeriod);
+	this.getTermByName = function (termName) {
+		const term = this.terms.find(c => c.name == termName);
+		return term;
+	};
 
-		this.rankflow.update(data.filteredPeriod);
-		this.topVideos.update(data.filteredPeriod);
-		this.topChannels.update(data.filteredPeriod);
+	this.getChannelByName = function(channelName) {
+		// const term = datamodel.terms.find(t => t.slug == this.selectedTerm);
+		const channel = datamodel.videoCollection.channels.find(c => c.name == channelName);
+		return channel;
+	};
 
-		this.topMenu.update(data.filteredPeriod);
+	this.itemMouseOver = function(data,source) {
+		if(source == 'video') {
+			this.topVideos.highlightOn(data.youtubeID, source);
+			this.topChannels.highlightOn(data.channel);
+			this.rankflow.highlightOn(data,source);
+		} else if(source == 'channel') {
+			this.topVideos.highlightOn(data.name, source);
+			this.topChannels.highlightOn(data.name);
+			this.rankflow.highlightOn(data,source);
+		} else if(source == 'rank') {
+			this.topVideos.highlightOn(data.data.youtubeID,'video');
+			this.topChannels.highlightOn(data.channel,source);
+			this.rankflow.highlightOn(data,source);
+		}
+	};
 
-		// rankFlowVis.setupvis();
-		// rankFlowVis.builtChart();
-		// rankFlowVis.vis(data.filteredPeriod);
-
-		// console.log(data);
-		
-		// topVideosVis.init(data.filteredPeriod);
-		// topChannelsVis.init(data.channels);
-
-		//update html
-		// let html = rankflowData.displayPeriodStartDate() + ' a ' + rankflowData.displayPeriodEndDate();
-
-		// $('#current-view').find('#current-period').html(html);
-
-		// const termSelected = rankflowData.terms.find(term => term.slug == this.selectedTerm);
-		// $('#current-view').find('#current-term').html(termSelected.name);
+	this.itemMouseOut = function(data,source) {
+		if(source == 'video') {
+			this.topVideos.highlightOff(data.youtubeID);
+			this.topChannels.highlightOff(data.channel);
+			this.rankflow.highlightOff(data);
+		} else if(source == 'channel') {
+			this.topVideos.highlightOff(data.name);
+			this.topChannels.highlightOff(data.name);
+			this.rankflow.highlightOff(data);
+		} else if(source == 'rank') {
+			this.topVideos.highlightOff(data.name);
+			this.topChannels.highlightOff(data.name);
+			this.rankflow.highlightOff(data);
+		}
 	};
 
 

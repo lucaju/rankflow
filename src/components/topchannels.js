@@ -1,8 +1,11 @@
-import $ from 'jquery';
 import topchannelsMustache from './topchannels.html';
+import topChannelsVis from './TopChannelsVis';
+
+import {select} from 'd3-selection';
 
 export default function Topvideos(app) {
 	this.app = app;
+	this.vis;
 
 	this.init = function init() {
 		// data
@@ -12,21 +15,28 @@ export default function Topvideos(app) {
 
 		// buid page
 		const html = topchannelsMustache(pageData);
-		$(html).appendTo($('#app'));
+		select('#app').append('div').attr('id','topchannels-section');
+		select('#topchannels-section').html(html);
+
+		this.vis = new topChannelsVis(this.app);
+		this.vis.init();
 	};
 
-	this.update = function(period) {
-		// topVideosVis.init(data.filteredPeriod);
+	this.load = function(data) {
+		select('#topchannels-section').select('.spiner').hide();
+		this.vis.update(data);
 	};
 
-	this.success = function() {
-		//- > make it local
-		$('.spiner').hide();
+	this.loading = function() {
+		select('#topchannels-section').select('.spiner').show();
+		this.vis.exit();
 	};
 
-	this.load = function() {
-		//- > make it local
-		$('#top-ten-channels').empty();
-		$('.spiner').show();
+	this.highlightOn = function (channelName) {
+		this.vis.highlightOn(channelName);
+	};
+
+	this.highlightOff = function (channelName) {
+		this.vis.highlightOff(channelName);
 	};
 }

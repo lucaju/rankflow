@@ -1,173 +1,289 @@
 //modules
 import chroma from 'chroma-js';
 
-import {
-	select
-} from 'd3-selection';
-import {
-	max
-} from 'd3-array';
-import {
-	axisBottom,
-	axisLeft
-} from 'd3-axis';
-import {
-	scaleOrdinal,
-	scaleLinear,
-	scaleBand
-} from 'd3-scale';
-import {
-	schemeSet3
-} from 'd3-scale-chromatic';
-import {
-	transition
-} from 'd3-transition';
+import {select} from 'd3-selection';
+import {max} from 'd3-array';
+import {axisBottom,axisLeft} from 'd3-axis';
+import {scaleOrdinal,scaleLinear,scaleBand} from 'd3-scale';
+import {schemeSet3} from 'd3-scale-chromatic';
+import {transition} from 'd3-transition';
 
 
-export default function TopVideosVis(context) {
+export default function TopVideosVis(app) {
 
-	this.context = context;
+	this.app = app;
 
+	// this.context = context;
 	this.topTenData = [];
+	this.visContainer = '';
 
-	this.init = function (data) {
+	this.windowWidth = 0;
+	this.height = 0;
+	this.width = 0;
 
-		this.topTenData = data;
+	this.margin = {
+		top: 30,
+		right: 250,
+		bottom: 30,
+		left: 10
+	};
 
-		let topTenData = data.videos.slice(0, 10);
+	this.svg = '';
+	this.vis = '';
 
-		let visContainer = select('#top-ten-videos');
-		visContainer.html = '';
+	this.xScale ='';
+	this.yScale ='';
 
-		let windowWidth = visContainer.node().getBoundingClientRect().width;
+	this.xAxis;
+	this.yAxis;
 
-		let margin = {
-			top: 30,
-			right: 250,
-			bottom: 30,
-			left: 10
-		};
+	this.colourScale = [];
 
-		// let colour = scaleOrdinal(schemePaired);
-		let colour = scaleOrdinal(schemeSet3);
+	this.init = function () {
 
-		let width = windowWidth - margin.left - margin.right;
-		let height = 300 - margin.top - margin.bottom;
+		this.visContainer = select('#top-videos');
 
-		let svg = visContainer.append('svg')
-			.attr('width', width + margin.left + margin.right)
-			.attr('height', height + margin.top + margin.bottom);
+		// this.colour = scaleOrdinal(schemePaired);
+		this.colour = scaleOrdinal(schemeSet3);
 
-		var x = scaleLinear().range([0, width]);
-		var y = scaleBand().range([height, 0]);
+		//size
+		this.windowWidth = this.visContainer.node().getBoundingClientRect().width;
+		this.width = this.windowWidth - this.margin.left - this.margin.right;
+		this.height = 300 - this.margin.top - this.margin.bottom;
 
-		var g = svg.append('g')
-			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+		this.svg = this.visContainer.append('svg')
+			.attr('width', this.width + this.margin.left + this.margin.right)
+			.attr('height', this.height + this.margin.top + this.margin.bottom);
+
+
+		//scale
+		this.xScale = scaleLinear()
+			.range([0, this.width]);
+		this.yScale = scaleBand()
+			.range([this.height, 0]);
+
+
+		// AXIS
+		this.xAxis = this.visContainer.append('g')
+			.attr('class', 'x axis')
+			.attr('transform', 'translate(0,' + this.height + ')');
+
+		this.yAxis = this.visContainer.append('g')
+			.attr('class', 'y axis')
+			.call(axisLeft(this.yScale).tickSize(0).tickFormat(''));
+
+		//VIS
+		this.vis = this.svg.append('g')
+			.attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
+	};
+
+	this.update = function(data) {
+
+		this.topTenData = data.videos.slice(0, 10);
 
 		//inverse order
-		topTenData.sort(function (a, b) {
+		this.topTenData.sort(function (a, b) {
 			return a.sumRec - b.sumRec;
 		});
 
-		x.domain([0, max(topTenData, function (d) {
+		this.updateScale();
+		this.updateAxis();
+		this.updateVis();
+	};
+
+	this.updateScale = function() {
+		this.xScale.domain([0, max(this.topTenData, function (d) {
 			return d.sumRec;
 		})]);
 
-		y.domain(topTenData.map(function (d) {
+		this.yScale.domain(this.topTenData.map(function (d) {
 			return d.title;
 		})).padding(0.2);
+	};
 
-		g.append('g')
-			.attr('class', 'x axis')
-			.attr('transform', 'translate(0,' + height + ')')
-			.call(axisBottom(x).ticks(0).tickFormat(''));
+	this.updateAxis = function() {
 
-		// Axis labels
-		// .call(axisBottom(x).ticks(5).tickFormat(function (d) {
+		this.yAxis.call(axisBottom(this.xScale).ticks(0).tickFormat(''));
+
+		// x-Axis labels
+		// .call(axisBottom(this.xScale).ticks(5).tickFormat(function (d) {
 		// 	return d;
 		// }));
 
-		g.append('g')
-			.attr('class', 'y axis')
-			.call(axisLeft(y).tickSize(0).tickFormat(''));
+	};
 
-		let bar = g.selectAll('.bar')
-			.data(topTenData)
-			.enter()
-			.append('g');
+	this.updateVis = function() {
 
-		bar.append('rect')
-			.attr('class', 'bar')
+		const _this = this;
+
+		//remove it all
+		let nodes = this.vis.selectAll('.node')
+			.remove();
+
+		//new data
+		nodes = this.vis.selectAll('.node')
+			.data(this.topTenData);
+
+		//add elments
+		let newNodes = nodes.enter()
+			.append('g')
+			.attr('class', 'node');
+		
+		newNodes.append('rect')
+			.attr('class', 'bar');
+
+		newNodes.append('text')
+			.attr('class', 'bar-title');
+
+		newNodes.append('text')
+			.attr('class', 'bar-value');
+
+
+		//update elements
+		nodes = this.vis.selectAll('.node');
+
+		nodes.selectAll('.bar')
 			.attr('fill', function (d) {
-				return colour(d.channel);
-				// let channel = rankflowData.getChannelByName(d.channel);
-				// return channel.colour;
+				// return _this.colour(d.channel);
+				const channel = _this.app.getChannelByName(d.channel);
+				return channel.colour;
 			})
 			.attr('x', 0)
-			.attr('height', y.bandwidth())
+			.attr('height', _this.yScale.bandwidth())
 			.attr('y', function (d) {
-				return y(d.title);
+				return _this.yScale(d.title);
 			})
+			.style('cursor','pointer')
 			.on('mousemove', function (d) {
 				//change color
+				_this._mouseOverSelection(d);
 			})
 			.on('mouseout', function (d) {
 				//back to normal
+				_this._mouseOutSelection(d);
 			})
 			.on('click', function (d) {
 				//open popup
+				console.log(d);
 				// rankFlowVis.showDetails(d);
-			}).transition().duration(750).delay(function (d, i) {
+			})
+			.transition()
+			.duration(750)
+			.delay(function (d, i) {
 				return i * 100;
 			}).attr('width', function (d) {
-				return x(d.sumRec);
+				// console.log(d,d.sumRec)
+				return _this.xScale(d.sumRec);
 			});
 
-		bar.append('text')
-			.attr('class', 'bar-title')
+		nodes.selectAll('.bar-title')
 			.attr('x', function (d) {
-				return x(d.sumRec);
+				return _this.xScale(d.sumRec);
 			})
 			.attr('y', function (d) {
-				return y(d.title);
+				return _this.yScale(d.title);
 			})
-			.attr('dx', '.35em') //margin right
+			.attr('dx', '.35em') //this.margin right
 			.attr('dy', '1.35em') //vertical align middle
 			.style('font', '10px sans-serif')
 			.style('opacity', 0)
 			.text(function (d) {
 				return (d.title);
-			}).transition().duration(750).delay(function (d, i) {
+			})
+			.transition()
+			.duration(750)
+			.delay(function (d, i) {
 				return 750 + (i * 100);
-			}).style('opacity', 1);
+			})
+			.style('opacity', 1);
 
-		bar.append('text')
-			.attr('class', 'bar-value')
+		nodes.selectAll('.bar-value')
 			.attr('x', function (d) {
-				return x(d.sumRec);
+				return _this.xScale(d.sumRec);
 			})
 			.attr('y', function (d) {
-				return y(d.title);
+				return _this.yScale(d.title);
 			})
-			.attr('dx', '-.35em') //margin right
+			.attr('dx', '-.35em') //this.margin right
 			.attr('dy', '1.15em') //vertical align middle
 			.attr('text-anchor', 'end')
 			.style('font', '12px sans-serif')
 			.style('font-weight', 'bold')
 			.style('fill', function (d) {
 				let textColour = chroma(0, 0, 0, 0.9).hex();
-				// let channel = rankflowData.getChannelByName(d.channel);
-				// let contrast = chroma.contrast(channel.colour, textColour);
-				// if (contrast < 4.5) textColour = chroma(255, 255, 255, 0.85).hex();
+				const channel = _this.app.getChannelByName(d.channel);
+				const contrast = chroma.contrast(channel.colour, textColour);
+				if (contrast < 4.5) textColour = chroma(255, 255, 255, 0.85).hex();
 				return textColour;
 			})
 			.style('opacity', 0)
 			.text(function (d) {
 				return (d.sumRec);
-			}).transition().duration(750).delay(function (d, i) {
+			})
+			.transition()
+			.duration(750)
+			.delay(function (d, i) {
 				return 750 + (i * 100);
-			}).style('opacity', 1);
+			})
+			.style('opacity', 1);
 
+	};
+
+	this.exit = function() {
+		const duration = 500;
+		let bar = this.vis.selectAll('.bar');
+		bar.transition()
+			.duration(duration)
+			.attr('width', 0);
+
+		this.vis.selectAll('.bar-title')
+			.transition()
+			.duration(duration/2)
+			// .attr('x', 0)
+			.style('opacity', 0);
+
+		this.vis.selectAll('.bar-value')
+			.transition()
+			.duration(duration)
+			.attr('x', 0)
+			.style('opacity', 0);
+
+	};
+
+	this._mouseOverSelection = function(d) {
+		// console.log(d);
+		// this.highlightOn(d);
+		this.app.itemMouseOver(d,'video');
+	};
+
+	this._mouseOutSelection = function(d) {
+		// this.highlightOff(d);
+		this.app.itemMouseOut(d,'video');
+	};
+
+	this.highlightOn = function (id, sourceType) {
+		this.vis.selectAll('.node')
+			.style('opacity', function(d) {
+				if (sourceType == 'video') {
+					return (d.youtubeID === id) ? 1 : 0.5;
+				} else if (sourceType == 'channel') {
+					return (d.channel === id) ? 1 : 0.5;
+				}
+			});
+
+		this.vis.selectAll('.bar-title')
+			.style('font-weight', function(d) {
+				if (sourceType == 'video') {
+					if(d.youtubeID === id) return 'bold';
+				} else if (sourceType == 'channel') {
+					if(d.channel === id) return 'bold';
+				}
+			});
+	};
+
+	this.highlightOff = function () {
+		this.vis.selectAll('.node').style('opacity', 1);
+		this.vis.selectAll('.bar-title').style('font-weight', 'normal');
 	};
 
 }

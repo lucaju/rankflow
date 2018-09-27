@@ -48,14 +48,15 @@ function Datamodel() {
 
 		this.selectedTerm = term;
 
-		datamodel.termVideoCollection = {};
+		datamodel.videoCollection.videos = [];
+		datamodel.videoCollection.channels = [];
 
 		let dayIterator = moment(this.initialDate);
 		const fileArray = [];
 
 		//
 		while (dayIterator <= this.finalDate) {
-			const file = `${this.PATH}video-infos-${this.selectedTerm}-${dayIterator.format('YYYYMMDD')}.json`; // get file name
+			const file = `${this.PATH}video-infos-${this.selectedTerm.slug}-${dayIterator.format('YYYYMMDD')}.json`; // get file name
 			fileArray.push(file);
 			dayIterator.add(1, 'days');
 		}
@@ -70,6 +71,7 @@ function Datamodel() {
 						datamodel.reorderByDate();
 						return datamodel.parseData();
 					}).then(function () {
+						datamodel.getRankedChannels();
 						resolve(datamodel.videoCollection);
 					});
 			});
@@ -263,7 +265,7 @@ function Datamodel() {
 
 
 		//add colour based on pallete 
-		// if (app.channelColours) this._setChannelColour(channels);
+		if (this.app.channelColours) this._setChannelColour(channels);
 		
 
 		//save;
@@ -272,6 +274,8 @@ function Datamodel() {
 	};
 
 	this._setChannelColour = function(channels) {
+		const _this = this;
+
 		channels.forEach( function(c,i) {
 
 			//top ten color /// more on gray
@@ -282,7 +286,7 @@ function Datamodel() {
 					c.colour = colour;
 				} else {
 
-					colour = chroma(this.app.channelColours[i]).hex();
+					colour = chroma(_this.app.channelColours[i]).hex();
 					let testDuplication = true;
 					let multiplier = 1;
 					while (testDuplication) {
@@ -296,7 +300,7 @@ function Datamodel() {
 					c.colour = colour;
 
 
-					this.topChannels.push(c); 
+					_this.topChannels.push(c); 
 				}
 
 			} else {
@@ -403,21 +407,21 @@ function Datamodel() {
 
 	};
 
-	this.selectTerm = function(term) {
-		this.selectedTerm = term; //new term
-		const termSelected = this.terms.find(term => term.slug == this.selectedTerm);
+	// this.selectTerm = function(term) {
+	// 	this.selectedTerm = term; //new term
+	// 	const termSelected = this.terms.find(term => term.slug == this.selectedTerm);
 
-		$('#current-view').find('#current-tern').html(termSelected.name);
+	// 	$('#current-view').find('#current-tern').html(termSelected.name);
 
-		if(termSelected.videos.length == 0) {
-			datamodel.emit('load',term);
-			// $(rankflowData).trigger('load');
-			this.loadData();
-		} else {
-			this.updateData();
-		}
+	// 	if(termSelected.videos.length == 0) {
+	// 		datamodel.emit('load',term);
+	// 		// $(rankflowData).trigger('load');
+	// 		this.loadData();
+	// 	} else {
+	// 		this.updateData();
+	// 	}
 		
-	};
+	// };
 
 	this.updateData = function() {
 
@@ -426,24 +430,6 @@ function Datamodel() {
 
 		// $(rankflowData).trigger('update',[selectedDataset]);
 
-	};
-
-	this.getTermByName = function (termName) {
-
-		// termName = termName.replace(' ', '_'); // replace space with trailing
-
-		for (let i = 0; i < this.terms.length; i++) {
-			if (this.terms[i].slug == termName) {
-				return this.terms[i];
-			}
-		}
-		return null;
-	};
-
-	this.getChannelByName = function(channelName) {
-		const term = this.terms.find(t => t.slug == this.selectedTerm);
-		const channel = term.channels.find(c => c.name == channelName);
-		return channel;
 	};
 
 	this.displayPeriodStartDate = function() {

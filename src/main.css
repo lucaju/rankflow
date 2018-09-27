@@ -54,6 +54,10 @@
     padding: 150px 40px 60px 40px;
 }
 
+#top-menu {
+    z-index: 980;
+}
+
 .tm-main {
     padding-left: 230px;
 }
