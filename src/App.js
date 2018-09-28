@@ -27,6 +27,7 @@ import Topmenu from './components/topmenu';
 import Topvideos from './components/topvideos';
 import Topchannels from './components/topchannels';
 import Rankflow from './components/rankflow';
+import Details from './components/details';
 import Methodology from './components/methodology';
 
 
@@ -86,6 +87,8 @@ function App() {
 		this.topChannels .init();
 		this.rankflow = new Rankflow(this);
 		this.rankflow.init();
+		this.details = new Details(this);
+		this.details.init();
 		this.methodology = new Methodology(this);
 		this.methodology.init();
 
@@ -174,6 +177,10 @@ function App() {
 			this.topChannels.highlightOff(data.name);
 			this.rankflow.highlightOff(data);
 		}
+	};
+
+	this.showDetails = function(d,source) {
+		this.details.addModal(d,source);
 	};
 
 

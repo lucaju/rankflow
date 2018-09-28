@@ -65,6 +65,8 @@ export default function RankFlowVis(app) {
 	//----- CONSTRUCTOR
 	this.init = function () {
 
+		const _this = this;
+
 		this.windowWidth = document.body.clientWidth;
 
 		//set the context in the DOM
@@ -78,7 +80,7 @@ export default function RankFlowVis(app) {
 		this.height = 470 - this.margin.top - this.margin.bottom;
 
 		select(window).on('resize', function () {
-			this.resize();
+			_this.resize();
 		});
 
 
@@ -436,7 +438,9 @@ export default function RankFlowVis(app) {
 				_this._mouseOutSelection(d.id);
 				// _this.highlightOff(d.id);
 			})
-			.on('click', this._mouseClick);
+			.on('click', function (d) {
+				_this._mouseClick(d);
+			});
 
 
 		//update existing data
@@ -636,7 +640,7 @@ export default function RankFlowVis(app) {
 			// .style('fill', this.color(d.channel))
 			.style('fill', this.app.getChannelByName(d.channel).colour)
 			.attr('r', circleSize);
-		console.log(d)
+
 		this.popUpName.select('text').text(d.moment.format('MMM D') + ': ' + d.title + ' (Rank: ' + d.recRank + ')');
 
 		//fix popuop position if text is out of boundaries to tlef or ti the right
@@ -656,8 +660,7 @@ export default function RankFlowVis(app) {
 
 	///////////////////////// VORONOI CLICK - ADD MODAL
 	this._mouseClick = function (d) {
-		console.log(d);
-		this.showDetails(d.data);
+		this.app.showDetails(d,'rank');
 	};
 
 	this.exit = function() {
@@ -668,79 +671,6 @@ export default function RankFlowVis(app) {
 			.transition()
 			.duration(duration/2)
 			.style('opacity', 0);
-	};
-
-	this.showDetails = function (d) {
-
-		let html = `<div class='uk-modal-dialog'>
-							<button class='uk-modal-close-default' type='button' uk-close></button>
-							<div class='uk-modal-header uk-background-muted'>
-								<div class='uk-grid-small uk-flex-middle' uk-grid>
-									<!-- <div class='uk-width-auto'>
-										<img class='uk-border-circle' width='40' height='40' src='../docs/images/avatar.jpg'>
-									</div> -->
-									<div class='uk-width-expand'>
-										<h3 class='uk-card-title uk-margin-remove-bottom'>${d.title}</h3>
-										<p class='uk-text-meta uk-margin-remove-top'>${d.channel}</p>
-									</div>
-								</div>
-							</div>
-							<div class='uk-modal-body'>
-								<iframe width='540' height='310' src='https://www.youtube.com/embed/${d.youtubeID}' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>
-							</div>
-							<div class='uk-modal-footer' uk-overflow-auto>
-								<table id='video-dates-details' class='uk-table uk-table-small uk-table-hover uk-table-divider'></table>
-							</div>
-						</div>`;
-
-
-		let vDetails = $('#modal-video-details');
-		vDetails.append(html);
-
-		//table
-		let videoTable = $('#video-dates-details');
-
-		let tableHead = `<thead>
-								<tr>
-									<th class=''>&nbsp;</th>
-									<th class='uk-table-shrink uk-text-right'>Views</th>
-									<th class='uk-table-shrink uk-text-right'>Likes</th>
-									<th class='uk-table-shrink uk-text-right'>Dislikes</th>
-									<th class='uk-table-shrink uk-text-right'>Recomm</th>
-									<th class='uk-table-shrink uk-text-right'><span class='uk-text-small'>Recomm Rank</span></th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>`;
-
-		videoTable.append(tableHead);
-
-		let tableBody = videoTable.find('tbody');
-
-		let tableInfo = '';
-
-		//clone to revert order
-		let dataDate = d.dates.slice(0);
-		dataDate.reverse();
-
-		$.each(dataDate, function (i, d) {
-			tableInfo += `<tr>
-								<td>${d.moment.format('MMM D')}</td>
-								<td class='uk-text-right'>${d.views}</td>
-								<td class='uk-text-right'>${d.likes}</td>
-								<td class='uk-text-right'>${d.dislikes}</td>
-								<td class='uk-text-right'>${d.nb_recommendations}</td>
-								<td class='uk-text-right'>${d.recRank}</td>
-							</tr>`;
-		});
-
-		tableBody.append(tableInfo);
-
-		UIkit.modal(vDetails).show();
-
-		vDetails.on('hidden', function () {
-			$(this).html('');
-		});
 	};
 
 }

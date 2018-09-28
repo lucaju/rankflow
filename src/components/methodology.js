@@ -9,7 +9,7 @@ export default function Methodology(app) {
 	this.init = function init() {
 		// data
 		const pageData = {
-			title: 'Metodology',
+			title: 'Metodologia',
 			data: 'Data Collection',
 		};
 

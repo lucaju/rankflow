@@ -155,17 +155,13 @@ export default function TopVideosVis(app) {
 			})
 			.style('cursor','pointer')
 			.on('mousemove', function (d) {
-				//change color
 				_this._mouseOverSelection(d);
 			})
 			.on('mouseout', function (d) {
-				//back to normal
 				_this._mouseOutSelection(d);
 			})
 			.on('click', function (d) {
-				//open popup
-				console.log(d);
-				// rankFlowVis.showDetails(d);
+				_this._mouseClick(d);
 			})
 			.transition()
 			.duration(750)
@@ -284,6 +280,10 @@ export default function TopVideosVis(app) {
 	this.highlightOff = function () {
 		this.vis.selectAll('.node').style('opacity', 1);
 		this.vis.selectAll('.bar-title').style('font-weight', 'normal');
+	};
+
+	this._mouseClick = function (d) {
+		this.app.showDetails(d,'video');
 	};
 
 }

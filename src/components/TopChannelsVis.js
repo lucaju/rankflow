@@ -152,7 +152,7 @@ export default function TopVideosVis(app) {
 			.attr('y', function (d) {
 				return _this.yScale(d.name);
 			})
-			.style('cursor','pointer')
+			// .style('cursor','pointer')
 			.on('mousemove', function (d) {
 				//change color
 				_this._mouseOverSelection(d);
@@ -163,7 +163,7 @@ export default function TopVideosVis(app) {
 			})
 			.on('click', function (d) {
 				//open popup
-				console.log(d)
+				_this._click(d);
 				// rankFlowVis.showDetails(d);
 			})
 			.transition()
@@ -250,13 +250,16 @@ export default function TopVideosVis(app) {
 
 	this._mouseOverSelection = function(d) {
 		// console.log(d);
-		// this.highlightOn(d);
 		app.itemMouseOver(d, 'channel');
 	};
 
 	this._mouseOutSelection = function(d) {
-		// this.highlightOff(d);
 		app.itemMouseOut(d, 'channel');
+	};
+
+	this._click = function(d) {
+		console.log(d);
+		// this.app.showDetails(d,'video');
 	};
 
 	this.highlightOn = function (channelName) {
