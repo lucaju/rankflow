@@ -56,14 +56,22 @@ Slug: identificação do arquivo. Note que esse protótipo usa o padrão de nome
 ## Customização
 Se quiser modificar o código:
 
-Instale  node.js and npm
+Instale [node.js](https://nodejs.org) and npm.
 
 Clone esse repositório: https://github.com/lucaju/rankflow/
-
-Use: npm init para instalar as dependencies desse projeto (veja package.json).
+```
+npm init
+```
+para instalar as dependencies desse projeto (veja package.json).
 
 Esse projeto usa webpack.
 
-Use npm run watch para compilar os arquivos durante o desenvolvimento.
+```
+npm run watch
+```
+para compilar os arquivos durante o desenvolvimento.
 
-Use npm run production para a versão final.
+```
+npm run production
+```
+para a versão final.
