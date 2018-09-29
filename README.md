@@ -1,4 +1,4 @@
-# rankflow
+# Rankflow
 Visualization tool for Youtube video recommendation system
 
 - Sobre o projeto
@@ -44,7 +44,7 @@ Os dados foram coletados usando [youtube-explore](https://github.com/pnbt/youtub
 
 ## Uso
 ### Pronto para usar
-Arquivos prontos para usar estão na pasta **dist**, includingo os dados na pasta **/dist/dataset**.
+Arquivos prontos para usar estão na pasta **dist**, incluindo os dados na pasta **/dist/dataset**.
 
 ### Visualizar seus próprios dados
 Se quiser usar seus próprios dados mantendo o mesmo sistema, substitua o conteúdo da pasta **dist/dataset** pelos arquivos JSON (da pasta data) gerados pela sua pesquisa no Youtube-Explore.
@@ -55,9 +55,9 @@ Edite o arquivo **visconfig.json** na pasta **dist**. Esse arquivo é carregado 
 
 - Terms: Acrescente, remova ou edite os termos da pesquisa.
 
- - Name : Nome a ser mostrado na interface.
+   - Name : Nome a ser mostrado na interface.
 
- - Slug: identificação do arquivo. Note que esse protótipo usa o padrão de nomenclatura do youtube-explore: “videos-info-[nome do arquivo]-[termo]-[data].json
+   - Slug: identificação do arquivo. Note que esse protótipo usa o padrão de nomenclatura do youtube-explore: “videos-info-[nome do arquivo]-[termo]-[data].json
 
 
 ## Customização
