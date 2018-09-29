@@ -8,6 +8,7 @@ Visualization tool for Youtube video recommendation system
 - Customização
 
 
+
 ## Sobre o projeto
 ### Rankflow: Visualização do sistema de rankeamento de videos do Youtube
 
@@ -16,6 +17,7 @@ Inspirado no trabalho de Bernhard Rieder, nós desenvolvemos uma visualização
 Acompanhando essa visualização há dois outros gráficos indicando os dez videos mais vistos e os dez canais com mais visualizações. Passe o mouse por cima das barras em um dos gráficos para acender barras correspondentes nas ouras visualizações. Clique em um das barras dos dez videos mais vistos para obter mais informações.
 
 O rankflow permite analizar a evoluções de video no ranking the recomendações, identificar tendencias e padrões, e observar o que tem sido recomendado pelo algoritmo do Youtube. Esse projeto permite observar não apenas quais foram os videos mais recomendados, vistos e curtidos para cada termo pesquisado, mas também ajuda a identificar os produtores desses videos e a rede de conexões entre videos, produtores, e espectadores nas redes sociais. Isso também pode nos dar algumas pistas sobre o funcionamento do sistema de ranqueamento usado no Youtube, assim como quais os videos mais proeminentes em um tópico especifico, e qual a narrativa esse ranking produz no debate político no Brasil em particular, e nas redes sociais de forma mais geral.
+
 
 ### COLETA DE DADOS
 Os dados de desse projeto foram coletados foram coletados usando um script em Python desenvolvido por Guillaume Chaslot como parte to projeto Algo Transparency. O algorithm em questão faz uma busca no Youtube usando uma palavra-chave definida pelo usuário para coletar e armazenar informações dos videos relacionados à palavra-chave. Mais especificamente nós usamos script para A) identificar os quatro primeiros resultados encontrados na pesquisa no Youtube pela palavra-chave, B) obter os primeiros quatro videos relacionados ao resultados da pesquisa, C) repetir a etapa (B) quatro vezes sucessivamente com cada video obtido para coletar videos relacionados, e D) guardar o resultado em arquivo JSON. Esse operação é análoga a uma pessoa fazer uma busca por uma palavra-chave no Youtube, abrir os primeiros quatro videos, e na sequencia clicar nos quatro primeiros videos recomendados, repetindo esse processo quatro vezes para cada video que for aberto.
@@ -26,7 +28,8 @@ Para esta pesquisa nós coletados termos relevantes às eleições no Brasil, ma
 
 Cada coleta diária produziu um arquivo para cada termo pesquisado. Os arquivos de cada termo foram combinados e reestruturados em um único dataset para gerar informações como o numero total de vezes que um video for recomendado no período afim de ser usados na produção da visualização proposta neste projeto.
 
-## Dependencias
+
+## Dependências
 
 ### Dependências da visualização
 [D3.js](https://d3js.org/)
@@ -37,6 +40,7 @@ Cada coleta diária produziu um arquivo para cada termo pesquisado. Os arquivos 
 
 ### Dados
 Os dados foram coletados usando [youtube-explore](https://github.com/pnbt/youtube-explore), ferramenta desenvolvida por Guillaume Chaslot. O código esta na pasta ‘scraper’. Usamos os dados gravados na pasta ‘data’ neste no aplicativo para gerar as visualizações.
+
 
 ## Uso
 ### Pronto para usar
@@ -52,6 +56,7 @@ Terms: Acrescente, remova ou edite os termos da pesquisa.
 Name : Nome a ser mostrado na interface.
 
 Slug: identificação do arquivo. Note que esse protótipo usa o padrão de nomenclatura do youtube-explore: “videos-info-[nome do arquivo]-[termo]-[data].json
+
 
 ## Customização
 Se quiser modificar o código:
