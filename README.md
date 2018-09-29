@@ -8,7 +8,7 @@ Visualization tool for Youtube video recommendation system
 - Customização
 
 
-Demo: [http://labs.fluxo.art.br/rankflow-brasil/] (http://labs.fluxo.art.br/rankflow-brasil/)
+Demo: [http://labs.fluxo.art.br/rankflow-brasil/](http://labs.fluxo.art.br/rankflow-brasil/)
 
 
 
