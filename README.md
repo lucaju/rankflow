@@ -2,8 +2,7 @@
 Visualization tool for Youtube video recommendation system
 
 - Sobre o projeto
-- Dependencias
-- Instalação
+- Dependências
 - Uso
 - Customização
 
