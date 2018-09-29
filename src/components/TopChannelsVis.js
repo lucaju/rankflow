@@ -207,7 +207,6 @@ export default function TopVideosVis(app) {
 			.delay(function (d, i) {
 				return i * 100;
 			}).attr('width', function (d) {
-				// console.log(d,d.sumRec)
 				return _this.xScale(d.numberRecommendations);
 			});
 

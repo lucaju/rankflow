@@ -43,7 +43,6 @@ export default function Details(app) {
 		const html = detailsMustache(this.pageData);
 		this.modal.html(html);
 
-		// console.log(this.modal.node());
 		UIkit.modal(this.modal.node()).show();
 
 	};

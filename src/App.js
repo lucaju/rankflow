@@ -112,7 +112,7 @@ function App() {
 
 		this.datamodel.loadData(this.selectedTerm)
 			.then(function (r) {
-				console.log(r);
+				// console.log(r);
 				app.topVideos.load(r);
 				app.topChannels.load(r);
 				app.rankflow.load(r);

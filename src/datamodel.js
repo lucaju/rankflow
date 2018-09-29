@@ -64,7 +64,6 @@ function Datamodel() {
 			(resolve) => {
 				Promise.all(fileArray.map(this.loadfile))
 					.then(function transform(collection) {
-						console.log(collection);
 						const usefulData = collection.filter(data => data != undefined);
 						return Promise.all(usefulData.map(datamodel.transformDailyData));
 					}).then(function () {

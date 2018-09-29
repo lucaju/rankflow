@@ -274,7 +274,6 @@ export default function RankFlowVis(app) {
 		let array = [];
 
 		// reduce: find top 10
-		console.log(data)
 		data.forEach(function (v) {
 
 			let isTopN = false;
