@@ -66,10 +66,11 @@ Se quiser modificar o código:
 - Instale [node.js](https://nodejs.org) and npm.
 
 - Clone esse repositório: https://github.com/lucaju/rankflow/
+
+- Instale dependencies desse projeto (veja package.json).
 ```
 npm init
 ```
-para instalar as dependencies desse projeto (veja package.json).
 
 Esse projeto usa webpack.
 Para compilar os arquivos durante o desenvolvimento:
