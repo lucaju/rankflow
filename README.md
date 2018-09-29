@@ -54,11 +54,16 @@ Name : Nome a ser mostrado na interface.
 Slug: identificação do arquivo. Note que esse protótipo usa o padrão de nomenclatura do youtube-explore: “videos-info-[nome do arquivo]-[termo]-[data].json
 
 ## Customização
-Se quiser modificar o condigo:
+Se quiser modificar o código:
+
 Instale  node.js and npm
-Clone esse repositorio: 
+
+Clone esse repositório: https://github.com/lucaju/rankflow/
+
 Use: npm init para instalar as dependencies desse projeto (veja package.json).
 
 Esse projeto usa webpack.
-Use npm run watch para compilar os arquivos durante o desenvolvimento
+
+Use npm run watch para compilar os arquivos durante o desenvolvimento.
+
 Use npm run production para a versão final.
