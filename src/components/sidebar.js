@@ -1,5 +1,5 @@
 import sidebarMustache from './sidebar.html';
-import {select} from 'd3-selection';
+import {select} from 'd3-selection/dist/d3-selection.min';
 
 export default function Sidebar(app) {
 	this.app = app;
@@ -17,6 +17,5 @@ export default function Sidebar(app) {
 		const html = sidebarMustache(pageData);
 		select('#app').append('div').attr('id','tm-sidebar-left');
 		select('#tm-sidebar-left').html(html);
-		// $(html).appendTo($('#app'));
 	};
 }

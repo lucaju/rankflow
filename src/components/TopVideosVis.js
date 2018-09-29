@@ -1,12 +1,12 @@
 //modules
-import chroma from 'chroma-js';
+import chroma from 'chroma-js/chroma.min';
 
 import {select} from 'd3-selection';
-import {max} from 'd3-array';
-import {axisBottom,axisLeft} from 'd3-axis';
-import {scaleOrdinal,scaleLinear,scaleBand} from 'd3-scale';
-import {schemeSet3} from 'd3-scale-chromatic';
-import {transition} from 'd3-transition';
+import {max} from 'd3-array/dist/d3-array.min';
+import {axisBottom,axisLeft} from 'd3-axis/dist/d3-axis.min';
+import {scaleOrdinal,scaleLinear,scaleBand} from 'd3-scale/dist/d3-scale.min';
+import {schemeSet3} from 'd3-scale-chromatic/dist/d3-scale-chromatic.min';
+require('d3-transition/dist/d3-transition.min');
 
 
 export default function TopVideosVis(app) {
@@ -41,15 +41,31 @@ export default function TopVideosVis(app) {
 
 	this.init = function () {
 
+		const _this = this;
+
 		this.visContainer = select('#top-videos');
 
 		// this.colour = scaleOrdinal(schemePaired);
 		this.colour = scaleOrdinal(schemeSet3);
 
-		//size
+		this._setDimensions();
+		this.setupVis();
+
+		window.addEventListener('resize', function() {
+			_this.resize();
+		});
+
+	};
+
+	this._setDimensions = function () {
 		this.windowWidth = this.visContainer.node().getBoundingClientRect().width;
 		this.width = this.windowWidth - this.margin.left - this.margin.right;
 		this.height = 300 - this.margin.top - this.margin.bottom;
+	};
+
+	this.setupVis = function() {
+		//clear
+		this.visContainer.html('');
 
 		this.svg = this.visContainer.append('svg')
 			.attr('width', this.width + this.margin.left + this.margin.right)
@@ -75,16 +91,34 @@ export default function TopVideosVis(app) {
 		//VIS
 		this.vis = this.svg.append('g')
 			.attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
+
 	};
 
-	this.update = function(data) {
+	//---- RESIZE
+	this.resize = function () {
 
-		this.topTenData = data.videos.slice(0, 10);
+		const _this = this;
+		//width only
+		if (this.windowWidth != document.body.clientWidth) {
+			//delay... end resizing
+			clearTimeout(this.resizeTimer);
+			this.resizeTimer = setTimeout(function () {
+				_this._setDimensions();
+				_this.setupVis();
+				_this.update(_this.topTenData,'resize');
+			}, 250);
+		}
+	};
 
-		//inverse order
-		this.topTenData.sort(function (a, b) {
-			return a.sumRec - b.sumRec;
-		});
+	this.update = function(data,resize) {
+
+		if (!resize) {
+			this.topTenData = data.videos.slice(0, 10);
+			//inverse order
+			this.topTenData.sort(function (a, b) {
+				return a.sumRec - b.sumRec;
+			});
+		}
 
 		this.updateScale();
 		this.updateAxis();

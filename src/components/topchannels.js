@@ -1,7 +1,7 @@
 import topchannelsMustache from './topchannels.html';
 import topChannelsVis from './TopChannelsVis';
 
-import {select} from 'd3-selection';
+import {select} from 'd3-selection/dist/d3-selection.min';
 
 export default function Topvideos(app) {
 	this.app = app;

@@ -4,6 +4,7 @@ const webpack = require('webpack');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
 	mode: 'development', // production
@@ -71,6 +72,9 @@ module.exports = {
 			'window.jQuery': 'jquery',
 			'window.$': 'jquery',
 		}),
-		// new BundleAnalyzerPlugin()
+		new CopyWebpackPlugin([
+			'src/visconfig.json'
+		]),
+		// new BundleAnalyzerPlugin(),
 	],
 };

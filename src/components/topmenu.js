@@ -1,17 +1,26 @@
+//modules
 import UIkit from 'uikit/dist/js/uikit.min';
+import moment from 'moment';
 import topmenuMustache from './topmenu.html';
-import {select} from 'd3-selection';
+import {select} from 'd3-selection/dist/d3-selection.min';
 
 export default function Topmenu(app) {
 	this.app = app;
 
 	this.init = function init() {
+		
+		const startDate = moment(this.app.period.start).locale('pt').format('DD MMMM');
+		const endDate = moment(this.app.period.end).locale('pt').format('DD MMMM');
+
+		// const startDateLocale = this.app.period.start.locale('pt').format('DD MMMM');
+		// const endDateLocale = this.app.period.end.locale('pt').format('DD MMMM');
+
 		// data
 		this.pageData = {
 			title: 'Eleições Brasil 2018',
 			subtitle: 'RankFlow das Recomendações do YouTube',
 			currentTerm: this.app.selectedTerm.name,
-			currentPeriod: '23 de Setembro a 29 de setembro',
+			currentPeriod: `${startDate} a ${endDate}`,
 		};
 
 		// buid page
@@ -20,9 +29,7 @@ export default function Topmenu(app) {
 		select('#app').append('div').attr('id','top-menu');
 		select('#top-menu').html(html);
 
-		// $(html).appendTo($('#app'));
-
-		UIkit.toggle($('#small-title'), {
+		UIkit.toggle(select('#small-title').node(), {
 			mode: 'media',
 			animation: 'uk-animation-fade,uk-animation-fade',
 		});
@@ -30,12 +37,12 @@ export default function Topmenu(app) {
 		select('#menu-section').on('active', this.toggleSmallTittle);
 		select('#menu-section').on('inactive', this.toggleSmallTittle);
 
-		// $('#menu-section').on('active', this.toggleSmallTittle);
-		// $('#menu-section').on('inactive', this.toggleSmallTittle);
+		select('#menu-section').on('active', this.toggleSmallTittle);
+		select('#menu-section').on('inactive', this.toggleSmallTittle);
 	};
 
 	this.toggleSmallTittle = function toggleSmallTittle() {
-		UIkit.toggle($('#small-title')).toggle();
+		UIkit.toggle(select('#small-title').node()).toggle();
 	};
 
 	this.updateTerm = function(term) {
@@ -44,26 +51,6 @@ export default function Topmenu(app) {
 
 		const topMenu = select('#top-menu');
 		topMenu.html(html);
-
-		// $('#current-view').find('#current-tern').html(termSelected.name);
-
 	};
 
-	this.updatePeriod = function(period) {
-
-		// this.pageData.currentTerm = term.name;
-		// const html = topmenuMustache(this.pageData);
-
-		// const topMenu = select('#top-menu');
-		// topMenu.html(html);
-
-
-		
-		// let html = rankflowData.displayPeriodStartDate() + ' a ' + rankflowData.displayPeriodEndDate();
-
-		// $('#current-view').find('#current-period').html(html);
-
-		// const termSelected = rankflowData.terms.find(term => term.slug == this.selectedTerm);
-		// $('#current-view').find('#current-term').html(termSelected.name);
-	};
 }

@@ -2,7 +2,7 @@
 //modules
 import UIkit from 'uikit/dist/js/uikit.min';
 import detailsMustache from './details.html';
-import {select} from 'd3-selection';
+import {select} from 'd3-selection/dist/d3-selection.min';
 
 export default function Details(app) {
 	this.app = app;
@@ -12,18 +12,10 @@ export default function Details(app) {
 
 	this.init = function init() {
 
-		const _this = this;
-
 		this.modal = select('#app').append('div')
 			.attr('id','modal-video-details')
 			.attr('class', 'uk-modal-container')
 			.attr('uk-modal','true');
-
-		// UIkit.modal(this.modal).show();
-
-		// this.modal.on('hidden', function () {
-		// 	_this.modal.html('');
-		// });
 	};
 
 	this.addModal = function (d,source) { 

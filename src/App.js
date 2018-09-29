@@ -3,24 +3,18 @@
 */
 
 // modules
-// import $ from 'jquery';
-
 import UIkit from 'uikit/dist/js/uikit.min';
 import uikiticons from 'uikit/dist/js/uikit-icons.min';
 
-// import d3 from 'd3';
-import {selection} from 'd3-selection';
-// import chroma from 'chroma';
+import {selection} from 'd3-selection/dist/d3-selection.min';
+import {json} from 'd3-fetch/dist/d3-fetch.min';
 
-// import moment from 'moment-with-locales-es6';
-
-import visconfig from './visconfig.json';
+// import visconfig from './visconfig.json';
 
 import 'uikit/dist/css/uikit.min.css';
 import './main.css';
 
 import datamodel from './datamodel';
-
 import Header from './components/header';
 import Sidebar from './components/sidebar';
 import Topmenu from './components/topmenu';
@@ -36,11 +30,11 @@ import Methodology from './components/methodology';
 
 function App() {
 	// variables
-	this.terms = visconfig.terms;
-	this.relatedTerms = visconfig.relatedTerms;
-	this.period = visconfig.period;
+	this.terms = [];
+	this.relatedTerms = [];
+	this.period = {};
 
-	this.selectedTerm = this.terms[0];
+	this.selectedTerm = {};
 
 	this.showTableAll = false;
 
@@ -68,10 +62,24 @@ function App() {
 		return this;
 	};
 
-	this.init = function () {
+	this.loadConfig = function() {
+		const _this = this;
+		json('./visconfig.json')
+			.then(function (data) {
+				_this.init(data);
+			});
+	};
+
+	this.init = function (visconfig) {
 		// methods
 		// this.init = function init() {
 		uikiticons(UIkit);
+
+		this.terms = visconfig.terms;
+		this.relatedTerms = visconfig.relatedTerms;
+		this.period = visconfig.period;
+
+		this.selectedTerm = this.terms[0];
 
 		// header
 		new Header().init();
@@ -188,4 +196,4 @@ function App() {
 
 const app = new App();
 window.app = app;
-app.init();
+app.loadConfig();

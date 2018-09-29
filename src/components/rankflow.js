@@ -1,9 +1,7 @@
 import UIkit from 'uikit/dist/js/uikit.min';
 import rankflowMustache from './rankflow.html';
 import rankflowVis from './RankflowVis';
-
-
-import {select} from 'd3-selection';
+import {select} from 'd3-selection/dist/d3-selection.min';
 
 export default function Rankflow(app) {
 	this.app = app;
@@ -26,18 +24,7 @@ export default function Rankflow(app) {
 			mode: 'media',
 			animation: 'uk-animation-fade,uk-animation-fade'
 		});
-
-		// select('#methodology-section').on('click', this.toggleMethodology);
-
-		// $('#horizontal-scroll-hint').on('show', function showHint() {
-		// 	this.pageData.showScrollHint = true;
-		// });
-
-		// $('#horizontal-scroll-hint').on('hide', function hideHint() {
-		// 	this.pageData.showScrollHint = false;
-		// });
-
-
+		
 		this.vis = new rankflowVis(this.app);
 		this.vis.init();
 	};

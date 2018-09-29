@@ -1,15 +1,14 @@
 //modules
-import $ from 'jquery';
-import {extent,min,max} from 'd3-array';
-import {axisBottom,axisLeft} from 'd3-axis';
-import {nest} from 'd3-collection';
+import {extent,min} from 'd3-array/dist/d3-array.min';
+import {axisBottom,axisLeft} from 'd3-axis/dist/d3-axis.min';
+import {nest} from 'd3-collection/dist/d3-collection.min';
 import {selection,select,selectAll} from 'd3-selection';
-import {scaleOrdinal,scaleTime,scaleLinear} from 'd3-scale';
-import {schemePaired} from 'd3-scale-chromatic';
-import {line,curveStep,curveMonotoneX} from 'd3-shape';
-import {timeFormat,timeParse} from 'd3-time-format';
-import {transition} from 'd3-transition';
-import {voronoi} from 'd3-voronoi';
+import {scaleOrdinal,scaleTime,scaleLinear} from 'd3-scale/dist/d3-scale.min';
+import {schemePaired} from 'd3-scale-chromatic/dist/d3-scale-chromatic.min';
+import {line,curveStep} from 'd3-shape/dist/d3-shape.min';
+import {timeFormat,timeParse} from 'd3-time-format/dist/d3-time-format.min';
+import {voronoi} from 'd3-voronoi/dist/d3-voronoi.min';
+require('d3-transition/dist/d3-transition.min');
 
 import UIkit from 'uikit/dist/js/uikit.min';
 import moment from 'moment';
@@ -79,13 +78,11 @@ export default function RankFlowVis(app) {
 
 		this.height = 470 - this.margin.top - this.margin.bottom;
 
-		select(window).on('resize', function () {
+		window.addEventListener('resize', function() {
 			_this.resize();
 		});
 
-
 	};
-
 
 	//---- RESIZE
 	this.resize = function () {
@@ -100,18 +97,11 @@ export default function RankFlowVis(app) {
 			this.resizeTimer = setTimeout(function () {
 
 				_this.windowWidth = document.body.clientWidth;
-
-				_this._setWidth();
-				_this.setupvis();
-				_this.builtChart();
-
-
-				_this.vis(_this.visDataset, 'resize');
+				_this.update(_this.visDataset, 'resize');
 
 			}, 250);
 
 		}
-
 
 	};
 
@@ -121,10 +111,10 @@ export default function RankFlowVis(app) {
 
 		if (this.windowWidth < minVizWidth) {
 			this.width = minVizWidth - this.margin.left - this.margin.right - 10 - 120;
-			if (!app.showScrollHint) UIkit.toggle(select('#horizontal-scroll-hint')).toggle();
+			if (!app.showScrollHint) UIkit.toggle(select('#horizontal-scroll-hint').node()).toggle();
 		} else {
 			this.width = (this.windowWidth - 140) - this.margin.left - this.margin.right - 10 - 120;
-			if (app.showScrollHint) UIkit.toggle(select('#horizontal-scroll-hint')).toggle();
+			if (app.showScrollHint) UIkit.toggle(select('#horizontal-scroll-hint').node()).toggle();
 		}
 
 	};
@@ -195,14 +185,14 @@ export default function RankFlowVis(app) {
 	// };
 
 	//////////////////////// Create CHART //////////////////////// 
-	this.update = function (data) {
+	this.update = function (data,resize) {
 
 		this.dataset = data;
 
 		this.setupvis();
 
 		//clear
-		$('#visualization').empty();
+		select('#visualization').html('');
 
 		////////////////////////  Create focus SVG
 		this.focus = select('#visualization').append('svg')
@@ -272,8 +262,8 @@ export default function RankFlowVis(app) {
 			.style('font-size', 12)
 			.attr('class', 'titles')
 			.attr('y', -15);
-
-		this.vis(data);
+			
+		this.vis(this.dataset,resize);
 
 	};
 
@@ -284,11 +274,12 @@ export default function RankFlowVis(app) {
 		let array = [];
 
 		// reduce: find top 10
-		data.forEach(function (v, i) {
+		console.log(data)
+		data.forEach(function (v) {
 
 			let isTopN = false;
 
-			v.dates.forEach(function (d, j) {
+			v.dates.forEach(function (d) {
 				if (d.recRank <= _topN) {
 					isTopN = true;
 					return;
@@ -396,9 +387,9 @@ export default function RankFlowVis(app) {
 			// .rollup(function(d) {return max(d, function(g) {return g.sumRec;});})
 			.entries(this.flatData);
 
-		let nestedFlatData = nest().key(function (d) {
-			return d.id;
-		}).entries(this.flatData);
+		// let nestedFlatData = nest().key(function (d) {
+		// 	return d.id;
+		// }).entries(this.flatData);
 		// /*************************************************************/
 
 
@@ -502,7 +493,7 @@ export default function RankFlowVis(app) {
 				return _this.strokeWidth[maxPosition[_this.namesByID[d.id]].value - 1];
 			})
 			// .style('stroke-width', function(d) {return maxPosition[_this.namesByID[d.id]].value/10;})
-			.style('stroke', function (d, i) {
+			.style('stroke', function (d) {
 				// return _this.color(d.channel);
 				return _this.app.getChannelByName(d.channel).colour;
 			})
@@ -525,8 +516,7 @@ export default function RankFlowVis(app) {
 				return _this.strokeWidth[maxPosition[_this.namesByID[d.id]].value - 1];
 			})
 			// .style('stroke-width', function(d) {return maxPosition[this.namesByID[d.id]].value/10;})
-			.style('stroke', function (d, i) {
-				// return _this.color(d.channel);
+			.style('stroke', function (d) {
 				return this.app.datamodel.getChannelByName(d.channel).colour;
 			});
 
@@ -542,15 +532,13 @@ export default function RankFlowVis(app) {
 				return _this.yScale(d.dates[0].recRank);
 			})
 			.style('opacity', 0)
-			.style('stroke', function (d, i) {
-				// return _this.color(d.channel);
+			.style('stroke', function (d) {
 				return _this.app.getChannelByName(d.channel).colour;
 			})
-			.style('fill', function (d, i) {
+			.style('fill', function (d) {
 				if (d.dates[0].views == -1) {
 					return 'white';
 				} else {
-					// return _this.color(d.channel);
 					return _this.app.getChannelByName(d.channel).colour;
 				}
 			})
@@ -577,15 +565,13 @@ export default function RankFlowVis(app) {
 			.attr('r', function (d) {
 				return _this.strokeWidth[maxPosition[_this.namesByID[d.id]].value - 1];
 			})
-			.style('stroke', function (d, i) {
-				// return _this.color(d.channel);
+			.style('stroke', function (d) {
 				return this.app.datamodel.getChannelByName(d.channel).colour;
 			})
-			.style('fill', function (d, i) {
+			.style('fill', function (d) {
 				if (d.dates[0].views == -1) {
 					return 'white';
 				} else {
-					// return _this.color(d.channel);
 					return this.app.datamodel.getChannelByName(d.channel).colour;
 				}
 			});
@@ -651,12 +637,11 @@ export default function RankFlowVis(app) {
 		}
 	};
 
-	this.highlightOff = function (d) {
+	this.highlightOff = function () {
 		this.focus.selectAll('.focus').style('opacity', 1);
 		this.popUpName.attr('transform', 'translate(-100,-100)');
 		this.popUpName.select('text').style('text-anchor', 'middle');
 	};
-
 
 	///////////////////////// VORONOI CLICK - ADD MODAL
 	this._mouseClick = function (d) {

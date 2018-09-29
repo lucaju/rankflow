@@ -1,5 +1,5 @@
 import headerMustache from './header.html';
-import {select} from 'd3-selection';
+import {select} from 'd3-selection/dist/d3-selection.min';
 
 export default function Header() {
 	this.init = function init() {

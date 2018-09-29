@@ -1,9 +1,8 @@
 // modules
 import ee from 'event-emitter';
 import moment from 'moment';
-// import momentLocales from 'moment-with-locales-es6';
-import {json} from 'd3-fetch';
-import chroma from 'chroma-js';
+import {json} from 'd3-fetch/dist/d3-fetch.min';
+import chroma from 'chroma-js/chroma.min';
 
 function Datamodel() {
 
@@ -62,11 +61,12 @@ function Datamodel() {
 		}
 
 		const loadPromise = new Promise(
-			(resolve, reject) => {
+			(resolve) => {
 				Promise.all(fileArray.map(this.loadfile))
 					.then(function transform(collection) {
-						// console.log(collection);
-						return Promise.all(collection.map(datamodel.transformDailyData));
+						console.log(collection);
+						const usefulData = collection.filter(data => data != undefined);
+						return Promise.all(usefulData.map(datamodel.transformDailyData));
 					}).then(function () {
 						datamodel.reorderByDate();
 						return datamodel.parseData();
@@ -89,7 +89,11 @@ function Datamodel() {
 							filename: file,
 							data: data
 						};
+						// console.log(d)
 						resolve(d);
+					})
+					.catch(function() {
+						resolve();
 					});
 			});
 		return loadPromise;
@@ -354,7 +358,7 @@ function Datamodel() {
 
 	};
 
-	this.filterVidesByPeriod = function(tSlug, start, end) {
+	this.filterVidesByPeriod = function(tSlug) {
 
 		const _this = this;
 		
@@ -391,7 +395,7 @@ function Datamodel() {
 			}
 		}
 
-		function isBetweenDates(element, index, array) {
+		function isBetweenDates(element) {
 			return element.moment.isBetween(_this.period.startDate,_this.period.endDate, 'day','[]');
 		}
 
@@ -399,9 +403,6 @@ function Datamodel() {
 		termSelected.filteredPeriod.videos.sort(function (b, a) {
 			return a.sumRec - b.sumRec;
 		});
-		
-		//update channel list
-		this.getRankedChannels(rankflowData.selectedTerm);
 
 		this.updateData();
 
