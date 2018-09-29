@@ -19,15 +19,20 @@ O rankflow permite analizar a evoluções de video no ranking the recomendaçõe
 
 ### COLETA DE DADOS
 Os dados de desse projeto foram coletados foram coletados usando um script em Python desenvolvido por Guillaume Chaslot como parte to projeto Algo Transparency. O algorithm em questão faz uma busca no Youtube usando uma palavra-chave definida pelo usuário para coletar e armazenar informações dos videos relacionados à palavra-chave. Mais especificamente nós usamos script para A) identificar os quatro primeiros resultados encontrados na pesquisa no Youtube pela palavra-chave, B) obter os primeiros quatro videos relacionados ao resultados da pesquisa, C) repetir a etapa (B) quatro vezes sucessivamente com cada video obtido para coletar videos relacionados, e D) guardar o resultado em arquivo JSON. Esse operação é análoga a uma pessoa fazer uma busca por uma palavra-chave no Youtube, abrir os primeiros quatro videos, e na sequencia clicar nos quatro primeiros videos recomendados, repetindo esse processo quatro vezes para cada video que for aberto.
+
 Esse algoritmo não usa a API publica do Youtube. Ao invés disse, ele simula o ambiente do navegador web para coletar os elementos (HTML)que são desenhados nas páginas de busca e do visualização de video do Youtube — um processo conhecido como "scraping". Esse processo faz com que a coleta de dados fique mais neutra, evitando preferencias pessoais e preconceitos sociais definidas inscritas no perfil do usuário. Ou seja, não leve em consideração as preferencias do perfil do usuário no Youtube, o histórico do navegador, cookies, e outros elementos que podem interferir no rankeamento gerado pelo Youtube. No entanto, isso não remove outras variáveis que possam distorcer ou formatar o ranking, como a localização e sistema do computador em que a coleta foi feita, a lingua em que o sistema esta configurado, ou qualquer outra variável que faça parte do processo de ranqueamento não revelada pelo Youtube.
+
 Para esta pesquisa nós coletados termos relevantes às eleições no Brasil, mais especificamente os nomes dos candidatos e uma variação do nome do candidato acrescentado da palavra "presidente". Coletados as informações dos videos dos principais candidatos, a saber: Lula, Fernando Haddad, Geraldo Alckmin, Jair Bolsonaro, Guilherme Boulos, Ciro Gomes, Marina Silva, Henrique Meireles, e João Amoêdo (acrescentado à lista no dia 5 de setembro de 2018). Coletamos ainda informações do videos relacionados as palavras-chaves "Eleições 2018" e "Brazil Elections". A coleta dos dados foi feita usando uma vez ao dia, apenas por um computador (Apple) localizado em Montreal, Canada, entre os dia 23 de agosto de 2018 e 10 de outubro de 2018, entre 19 e 20 horas (horário de Brasília).
+
 Cada coleta diária produziu um arquivo para cada termo pesquisado. Os arquivos de cada termo foram combinados e reestruturados em um único dataset para gerar informações como o numero total de vezes que um video for recomendado no período afim de ser usados na produção da visualização proposta neste projeto.
 
 ## Dependencias
 
 ### Dependências da visualização
 [D3.js](https://d3js.org/)
+
 [Moment.js](https://gka.github.io/chroma.js/)
+
 [Chroma.js](https://momentjs.com/)
 
 ### Dados
@@ -39,9 +44,13 @@ Arquivos prontos para usar estão na pasta dist.  Os dados estão na pasta datas
 
 ### Visualizar seus próprios dados
 Se quiser usar seus próprios dados mantendo o mesmo sistema, substitua o conteúdo da pasta dataset pelos arquivos JSON (da pasta data) gerados pela sua pesquisa no Youtube-Explore. Edite o arquivo visconfig.json na pasta dist. Esse arquivo é carregado dinamicamente e não precisa ser recompilado.
+
 Period: Coloque a data inicial e final de sua pesquisa
+
 Terms: Acrescente, remova ou edite os termos da pesquisa.
+
 Name : Nome a ser mostrado na interface.
+
 Slug: identificação do arquivo. Note que esse protótipo usa o padrão de nomenclatura do youtube-explore: “videos-info-[nome do arquivo]-[termo]-[data].json
 
 ## Customização
