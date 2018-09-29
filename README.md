@@ -1,7 +1,7 @@
 # Rankflow
 Visualization tool for Youtube video recommendation system
 
-- [Sobre o projeto](## Sobre o projeto)
+- Sobre o projeto
 - Dependencias
 - Instalação
 - Uso
