@@ -13,7 +13,7 @@ function Datamodel() {
 
 	moment.locale('pt-br');
 
-	this.PATH = '../dataset/'; // Define files paths
+	this.PATH = './dataset/'; // Define files paths
 
 	this.videoCollection = {
 		videos: [],

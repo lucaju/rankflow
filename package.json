@@ -1,7 +1,17 @@
 {
   "name": "rankflow",
-  "version": "0.5.0",
-  "description": "",
+  "version": "1.0.0",
+  "author": "Luciano Frizzera",
+  "license": "ISC",
+  "description": "Visualization tool for Youtube video recommendation system",
+  "keywords": [
+    "Visualization",
+    "Youtube"
+  ],
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/lucaju/rankflow"
+  },
   "main": "App.js",
   "scripts": {
     "start": "node index",
@@ -11,12 +21,15 @@
     "watch": "webpack --watch",
     "server": "node index.js"
   },
-  "keywords": [
-    "Visualization",
-    "Youtube"
-  ],
-  "author": "Luciano Frizzera",
-  "license": "ISC",
+  "dependencies": {
+    "chroma-js": "^1.4.0",
+    "d3": "^5.7.0",
+    "event-emitter": "^0.3.5",
+    "moment": "^2.22.2",
+    "mustache": "^3.0.0",
+    "mustache-loader": "^1.4.1",
+    "uikit": "^3.0.0-rc.17"
+  },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.2",
@@ -31,17 +44,8 @@
     "style-loader": "^0.23.0",
     "webpack": "^4.20.2",
     "webpack-bundle-analyzer": "^3.0.2",
-    "webpack-cli": "^3.1.1",
+    "webpack-cli": "^3.1.2",
     "webpack-dev-middleware": "^3.4.0",
     "webpack-dev-server": "^3.1.9"
-  },
-  "dependencies": {
-    "chroma-js": "^1.4.0",
-    "d3": "^5.7.0",
-    "event-emitter": "^0.3.5",
-    "moment": "^2.22.2",
-    "mustache": "^3.0.0",
-    "mustache-loader": "^1.4.1",
-    "uikit": "^3.0.0-rc.17"
   }
 }

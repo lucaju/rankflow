@@ -35,9 +35,6 @@ module.exports = {
 			{
 				test: /\.html$/,
 				use: 'mustache-loader',
-				// loader: 'mustache-loader?minify'
-				// loader: 'mustache-loader?{ minify: { removeComments: false } }'
-				// loader: 'mustache-loader?noShortcut'
 			},
 		],
 	},
@@ -73,7 +70,8 @@ module.exports = {
 			'window.$': 'jquery',
 		}),
 		new CopyWebpackPlugin([
-			'src/visconfig.json'
+			'src/visconfig.json',
+			{ from: './dataset/', to: 'dataset/' }
 		]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 		new BundleAnalyzerPlugin(),
