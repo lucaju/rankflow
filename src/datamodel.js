@@ -1,6 +1,8 @@
 // modules
 import ee from 'event-emitter';
 import moment from 'moment';
+import 'moment/locale/pt-br';
+import 'moment/locale/en-ca';
 import {json} from 'd3-fetch/dist/d3-fetch.min';
 import chroma from 'chroma-js/chroma.min';
 
@@ -8,6 +10,8 @@ function Datamodel() {
 
 	//emitter
 	ee(this);
+
+	moment.locale('pt-br');
 
 	this.PATH = '../dataset/'; // Define files paths
 

@@ -1,6 +1,8 @@
 //modules
 import UIkit from 'uikit/dist/js/uikit.min';
 import moment from 'moment';
+import 'moment/locale/pt-br';
+import 'moment/locale/en-ca';
 import topmenuMustache from './topmenu.html';
 import {select} from 'd3-selection/dist/d3-selection.min';
 
@@ -8,9 +10,11 @@ export default function Topmenu(app) {
 	this.app = app;
 
 	this.init = function init() {
+
+		moment.locale('pt-br');
 		
-		const startDate = moment(this.app.period.start).locale('pt').format('DD MMMM');
-		const endDate = moment(this.app.period.end).locale('pt').format('DD MMMM');
+		const startDate = moment(this.app.period.start).locale('pt').format('DD [de] MMMM');
+		const endDate = moment(this.app.period.end).locale('pt').format('DD [de] MMMM');
 
 		// const startDateLocale = this.app.period.start.locale('pt').format('DD MMMM');
 		// const endDateLocale = this.app.period.end.locale('pt').format('DD MMMM');

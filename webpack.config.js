@@ -1,10 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
 
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	mode: 'development', // production
@@ -75,6 +75,7 @@ module.exports = {
 		new CopyWebpackPlugin([
 			'src/visconfig.json'
 		]),
-		// new BundleAnalyzerPlugin(),
+		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+		new BundleAnalyzerPlugin(),
 	],
 };

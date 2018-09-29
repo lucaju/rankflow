@@ -1,4 +1,3 @@
-// ${d.moment.format("MMM D")}
 //modules
 import UIkit from 'uikit/dist/js/uikit.min';
 import detailsMustache from './details.html';
