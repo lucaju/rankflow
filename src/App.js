@@ -25,7 +25,6 @@ import Details from './components/details';
 import Methodology from './components/methodology';
 
 
-
 // APP
 
 function App() {
