@@ -14,24 +14,23 @@
   },
   "main": "App.js",
   "scripts": {
-    "start": "node index",
-    "webpackServer": "webpack-dev-server --open",
+    "start": "webpack-dev-server --open",
     "build": "webpack",
     "production": "webpack -p --progress",
     "watch": "webpack --watch",
     "server": "node index.js",
-    "parser": "node DataParser.js"
+    "parser": "node ./mongoDB/DataParser.js",
+    "babel": "babel mongoDB -d lib"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "chalk": "^2.4.2",
     "chroma-js": "^2.0.3",
     "cli-spinners": "^2.0.0",
-    "d3": "^5.9.1",
+    "d3": "^5.9.2",
     "event-emitter": "^0.3.5",
     "fs-extra": "^7.0.1",
     "jsonfile": "^5.0.0",
-    "log-update": "^3.1.0",
     "moment": "^2.24.0",
     "mongodb": "^3.1.13",
     "mustache": "^3.0.1",
@@ -40,7 +39,7 @@
     "uikit": "^3.0.3"
   },
   "devDependencies": {
-    "clean-webpack-plugin": "^2.0.0",
+    "clean-webpack-plugin": "^2.0.1",
     "copy-webpack-plugin": "^5.0.1",
     "css-loader": "^2.1.1",
     "eslint": "^5.15.1",

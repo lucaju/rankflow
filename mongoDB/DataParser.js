@@ -6,9 +6,8 @@ const express = require('express')
 const fs = require('fs-extra');
 const jsonfile = require('jsonfile');
 const log = require('single-line-log').stdout;
-const logUpdate = require('log-update');
 const moment = require('moment');
-const MongoClient = require('mongodb').MongoClient
+const MongoClient = require('mongodb').MongoClient;
 
 const config = require('./src/visconfig.json');
 

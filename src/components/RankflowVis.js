@@ -76,7 +76,7 @@ export default function RankFlowVis(app) {
 			left: 50
 		};
 
-		this.height = 470 - this.margin.top - this.margin.bottom;
+		this.height = 500 - this.margin.top - this.margin.bottom;
 
 		window.addEventListener('resize', function() {
 			_this.resize();
@@ -107,14 +107,16 @@ export default function RankFlowVis(app) {
 
 	this._setWidth = function () {
 
-		let minVizWidth = (this.app.datamodel.numberDays * this.minDateWidth) + this.margin.left + this.margin.right - 10 - 240; //240 is the width of side bar. Better to get this by code
+		const minVizWidth = (this.app.datamodel.numberDays * this.minDateWidth) + this.margin.left + this.margin.right - 240; //240 is the width of side bar. Better to get this by code
+
+		const scrollHint = UIkit.toggle(select('#horizontal-scroll-hint').node());
 
 		if (this.windowWidth < minVizWidth) {
-			this.width = minVizWidth - this.margin.left - this.margin.right - 10 - 120;
-			if (!app.showScrollHint) UIkit.toggle(select('#horizontal-scroll-hint').node()).toggle();
+			this.width = minVizWidth - this.margin.left - this.margin.right - 120;
+			if (!scrollHint.isToggled()) scrollHint.toggle();
 		} else {
-			this.width = (this.windowWidth - 140) - this.margin.left - this.margin.right - 10 - 120;
-			if (app.showScrollHint) UIkit.toggle(select('#horizontal-scroll-hint').node()).toggle();
+			this.width = (this.windowWidth - 140) - this.margin.left - this.margin.right - 120;
+			if (scrollHint.isToggled()) scrollHint.toggle();
 		}
 
 	};
@@ -196,8 +198,9 @@ export default function RankFlowVis(app) {
 
 		////////////////////////  Create focus SVG
 		this.focus = select('#visualization').append('svg')
-			.attr('width', this.width + this.margin.left + this.margin.right - 240) //240 is the width of side bar. Better to get this by code
-			.attr('height', this.height + this.margin.top + this.margin.bottom)
+			.style('width', this.width + this.margin.left + this.margin.right - 240) //240 is the width of side bar. Better to get this by code
+			.style('height', this.height + this.margin.top + this.margin.bottom)
+			.style('max-width','none')
 			.append('g')
 			.attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
