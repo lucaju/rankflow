@@ -22,7 +22,7 @@ let server = app.listen(port, () => console.log(chalk.cyan(`Initiate Server on o
 
 //Mongo DB
 const useRemoteMongoDB = true; //false
-let mongoURI = 'mongodb://localhost:27017';
+let mongoURI = 'mongodb://localhost:27017'; /// exevute - mongod - on terminal
 if (useRemoteMongoDB) mongoURI = 'mongodb+srv://lucaju:Dreaming.80@fluxoart-ik2c8.gcp.mongodb.net/test?retryWrites=true';
 
 let mongoClient;
