@@ -124,6 +124,7 @@ export default function TopVideosVis(app) {
 		this.updateAxis();
 		this.updateVis();
 	};
+	
 
 	this.updateScale = function() {
 		this.xScale.domain([0, max(this.topTenData, function (d) {

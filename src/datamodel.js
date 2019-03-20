@@ -204,6 +204,7 @@ function Datamodel() {
 						date: v.date,
 						day: v.day,
 						moment: v.moment,
+						title: v.title,
 						depth: v.depth,
 						dislikes: v.dislikes,
 						likes: v.likes,
@@ -215,6 +216,9 @@ function Datamodel() {
 					};
 
 					video.sumRec += v.nb_recommendations;
+
+					//fix empty title
+					if (video.title == '') video.title = v.title;
 
 					video.dates.push(day);
 				}
