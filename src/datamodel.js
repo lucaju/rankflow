@@ -13,7 +13,7 @@ function Datamodel() {
 
 	moment.locale('pt-br');
 
-	this.PATH = './dataset/'; // Define files paths
+	this.PATH = './dataset'; // Define files paths
 
 	this.videoCollection = {
 		videos: [],
@@ -59,7 +59,7 @@ function Datamodel() {
 
 		//
 		while (dayIterator <= this.finalDate) {
-			const file = `${this.PATH}video-infos-${this.selectedTerm.slug}-${dayIterator.format('YYYYMMDD')}.json`; // get file name
+			const file = `${this.PATH}/video-infos-${this.selectedTerm.slug}-${dayIterator.format('YYYYMMDD')}.json`; // get file name
 			fileArray.push(file);
 			dayIterator.add(1, 'days');
 		}
