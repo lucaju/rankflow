@@ -9,8 +9,6 @@ import uikiticons from 'uikit/dist/js/uikit-icons.min';
 import {selection} from 'd3-selection/dist/d3-selection.min';
 import {json} from 'd3-fetch/dist/d3-fetch.min';
 
-// import visconfig from './visconfig.json';
-
 import 'uikit/dist/css/uikit.min.css';
 import './main.css';
 
@@ -61,22 +59,20 @@ function App() {
 		return this;
 	};
 
-	this.loadConfig = function() {
-		const _this = this;
-		json('./visconfig.json')
-			.then(function (data) {
-				_this.init(data);
-			});
+	this.loadConfig = async () => {
+		const res = await fetch('./config/config.json');
+		const data = await res.json();
+		this.init(data);
 	};
 
-	this.init = function (visconfig) {
+	this.init = function (config) {
 		// methods
 		// this.init = function init() {
 		uikiticons(UIkit);
 
-		this.terms = visconfig.terms;
-		this.relatedTerms = visconfig.relatedTerms;
-		this.period = visconfig.period;
+		this.terms = config.terms;
+		this.relatedTerms = config.relatedTerms;
+		this.period = config.period;
 
 		this.selectedTerm = this.terms[0];
 

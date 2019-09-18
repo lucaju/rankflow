@@ -9,7 +9,7 @@ const log = require('single-line-log').stdout;
 const moment = require('moment');
 const MongoClient = require('mongodb').MongoClient;
 
-// const config = require('../src/visconfig.json');
+
 const config = require('./ontario-config.json');
 
 

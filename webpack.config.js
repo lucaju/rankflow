@@ -56,27 +56,6 @@ module.exports = {
 			filename: 'index.html',
 			// inject: 'head'
 		}),
-		// new HtmlWebpackPlugin({
-		// 	inject: false,
-		// 	template: require('html-webpack-template'),
-		// 	appMountId: 'app',
-		// 	filename: 'index.html',
-		// 	meta: [
-		// 		{
-		// 			name: 'charset',
-		// 			content: 'utf-8',
-		// 		},
-		// 		{
-		// 			name: 'viewport',
-		// 			content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0',
-		// 		},
-		// 		{
-		// 			name: 'apple-mobile-web-app-capable',
-		// 			content: 'yes',
-		// 		},
-		// 	],
-		// 	title: 'Rankflow - Eleições Brasil 2018:',
-		// }),
 		new MiniCssExtractPlugin({
 			// Options similar to the same options in webpackOptions.output
 			// both options are optional
@@ -84,8 +63,14 @@ module.exports = {
 			chunkFilename: '[id].css',
 		}),
 		new CopyWebpackPlugin([
-			'src/visconfig.json',
-			{ from: './dataset/', to: 'dataset/' }
+			{
+				from: './src/config/',
+				to: 'config/'
+			},
+			{
+				from: './dataset/',
+				to: 'dataset/'
+			}
 		]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 		new WebpackBar(),
