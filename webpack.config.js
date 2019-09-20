@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+// const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -44,13 +44,23 @@ module.exports = {
 				],
 			},
 			{
-				test: /\.html$/,
-				use: 'mustache-loader',
+				test: /\.hbs$/,
+				loader: 'handlebars-loader',
+				options: {
+					knownHelpersOnly: false,
+					inlineRequires: /\/assets\/(:?images|audio|video)\//ig,
+					helperDirs: [path.join(__dirname, '/lib/hbs-helpers')],
+					// partialDirs: [path.join(PATHS.TEMPLATES, 'partials')],
+				},
 			},
+			// {
+			// 	test: /\.html$/,
+			// 	use: 'mustache-loader',
+			// },
 		],
 	},
 	plugins: [
-		new CleanWebpackPlugin(),
+		// new CleanWebpackPlugin(),
 		new HtmlWebpackPlugin({
 			template: './src/index.html',
 			filename: 'index.html',

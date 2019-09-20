@@ -1,21 +1,34 @@
-import sidebarMustache from './sidebar.html';
+import sidebarHBS from './sidebar.hbs';
 import {select} from 'd3-selection/dist/d3-selection.min';
 
-export default function Sidebar(app) {
-	this.app = app;
+import {config} from '../app';
 
-	this.init = function init() {
-		// data
-		const pageData = {
-			termsTitle: 'Candidatos',
-			relatedTermsTitle: 'Termos Relacionados',
-			terms: this.app.terms,
-			relatedTerms: this.app.relatedTerms,
-		};
+const init = () => {
 
-		// buid page
-		const html = sidebarMustache(pageData);
-		select('#app').append('div').attr('id','tm-sidebar-left');
-		select('#tm-sidebar-left').html(html);
+	const pageData = {
+		termsTitle: config.meta.termsTitle,
+		terms: config.terms
 	};
-}
+
+	// buid page
+	const html = sidebarHBS(pageData);
+	select('#app').append('div').attr('id','tm-sidebar-left');
+	select('#tm-sidebar-left').html(html);
+};
+
+export const selectTerm = term => {
+
+	console.log('oi');
+	
+	// const selectedTerm = config.terms.find(t => t.slug === term);
+
+	// // Dispatch the event.
+	// const event = new Event('selectTerm', selectedTerm);
+	// this.dispatchEvent(event);
+};
+
+
+export default {
+	init,
+	selectTerm
+};
