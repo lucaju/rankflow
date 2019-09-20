@@ -9,18 +9,24 @@ const log = require('single-line-log').stdout;
 const moment = require('moment');
 const MongoClient = require('mongodb').MongoClient;
 
-const config = require('./src/visconfig.json');
+
+const config = require('./ontario-config.json');
+
 
 
 //Express server
 const app = express()
-app.use('/dataset', express.static(__dirname + '/dataset'));
+// app.use('/dataset', express.static(__dirname + '/dataset'));
+app.use(express.static('dataset'));
 const port = 3000
-let server = app.listen(port, () => console.log(chalk.cyan(`Initiate Server on on port ${port}!`)));
-// app.get('/', (req, res) => res.send('Hello World!'));
+let server = app.listen(port, () => {
+	console.log(chalk.cyan(`Initiate Server on on port ${port}!`));
+	dataParser.createDatabase();
+});
+app.get('/', (req, res) => res.send('Hello World!'));
 
 //Mongo DB
-const useRemoteMongoDB = true; //false
+const useRemoteMongoDB = false; //false
 let mongoURI = 'mongodb://localhost:27017'; /// exevute - mongod - on terminal
 if (useRemoteMongoDB) mongoURI = 'mongodb+srv://lucaju:Dreaming.80@fluxoart-ik2c8.gcp.mongodb.net/test?retryWrites=true';
 
@@ -139,13 +145,13 @@ const mongoAPI = new MongoAPI();
 
 function DataParser() {
 	
-	this.PATH = 'http://localhost:3000/dataset/'; // Define files paths
+	this.PATH = 'http://localhost:3000/'; // Define files paths
 	this.terms = config.terms;
 	this.videoCollection = [];
 	this.channelCollection = [];
 
 	this.startDate = moment(config.period.start);
-	// this.endDate = moment(config.period.start).add(2, 'days');
+	// this.endDate = moment(config.period.start).add(1, 'days');
 	this.endDate = moment(config.period.end);
 
 	var countVTerm = 0;
@@ -176,11 +182,11 @@ function DataParser() {
 		}
 		console.log(chalk.red('Terms Done!'));
 
-		console.log(chalk.blue('videos: '+allVideosDB.length));
-		console.log(chalk.blue('raw: '+allRaw.length));
+		// console.log(chalk.blue('videos: '+allVideosDB.length));
+		// console.log(chalk.blue('raw: '+allRaw.length));
 
-		// await mongoAPI.insertMany('raw-brasil',allRaw);
-		await mongoAPI.insertMany('videos-brasil',allVideosDB);
+		await mongoAPI.insertMany('raw-ontario',allRaw);
+		await mongoAPI.insertMany('videos-ontario',allVideosDB);
 
 		console.log(chalk.green('\nDone!'));
 		server.close();
@@ -198,13 +204,15 @@ function DataParser() {
 
 
 			while (dayIterator.isBefore(_this.endDate)) {
-				const file = `${_this.PATH}video-infos-${term.slug}-${dayIterator.format('YYYYMMDD')}.json`; // get file name
+				const file = `${_this.PATH}video-infos-ontario-elections-${term.slug}-${dayIterator.format('YYYY-MM-DD')}.json`; // get file name
 				fileArray.push(file);
 				dayIterator.add(1, 'days');
 			}
 
 			let daysComplete = 0;
 			let numVideos = 0;
+
+			// console.log(fileArray)
 
 			for (const file of fileArray) {
 				const fileData = await loadfile(file);
@@ -235,7 +243,7 @@ function DataParser() {
 			return parse(file,data);;
 			
 		} catch (error) {
-			// console.log(error);
+			console.log(error);
 			return null;
 		}
 	};
@@ -366,7 +374,7 @@ function DataParser() {
 	}
 
 	const getDateFromFileName = function getDateFromFileName(file) {
-		const regex = /(\d{4})(\d{2})(\d{2})/; // regex find date format 'YYYY-MM-DD'
+		const regex = /(\d{4})-(\d{2})-(\d{2})/; // regex find date format 'YYYY-MM-DD'
 		const rawDate = file.match(regex);
 		return rawDate[0];
 	}

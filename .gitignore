@@ -5,6 +5,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+## local folder
+__dataset/
+dataset/
+
+dist/
+
 # Runtime data
 pids
 *.pid

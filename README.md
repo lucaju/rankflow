@@ -51,7 +51,7 @@ Arquivos prontos para usar estão na pasta **dist**, incluindo os dados na pasta
 ### Visualizar seus próprios dados
 Se quiser usar seus próprios dados mantendo o mesmo sistema, substitua o conteúdo da pasta **dist/dataset** pelos arquivos JSON (da pasta data) gerados pela sua pesquisa no Youtube-Explore.
 
-Edite o arquivo **visconfig.json** na pasta **dist**. Esse arquivo é carregado dinamicamente e não precisa ser recompilado.
+Edite o arquivo **config.json** na pasta **dist**. Esse arquivo é carregado dinamicamente e não precisa ser recompilado.
 
 - Period: Coloque a data inicial e final de sua pesquisa
 

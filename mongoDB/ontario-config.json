@@ -1,0 +1,21 @@
+{
+    "period" : {
+        "start": "2018-04-03",
+        "end": "2018-06-11"
+    },
+    "terms": [
+        {
+            "name": "Kathleen Wynne",
+            "slug": "kathleen_wynne"
+        },{
+            "name": "Doug Ford",
+            "slug": "doug_ford"
+        },{
+            "name": "Andrea Horwath",
+            "slug": "andrea_horwath"
+        },{
+            "name": "Mike Schreiner",
+            "slug": "mike_schreiner"
+        }
+    ]
+}

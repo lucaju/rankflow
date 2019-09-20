@@ -1,10 +1,8 @@
 <div class="tm-sidebar-left">
 	<div id="main-menu">
 		<ul class="uk-nav uk-nav-default" uk-switcher>
-            <p class="uk-text-lead">{{termsTitle}}</p>
-            {{#terms}}
-			<li><a onclick="selectTerm('{{slug}}')">{{name}}</a></li>
-            {{/terms}}
+			 <p class="uk-text-lead">{{termsTitle}}</p>
+			{{#list terms}}{{name}} {{slug}}{{/list}}
 		</ul>
 	</div>
 	

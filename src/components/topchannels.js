@@ -15,7 +15,7 @@ export default function Topvideos(app) {
 
 		// buid page
 		const html = topchannelsMustache(pageData);
-		select('#app').append('div').attr('id','topchannels-section');
+		select('#channels').append('div').attr('id','topchannels-section');
 		select('#topchannels-section').html(html);
 
 		this.vis = new topChannelsVis(this.app);

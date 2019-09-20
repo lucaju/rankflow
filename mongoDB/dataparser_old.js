@@ -8,7 +8,9 @@ const log = require('single-line-log').stdout;
 const moment = require('moment');
 const MongoClient = require('mongodb').MongoClient
 
-const config = require('./src/visconfig.json');
+// const config = require('./src/visconfig.json');
+const config = require('./ontario-config.json');
+
 
 
 //Express server
@@ -19,7 +21,7 @@ let server = app.listen(port, () => console.log(chalk.cyan(`Initiate Server on o
 // app.get('/', (req, res) => res.send('Hello World!'));
 
 //Mongo DB
-const useRemoteMongoDB = true; //false
+const useRemoteMongoDB = false; //false
 let mongoURI = 'mongodb://localhost:27017';
 if (useRemoteMongoDB) mongoURI = 'mongodb+srv://lucaju:Dreaming.80@fluxoart-ik2c8.gcp.mongodb.net/test?retryWrites=true';
 
@@ -135,8 +137,8 @@ function DataParser() {
 	this.channelCollection = [];
 
 	this.startDate = moment(config.period.start);
-	this.endDate = moment(config.period.start).add(14, 'days');
-	// this.endDate = moment(config.period.end);
+	// this.endDate = moment(config.period.start).add(14, 'days');
+	this.endDate = moment(config.period.end);
 
 	var countVTerm = 0;
 
@@ -211,8 +213,8 @@ function DataParser() {
 		}
 		console.log(chalk.red('Terms Done!'));
 
-		console.log(chalk.blue('videos: '+allVideosDB.length));
-		console.log(chalk.blue('raw: '+allRaw.length));
+		console.log(chalk.blue('videos-ontario: '+allVideosDB.length));
+		console.log(chalk.blue('raw-ontario: '+allRaw.length));
 		console.log('saving!')
 
 		console.log(chalk.green('Done!'));
@@ -252,6 +254,8 @@ function DataParser() {
 
 	const loadData = async term => {
 
+		console.log(term)
+
 		try {
 
 			
@@ -264,12 +268,13 @@ function DataParser() {
 
 
 			while (dayIterator.isBefore(_this.endDate)) {
-				const file = `${_this.PATH}video-infos-${term.slug}-${dayIterator.format('YYYYMMDD')}.json`; // get file name
+				const file = `${_this.PATH}video-infos-ontario-elections-${term.slug}-${dayIterator.format('YYYY-MM-DD')}.json`; // get file name
 				fileArray.push(file);
 				dayIterator.add(1, 'days');
+				// console.log(file)
 			}
 
-			for (const item of array) {
+			for (const item of fileArray) {
 				await loadfile(item);
 			  }
 			  console.log(chalk.green('Term Done!'))
@@ -292,8 +297,8 @@ function DataParser() {
 			// return loadPromise;
 
 		} catch (error) {
-			console.log(chalk.yellow.dim(`NOT:${term}`));
-			// console.log(error);
+			// console.log(chalk.yellow.dim(`NOT:${term}`));
+			console.log(error);
 		}
 		
 	};
