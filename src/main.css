@@ -1,0 +1,67 @@
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path, .y.axis path {
+    display: none;
+}
+
+.x.axis text, .y.axis text {
+    font: 10px;
+}
+
+.titles {
+    fill: #000;
+    color: #000;
+}
+
+.line {
+    fill: none;
+}
+
+.popUpName {
+    width: 50px;
+}
+
+.popUpName text {
+    text-anchor: middle;
+    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
+
+.voronoi path {
+    fill: none;
+    pointer-events: all;
+    /* stroke: #ddd; */
+}
+
+.tm-sidebar-left {
+    position: fixed;
+    top: 0px;
+    bottom: 0;
+    box-sizing: border-box;
+    width: 230px !important;
+    
+    /* border-right: 1px #e5e5e5 solid; */
+    overflow: auto;
+    background-color: white;
+    z-index: 100;
+}
+
+#main-menu {
+    padding: 150px 40px 60px 40px;
+}
+
+#top-menu {
+    z-index: 980;
+}
+
+.tm-main {
+    padding-left: 230px;
+}
+
+.spiner {
+    left: 60%;
+}

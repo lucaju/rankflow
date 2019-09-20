@@ -1,0 +1,12 @@
+{
+    "typescript.validate.enable": false,
+    "tslint.enable": false,
+    "tslint.ignoreDefinitionFiles": false,
+    "typescript.tsc.autoDetect": "off",
+    "typescript.suggestionActions.enabled": false,
+    "typescript.reportStyleChecksAsWarnings": false,
+    "typescript.format.insertSpaceAfterSemicolonInForStatements": false,
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
+    "javascript.suggestionActions.enabled": false,
+    "typescript.format.enable": false
+}
