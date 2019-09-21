@@ -5,12 +5,10 @@
 // modules
 import UIkit from 'uikit/dist/js/uikit.min';
 import uikiticons from 'uikit/dist/js/uikit-icons.min';
-
 import {selection} from 'd3-selection/dist/d3-selection.min';
 
 import 'uikit/dist/css/uikit.min.css';
 import './main.css';
-
 
 import datamodel from './datamodel';
 import header from './components/header';
@@ -20,8 +18,7 @@ import topMenu from './components/topmenu';
 // import Topchannels from './components/topchannels';
 // import Rankflow from './components/rankflow';
 // import Details from './components/details';
-// import Methodology from './components/methodology';
-
+import methodology from './components/methodology';
 
 
 // variables
@@ -77,6 +74,7 @@ const init = async () => {
 	header.init();
 	sidebar.init();
 	topMenu.init();
+	methodology.init();
 
 
 	// this.topVideos = new Topvideos(this);
@@ -87,8 +85,6 @@ const init = async () => {
 	// this.rankflow.init();
 	// this.details = new Details(this);
 	// this.details.init();
-	// this.methodology = new Methodology(this);
-	// this.methodology.init();
 
 	//load data
 	datamodel.init(config);
