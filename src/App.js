@@ -14,7 +14,7 @@ import datamodel from './datamodel';
 import header from './components/header';
 import sidebar from './components/sidebar';
 import topMenu from './components/topmenu';
-// import Topvideos from './components/topvideos';
+import topvideos from './components/topvideos';
 // import Topchannels from './components/topchannels';
 // import Rankflow from './components/rankflow';
 // import Details from './components/details';
@@ -75,7 +75,7 @@ const init = async () => {
 	sidebar.init();
 	topMenu.init();
 	methodology.init();
-
+	topvideos.init();
 
 	// this.topVideos = new Topvideos(this);
 	// this.topVideos.init();

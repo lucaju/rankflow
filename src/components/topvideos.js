@@ -1,44 +1,41 @@
-import topvideosMustache from './topvideos.html';
-import topVideoVis from './TopVideosVis';
-
 import {select} from 'd3-selection/dist/d3-selection.min';
 
+import topvideosHBS from './topvideos.hbs';
+// import vis from './topVideosVis';
 
-export default function Topvideos(app) {
-	this.app = app;
-	this.vis;
+const init = () => {
 
-	this.init = function init() {
-
-		// data
-		const pageData = {
-			title: 'Videos mais recomendados',
-		};
-
-		// buid page
-		const html = topvideosMustache(pageData);
-		select('#app').append('div').attr('id','topvideos-section');
-		select('#topvideos-section').html(html);
-
-		this.vis = new topVideoVis(this.app);
-		this.vis.init();
+	// data
+	const pageData = {
+		title: 'Videos mais recomendados',
 	};
 
-	this.load = function(data) {
-		select('#topvideos-section').select('.spiner').hide();
-		this.vis.update(data);
-	};
+	// buid page
+	const html = topvideosHBS(pageData);
+	select('#app').append('div').attr('id','topvideos-section');
+	select('#topvideos-section').html(html);
 
-	this.loading = function() {
-		select('#topvideos-section').select('.spiner').show();
-		this.vis.exit();
-	};
+	// vis.init();
+};
 
-	this.highlightOn = function (id, sourceType) {
-		this.vis.highlightOn(id, sourceType);
-	};
+const load = data => {
+	select('#topvideos-section').select('.spiner').hide();
+	// vis.update(data);
+};
 
-	this.highlightOff = function (youtubeID) {
-		this.vis.highlightOff(youtubeID);
-	};
-}
+const loading = () => {
+	select('#topvideos-section').select('.spiner').show();
+	// vis.exit();
+};
+
+// const highlightOn = (id, sourceType) => vis.highlightOn(id, sourceType);
+// const highlightOff = youtubeID => vis.highlightOff(youtubeID);
+
+
+export default {
+	init,
+	load,
+	loading,
+	// highlightOn,
+	// highlightOff
+};
