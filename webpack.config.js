@@ -49,7 +49,7 @@ module.exports = {
 				options: {
 					knownHelpersOnly: false,
 					inlineRequires: /\/assets\/(:?images|audio|video)\//ig,
-					helperDirs: [path.join(__dirname, '/lib/hbs-helpers')],
+					helperDirs: [path.join(__dirname, '/src/components/hbs-helpers')],
 					// partialDirs: [path.join(PATHS.TEMPLATES, 'partials')],
 				},
 			},

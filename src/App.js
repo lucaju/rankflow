@@ -15,7 +15,7 @@ import './main.css';
 import datamodel from './datamodel';
 import header from './components/header';
 import sidebar from './components/sidebar';
-// import Topmenu from './components/topmenu';
+import topMenu from './components/topmenu';
 // import Topvideos from './components/topvideos';
 // import Topchannels from './components/topchannels';
 // import Rankflow from './components/rankflow';
@@ -40,9 +40,9 @@ export const channelColours = [
 
 export let config;
 
-let terms = [];
-let period = {};
-let selectedTerm = {};
+let terms;
+let period;
+let selectedTerm;
 let showTableAll = false;
 
 // add functionality to D3 Selection
@@ -76,9 +76,9 @@ const init = async () => {
 	//load components
 	header.init();
 	sidebar.init();
+	topMenu.init();
 
-	// this.topMenu = new Topmenu(this);
-	// this.topMenu.init();
+
 	// this.topVideos = new Topvideos(this);
 	// this.topVideos.init();
 	// this.topChannels = new Topchannels(this);
@@ -117,28 +117,36 @@ const init = async () => {
 	
 };
 
-const selectTerm = term => {
+sidebar.event.on('selectTerm', term => {
+	selectedTerm = term;
+	topMenu.updateTerm(selectedTerm);
+});
+
+export const getSelectedTerm = () =>  selectedTerm;
+
+
+// const selectTe÷rm = term => {
 	
-	selectedTerm = terms.find(t => t.slug === term);
+// selectedTerm = terms.find(t => t.slug === term);
 
-	// Dispatch the event.
-	const event = new Event('selectTerm', selectedTerm);
-	this.dispatchEvent(event);
+// // Dispatch the event.
+// const event = new Event('selectTerm', selectedTerm);
+// this.dispatchEvent(event);
 
 
-	// topMenu.updateTerm(selectedTerm);
+// topMenu.updateTerm(selectedTerm);
 
-	// this.datamodelOnLoad();
+// this.datamodelOnLoad();
 
-	// this.datamodel.loadData(this.selectedTerm)
-	// 	.then(function (r) {
-	// 		// console.log(r);
-	// 		app.topVideos.load(r);
-	// 		app.topChannels.load(r);
-	// 		app.rankflow.load(r);
-	// 	});
+// this.datamodel.loadData(this.selectedTerm)
+// 	.then(function (r) {
+// 		// console.log(r);
+// 		app.topVideos.load(r);
+// 		app.topChannels.load(r);
+// 		app.rankflow.load(r);
+// 	});
 	
-};
+// };
 
 // this.datamodelOnLoad = function () {
 // 	this.topVideos.loading();
@@ -190,7 +198,8 @@ const showDetails = (d,source) => {
 init();
 
 export default {
-	selectTerm,
+	config,
+	getSelectedTerm,
 	getTermByName,
 	getChannelByName,
 	itemMouseOver,

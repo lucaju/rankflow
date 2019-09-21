@@ -1,60 +1,59 @@
-//modules
-import UIkit from 'uikit/dist/js/uikit.min';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import 'moment/locale/en-ca';
-import topmenuMustache from './topmenu.html';
 import {select} from 'd3-selection/dist/d3-selection.min';
+import UIkit from 'uikit/dist/js/uikit.min';
 
-export default function Topmenu(app) {
-	this.app = app;
+import topMenuHBS from './top-menu.hbs';
+import {config, getSelectedTerm} from '../app';
 
-	this.init = function init() {
 
-		moment.locale('pt-br');
-		
-		const startDate = moment(this.app.period.start).locale('pt').format('DD [de] MMMM');
-		const endDate = moment(this.app.period.end).locale('pt').format('DD [de] MMMM');
+moment.locale('pt-br');
+let pageData;
 
-		// const startDateLocale = this.app.period.start.locale('pt').format('DD MMMM');
-		// const endDateLocale = this.app.period.end.locale('pt').format('DD MMMM');
+const init = () => {
+	
+	const startDate = moment(config.period.start).locale('pt').format('DD [de] MMMM');
+	const endDate = moment(config.period.end).locale('pt').format('DD [de] MMMM');
 
-		// data
-		this.pageData = {
-			title: 'Eleições Brasil 2018',
-			subtitle: 'RankFlow das Recomendações do YouTube',
-			currentTerm: this.app.selectedTerm.name,
-			currentPeriod: `${startDate} a ${endDate}`,
-		};
-
-		// buid page
-		const html = topmenuMustache(this.pageData);
-
-		select('#app').append('div').attr('id','top-menu');
-		select('#top-menu').html(html);
-
-		UIkit.toggle(select('#small-title').node(), {
-			mode: 'media',
-			animation: 'uk-animation-fade,uk-animation-fade',
-		});
-
-		select('#menu-section').on('active', this.toggleSmallTittle);
-		select('#menu-section').on('inactive', this.toggleSmallTittle);
-
-		select('#menu-section').on('active', this.toggleSmallTittle);
-		select('#menu-section').on('inactive', this.toggleSmallTittle);
+	// data
+	pageData = {
+		title: config.meta.title,
+		subtitle: config.meta.subtitle,
+		currentTerm: getSelectedTerm().name,
+		currentPeriod: `${startDate} - ${endDate}`,
 	};
 
-	this.toggleSmallTittle = function toggleSmallTittle() {
-		UIkit.toggle(select('#small-title').node()).toggle();
-	};
+	// buid page
+	const html = topMenuHBS(pageData);
 
-	this.updateTerm = function(term) {
-		this.pageData.currentTerm = term.name;
-		const html = topmenuMustache(this.pageData);
+	select('#app').append('div').attr('id','top-menu');
+	select('#top-menu').html(html);
 
-		const topMenu = select('#top-menu');
-		topMenu.html(html);
-	};
+	UIkit.toggle(select('#small-title').node(), {
+		mode: 'media',
+		animation: 'uk-animation-fade,uk-animation-fade',
+	});
 
-}
+	select('#menu-section').on('active', toggleSmallTittle);
+	select('#menu-section').on('inactive', toggleSmallTittle);
+
+	select('#menu-section').on('active', toggleSmallTittle);
+	select('#menu-section').on('inactive', toggleSmallTittle);
+};
+
+const toggleSmallTittle = () => {
+	UIkit.toggle(select('#small-title').node()).toggle();
+};
+
+const updateTerm = term => {
+	pageData.currentTerm = term.name;
+	const html = topMenuHBS(pageData);
+	select('#top-menu').html(html);
+};
+
+
+export default {
+	init,
+	updateTerm
+};
