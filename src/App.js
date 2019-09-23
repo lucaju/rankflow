@@ -3,200 +3,156 @@
 */
 
 // modules
+import EventEmitter from 'event-emitter';
+import {selection} from 'd3-selection/dist/d3-selection.min';
 import UIkit from 'uikit/dist/js/uikit.min';
 import uikiticons from 'uikit/dist/js/uikit-icons.min';
-import {selection} from 'd3-selection/dist/d3-selection.min';
 
 import 'uikit/dist/css/uikit.min.css';
 import './main.css';
 
 import datamodel from './datamodel';
-import header from './components/header';
-import sidebar from './components/sidebar';
-import topMenu from './components/topmenu';
-import topvideos from './components/topvideos';
-// import Topchannels from './components/topchannels';
-// import Rankflow from './components/rankflow';
-// import Details from './components/details';
-import methodology from './components/methodology';
+import header from './components/header/header';
+import sidebar from './components/sidebar/sidebar';
+import topMenu from './components/top-menu/top-menu';
+import topVideos from './components/top-videos/top-videos';
+import topChannels from './components/top-channels/top-channels';
+import rankflow from './components/rankflow/rankflow';
+import details from './components/details/details';
+import methodology from './components/methodology/methodology';
 
 
-// variables
-export const channelColours = [
-	'#9badf9',
-	'#f6a072',
-	'#3be6ea',
-	'#dd9fe9',
-	'#ebae64',
-	'#fa928f',
-	'#5abef6',
-	'#d0d875',
-	'#e565a4',
-	'#8fdc8c',
-];
-
+export const appEvent = new EventEmitter();
 export let config;
-
+export let ui;
 let terms;
-let period;
 let selectedTerm;
-let showTableAll = false;
-
-// add functionality to D3 Selection
-selection.prototype.show = function() {  
-	this.style('display', 'initial');
-	return this;
-};
-
-selection.prototype.hide = function() {  
-	this.style('display', 'none');
-	return this;
-};
-
-uikiticons(UIkit);
-
+// let period;
 
 
 const init = async () => {
 
+	librariesSetup();
+
 	// load config
-	const res = await fetch('./config/config.json');
-	config = await res.json();
+	await loadConfig();
 
-	//defining properties
-	terms = config.terms;
-	period = config.period;
-
-	selectedTerm = terms[0];
-
-	
 	//load components
 	header.init();
 	sidebar.init();
 	topMenu.init();
+	topVideos.init();
+	topChannels.init();
+	rankflow.init();
 	methodology.init();
-	topvideos.init();
-
-	// this.topVideos = new Topvideos(this);
-	// this.topVideos.init();
-	// this.topChannels = new Topchannels(this);
-	// this.topChannels .init();
-	// this.rankflow = new Rankflow(this);
-	// this.rankflow.init();
-	// this.details = new Details(this);
-	// this.details.init();
+	details.init();
 
 	//load data
 	datamodel.init(config);
 	const data = await datamodel.loadData(selectedTerm);
-	console.log(data);
 
+	topVideos.load(data);
+	topChannels.load(data);
+	rankflow.load(data);
 
-	// this.datamodel = new datamodel(this);
-	// this.datamodel = datamodel;
-	// this.datamodel.init(config);
-
-	// this.datamodel.on('load', app.datamodelOnLoad);
-	// this.datamodel.on('update', {data: Object}, function (e, data) {
-	// 	app.datamodelOnLoad(data);
-	// });
-		
-
-	// this.datamodel.loadData(this.selectedTerm)
-	// 	.then(function (r) {
-	// 		// console.log(r);
-	// 		app.topVideos.load(r);
-	// 		app.topChannels.load(r);
-	// 		app.rankflow.load(r);
-	// 	});
-
-	
 };
 
-sidebar.event.on('selectTerm', term => {
+const librariesSetup = () => {
+
+	//setup
+	uikiticons(UIkit);
+	// add functionality to D3 Selection
+	selection.prototype.show = function() {  
+		this.style('display', 'initial');
+		return this;
+	};
+
+	selection.prototype.hide = function() {  
+		this.style('display', 'none');
+		return this;
+	};
+
+};
+
+const loadConfig = async () => {
+	const res = await fetch('./config/config.json');
+	config = await res.json();
+
+	terms = config.terms;
+	// period = config.period;
+	selectedTerm = terms[0];
+	
+	await loadUIlanguage(config.meta.language);
+	return;
+};
+
+const loadUIlanguage = async lang => {
+	const res = await fetch(`./config/ui-${lang}.json`);
+	ui = await res.json();
+	return;
+};
+
+sidebar.event.on('selectTerm', async term => {
 	selectedTerm = term;
-	topMenu.updateTerm(selectedTerm);
+
+	topVideos.loading();
+	topChannels.loading();
+	rankflow.loading();
+
+	const data = await datamodel.loadData(selectedTerm);
+
+	topVideos.load(data);
+	topChannels.load(data);
+	rankflow.load(data);
+
 });
 
 export const getSelectedTerm = () =>  selectedTerm;
 
+export const getChannelByName = channelName => datamodel.getChannelByName(channelName);
 
-// const selectTe÷rm = term => {
-	
-// selectedTerm = terms.find(t => t.slug === term);
-
-// // Dispatch the event.
-// const event = new Event('selectTerm', selectedTerm);
-// this.dispatchEvent(event);
-
-
-// topMenu.updateTerm(selectedTerm);
-
-// this.datamodelOnLoad();
-
-// this.datamodel.loadData(this.selectedTerm)
-// 	.then(function (r) {
-// 		// console.log(r);
-// 		app.topVideos.load(r);
-// 		app.topChannels.load(r);
-// 		app.rankflow.load(r);
-// 	});
-	
-// };
-
-// this.datamodelOnLoad = function () {
-// 	this.topVideos.loading();
-// 	this.topChannels.loading();
-// 	this.rankflow.loading();
-// };
-
-const getTermByName = termName => terms.find(c => c.name == termName);
-
-const getChannelByName = channelName => datamodel.collection.channels.find(c => c.name == channelName);
-
-const itemMouseOver = (data,source) => {
+export const itemMouseOver = (data,source) => {
 	if(source == 'video') {
-		this.topVideos.highlightOn(data.youtubeID, source);
-		this.topChannels.highlightOn(data.channel);
-		this.rankflow.highlightOn(data,source);
+		topVideos.highlightOn(data.youtubeID, source);
+		topChannels.highlightOn(data.channel);
+		rankflow.highlightOn(data,source);
 	} else if(source == 'channel') {
-		this.topVideos.highlightOn(data.name, source);
-		this.topChannels.highlightOn(data.name);
-		this.rankflow.highlightOn(data,source);
+		topVideos.highlightOn(data.name, source);
+		topChannels.highlightOn(data.name);
+		rankflow.highlightOn(data,source);
 	} else if(source == 'rank') {
-		this.topVideos.highlightOn(data.data.youtubeID,'video');
-		this.topChannels.highlightOn(data.channel,source);
-		this.rankflow.highlightOn(data,source);
+		topVideos.highlightOn(data.data.youtubeID,'video');
+		topChannels.highlightOn(data.channel,source);
+		rankflow.highlightOn(data,source);
 	}
 };
 
-const itemMouseOut = (data,source) => {
+export const itemMouseOut = (data,source) => {
 	if(source == 'video') {
-		this.topVideos.highlightOff(data.youtubeID);
-		this.topChannels.highlightOff(data.channel);
-		this.rankflow.highlightOff(data);
+		topVideos.highlightOff(data.youtubeID);
+		topChannels.highlightOff(data.channel);
+		rankflow.highlightOff(data);
 	} else if(source == 'channel') {
-		this.topVideos.highlightOff(data.name);
-		this.topChannels.highlightOff(data.name);
-		this.rankflow.highlightOff(data);
+		topVideos.highlightOff(data.name);
+		topChannels.highlightOff(data.name);
+		rankflow.highlightOff(data);
 	} else if(source == 'rank') {
-		this.topVideos.highlightOff(data.name);
-		this.topChannels.highlightOff(data.name);
-		this.rankflow.highlightOff(data);
+		topVideos.highlightOff(data.name);
+		topChannels.highlightOff(data.name);
+		rankflow.highlightOff(data);
 	}
 };
 
-const showDetails = (d,source) => {
-	this.details.addModal(d,source);
+export const showDetails = (d,source) => {
+	details.addModal(d,source);
 };
-
 
 init();
 
 export default {
 	config,
+	appEvent,
 	getSelectedTerm,
-	getTermByName,
 	getChannelByName,
 	itemMouseOver,
 	itemMouseOut,

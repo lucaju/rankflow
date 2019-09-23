@@ -1,33 +1,31 @@
 // modules
-import ee from 'event-emitter';
+// import EventEmitter from 'event-emitter';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import 'moment/locale/en-ca';
-import {json} from 'd3-fetch/dist/d3-fetch.min';
 import chroma from 'chroma-js/chroma.min';
 
+import colourPalette from './components/utilities/colour-palette';
 
 
-//emitter
-ee(this);
+//settings
 moment.locale('pt-br');
+
 const PATH = './dataset'; // Define files paths
+// export const event = new EventEmitter();
 
 const collection = {
 	videos: [],
 	channels: [],
 	topChannels: []
 };
-
 const period = {
 	start: undefined,
 	end: undefined,
 	duration: undefined
 };
 
-// this.temp;
 let selectedTerm;
-const maxRankIndex = 10;
 
 
 const init = config => {
@@ -62,7 +60,6 @@ export const loadData = async term => {
 			addDataToCollection(data, dayIterator);
 
 		} catch (err) {
-			console.log('oi');
 			continue;
 		}
 		
@@ -74,7 +71,6 @@ export const loadData = async term => {
 	return collection;
 
 };
-
 
 const addDataToCollection = (data, date) => {
 
@@ -88,7 +84,8 @@ const addDataToCollection = (data, date) => {
 	for (const video of arrayData) {
 
 		video.youtubeID = video.id;
-		video.date = date;
+		video.date = date.format('YYYY-MM-DD');
+		video.moment = date;
 		video.recRank = rankIndex;
 		video.day = date.format('DD');
 		video.id = '_' + video.id;
@@ -99,7 +96,6 @@ const addDataToCollection = (data, date) => {
 
 		rankIndex++;
 	}
-
 
 	return collection;
 
@@ -199,7 +195,7 @@ const getRankedChannels = () => {
 	channels.sort((b, a) =>  a.numberRecommendations - b.numberRecommendations);
 
 	//add colour based on pallete 
-	// if (this.app.channelColours) this._setChannelColour(channels);
+	setChannelColour(channels);
 	
 
 	//save;
@@ -209,49 +205,53 @@ const getRankedChannels = () => {
 
 const setChannelColour = channels => {
 
-	channels.forEach( function(c,i) {
+	channels.forEach((c,i) => {
 
 		//top ten color /// more on gray
 		if (i < 10) {
-			// c.colour = app.channelColours[i];
+
 			let colour = checkChannelColour(c.name);
+
 			if (colour) {
 				c.colour = colour;
-			} else {
 
-				colour = chroma(_this.app.channelColours[i]).hex();
+			} else {
+				colour = chroma(colourPalette.channelColours[i]).hex();
 				let testDuplication = true;
 				let multiplier = 1;
+
 				while (testDuplication) {
 					testDuplication = checkColourDuplicationTopTen(colour);
 					if (testDuplication) {
 						colour = chroma(colour).saturate(multiplier).hex();
 						multiplier++;
 					}
+
 				}
 				
 				c.colour = colour;
-
-
 				collection.topChannels.push(c); 
+
 			}
 
 		} else {
-			// c.colour = '#ccc';
 			c.colour = chroma('lightgray').hex();
+
 		}
 
-	});
-
-	const checkChannelColour = channelName => {
-		const channel = collection.topChannels.find(c => c.name == channelName);
-		if (channel) return channel.colour;
-		return null;
-	};
-
-	const checkColourDuplicationTopTen = colour => collection.topChannels.find(c => c.colour == colour);
+	});	
 
 };
+
+const getChannelByName = channelName => collection.channels.find(channel => channel.name == channelName);
+
+const checkChannelColour = channelName => {
+	const channel = collection.topChannels.find(c => c.name === channelName);
+	if (channel) return channel.colour;
+	return null;
+};
+
+const checkColourDuplicationTopTen = colour => collection.topChannels.find(c => c.colour === colour);
 
 const changePeriod = (term, start, end) => {
 
@@ -282,11 +282,6 @@ const changePeriod = (term, start, end) => {
 };
 
 const filterVidesByPeriod = () => {
-	
-	// const termSelected = this.terms.find(term => term.slug == tSlug);
-
-	// const filteredData = termSelected;
-	
 
 	//filter data
 	const selectedPeriod = {
@@ -330,40 +325,10 @@ const filterVidesByPeriod = () => {
 
 };
 
-// this.selectTerm = function(term) {
-// 	this.selectedTerm = term; //new term
-// 	const termSelected = this.terms.find(term => term.slug == this.selectedTerm);
-
-// 	$('#current-view').find('#current-tern').html(termSelected.name);
-
-// 	if(termSelected.videos.length == 0) {
-// 		datamodel.emit('load',term);
-// 		// $(rankflowData).trigger('load');
-// 		this.loadData();
-// 	} else {
-// 		this.updateData();
-// 	}
-	
-// };
-
-// const updateData = () => {
-
-// 	const selectedDataset = this.terms.find(term => term.slug == this.selectedTerm);
-// 	datamodel.emit('update',[selectedDataset]);
-
-// 	// $(rankflowData).trigger('update',[selectedDataset]);
-
-// };
-
-const displayPeriodStartDate = () => period.start.locale('pt').format('DD MMMM');
-const displayPeriodEndDate = () => period.endD.locale('pt').format('DD MMMM');
-
-
-// const datamodel = new Datamodel();
-// export default datamodel;
-
 export default {
 	init,
+	// event,
 	loadData,
-	changePeriod
+	changePeriod,
+	getChannelByName
 };

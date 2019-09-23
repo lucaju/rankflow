@@ -2,9 +2,9 @@ import EventEmitter from 'event-emitter';
 import {select, selectAll} from 'd3-selection/dist/d3-selection.min';
 
 import sidebarHBS from './sidebar.hbs';
-import {config} from '../app';
+import {config} from '../../app';
 
-const event = new EventEmitter();
+export const event = new EventEmitter();
 
 const init = () => {
 

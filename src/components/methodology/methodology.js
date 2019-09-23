@@ -1,17 +1,25 @@
 import {select} from 'd3-selection/dist/d3-selection.min';
 import UIkit from 'uikit/dist/js/uikit.min';
 
-import methodologyHBS from './methodology.hbs';
+// import methodologyHBS from './methodology.hbs';
+import {config, ui} from '../../app';
 
 
 let showMethodology = false;
+let methodologyHBS;
 
+const init = async () => {
 
-const init = () => {
+	//load methodology according to language
+	await import(/* webpackChunkName: "methodology" */ `./methodology-${config.meta.language}.hbs`)
+		.then(({ default: methodology }) => {
+			methodologyHBS = methodology;
+			// debugHTML = botRecastaiDebugHBS(data);
+		})
+
 	// data
 	const pageData = {
-		title: 'Metodologia',
-		data: 'Coleta de Dados',
+		title: ui.methodology.title
 	};
 
 	// buid page

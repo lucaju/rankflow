@@ -2,7 +2,8 @@
     "meta": {
         "title": "Eleições Brasil 2018",
         "subtitle": "RankFlow das Recomendações do YouTube",
-        "termsTitle": "Candidatos"
+        "termsTitle": "Candidatos",
+        "language": "pt"
     },
     "period" : {
         "start": "2018-08-23",

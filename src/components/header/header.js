@@ -1,7 +1,7 @@
 import headerHBS from './header.hbs';
 import {select} from 'd3-selection/dist/d3-selection.min';
 
-import {config} from '../app';
+import {config} from '../../app';
 
 
 const init = () => {

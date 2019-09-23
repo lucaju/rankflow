@@ -1,0 +1,25 @@
+{
+    "mostRecommendedVideos": {
+        "title": "Most recommended videos"
+    },
+    "mostRecommendedChannels": {
+        "title": "Most recommended channels"
+    },
+    "rankflow": {
+        "title": "Ranking of most recommended videos",
+        "scroll": "Scroll",
+        "yAxisLabel": "Ranking position"
+    },
+    "details": {
+        "statsLabel": {
+            "views": "Views",
+            "likes": "Likes",
+            "dislikes": "Dislikes",
+            "recommendations": "Recommendations",
+            "rankingPosition": "Position in Recommendations Ranking"
+        }
+    },
+    "methodology": {
+        "title": "Methodology"
+    }
+}

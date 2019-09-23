@@ -5,7 +5,8 @@ import {select} from 'd3-selection/dist/d3-selection.min';
 import UIkit from 'uikit/dist/js/uikit.min';
 
 import topMenuHBS from './top-menu.hbs';
-import {config, getSelectedTerm} from '../app';
+import {config, getSelectedTerm} from '../../app';
+import {event as sidebarEvent} from '../sidebar/sidebar';
 
 
 moment.locale('pt-br');
@@ -52,8 +53,9 @@ const updateTerm = term => {
 	select('#top-menu').html(html);
 };
 
+sidebarEvent.on('selectTerm', term => updateTerm(term));
+
 
 export default {
-	init,
-	updateTerm
+	init
 };

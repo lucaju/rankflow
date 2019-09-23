@@ -1,0 +1,24 @@
+<div class="uk-section uk-section-xsmall uk-section-muted tm-main">
+    <div class="uk-container uk-text-small uk-text-muted">
+        <h3 class="uk-h3 uk-text-center uk-margin-small-top">
+            <span>{{title}} 
+                <a id="methodology-toggle-icon" class="uk-icon-link" uk-toggle="target: #methodology"></a>
+            </span>
+        </h3>
+        <div id="methodology" class="uk-grid-divider uk-margin-large-top uk-margin-medium-bottom" uk-grid hidden>
+            <div class="uk-width-3-5@m">
+                <h5 class="uk-h5 uk-text-uppercase">Data Collection</h5>
+                <p>We collected recommendations using a Python script developed by Guillaume Chaslot <a href="https://github.com/pnbt/YouTube-explore" target="_blank">Guillaume Chaslot</a> as part of the Algo Transparency project. The script starts with a search query on YouTube to follow and store the list of recommended videos related to the topic of interest. More specifically, the script 1) gets the [N] first search results, 2) follows the first [M] recommendations, 3) repeats step (2) [P] times, and 4) stores the results in a JSON file.</p>
+				<p>For this research we collected six relevant terms connected to the 2018 Ontario Elections: two broad terms to get the big picture on the elections (“Ontario Politics” and “Ontario Election”); and four specific terms, which are the names of the main candidates (“Kathleen Wynne”, “Doug Ford”, “Andrea Horwath”, “Mike Schreiner”). The collection was made manually running the script every day between 8 and 10 pm, from April 3 to May 8, 2018. We choose to have a narrow but deep look into the recommendation system. Thus we set the algorithm to follow the first four recommended videos and repeat the operation four times for each searched term. This is analogous of a person searching for a topic on YouTube, opening the first four videos, and sequentially following the first four recommended videos for each one of them, repeating the operation four times in the videos that come out from each new recommendation list.</p>
+				<p>This algorithm does not rely on YouTube public API. Instead, it simulates the browser environment, loading and scraping HTML elements present at the YouTube search and watch page. This makes the data collection less prone to social bias, such as user profiling using personal preferences, browser history, and cookies. However, it does not remove all the variable that might disturb the recommendation ranking, such as the location, language, the time of the day, and the machine used in this process, as well as other variables not revealed by YouTube.</p>
+				<p>Each daily search produces a JSON file containing the data for all the six terms. The files are merged into a single dataset, from which new information is derived (<i>e.g.</i>, total time a video was recommended during the period), and the data is organized to create a rank flow visualization.</p>
+            </div>
+            <div class="uk-width-2-5@m">
+                <h5 class="uk-h5 uk-text-uppercase">Visualization</h5>
+				<p>Inspired by <a href="http://labs.polsys.net/tools/rankflow/" target="_blank">Bernhard Rieder's work</a>, we developed a RankFlow visualization that shows a rank of the most recommended videos per day during the period. Built using <a href="https://d3js.org/" target="_blank">D3.js</a>, the visualization displays all videos that reached at least one of the top 5 positions in the rank at any given day of the observed period. The thickness of the line works as a reinforced visual cue for the rank position measure on the vertical axis, and it is set by the best position the video was ranked in the period. By clicking on each line, it is possible to watch the video in context, as well as check the basic metrics (view, likes, dislikes, number of recommendation) per day. Accompanying the graph, there is ranked table listing all videos collected on each searched term.</p>
+				<p>The rank flow allows the analysis of the evolution of each video in the rank, find trends, and observe what has been recommended. This might give us some insights about how YouTube rank system works, what are the most prominent videos on specific topics, and what narrative this rank bring to the political debate in Canada.</p>
+				<p>Although there is no legend (yet), each line is colour-coded by the channel that posted the video, which adds another possible dimension to the analysis: Who produces the videos about each searched term? Is there a dominant channel in the period or the video ecology is diverse?</p>
+            </div>
+        </div>
+    </div>
+</div>
