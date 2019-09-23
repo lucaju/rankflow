@@ -6,10 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 
 ## local folder
-__dataset/
-dataset/
-
-dist/
+/dataset/
 
 # Runtime data
 pids
