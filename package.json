@@ -1,6 +1,6 @@
 {
   "name": "rankflow",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": "Luciano Frizzera",
   "license": "ISC",
   "description": "Visualization for Youtube video recommendation system",
@@ -15,7 +15,7 @@
   "main": "App.js",
   "scripts": {
     "start": "webpack-dev-server --open",
-    "production": "webpack -p --progress",
+    "production": "webpack --config webpack.config.prod.js -p --progress",
     "watch": "webpack --watch"
   },
   "dependencies": {

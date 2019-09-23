@@ -4,7 +4,7 @@ const webpack = require('webpack');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const WebpackBar = require('webpackbar');
@@ -67,16 +67,16 @@ module.exports = {
 			filename: '[name].css',
 			chunkFilename: '[id].css',
 		}),
-		// new CopyWebpackPlugin([
-		// 	{
-		// 		from: './src/config/',
-		// 		to: 'config/'
-		// 	},
-		// 	{
-		// 		from: './dataset/',
-		// 		to: 'dataset/'
-		// 	}
-		// ]),
+		new CopyWebpackPlugin([
+			{
+				from: './src/config/',
+				to: 'config/'
+			},
+			{
+				from: './dataset/',
+				to: 'dataset/'
+			}
+		]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 		new WebpackBar(),
 		// new BundleAnalyzerPlugin(),
