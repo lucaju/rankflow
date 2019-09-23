@@ -9,7 +9,7 @@ export const event = new EventEmitter();
 const init = () => {
 
 	const pageData = {
-		termsTitle: config.meta.termsTitle,
+		termsTitle: config.meta.sideBarTitle,
 		terms: config.terms
 	};
 

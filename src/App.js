@@ -11,7 +11,7 @@ import uikiticons from 'uikit/dist/js/uikit-icons.min';
 import 'uikit/dist/css/uikit.min.css';
 import './main.css';
 
-import datamodel from './datamodel';
+import datamodel from './data-model';
 import header from './components/header/header';
 import sidebar from './components/sidebar/sidebar';
 import topMenu from './components/top-menu/top-menu';
@@ -82,7 +82,7 @@ const loadConfig = async () => {
 	// period = config.period;
 	selectedTerm = terms[0];
 	
-	await loadUIlanguage(config.meta.language);
+	await loadUIlanguage(config.language);
 	return;
 };
 

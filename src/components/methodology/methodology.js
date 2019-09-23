@@ -11,7 +11,7 @@ let methodologyHBS;
 const init = async () => {
 
 	//load methodology according to language
-	await import(/* webpackChunkName: "methodology" */ `./methodology-${config.meta.language}.hbs`)
+	await import(/* webpackChunkName: "methodology" */ `./methodology-${config.language}.hbs`)
 		.then(({ default: methodology }) => {
 			methodologyHBS = methodology;
 			// debugHTML = botRecastaiDebugHBS(data);

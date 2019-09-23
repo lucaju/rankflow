@@ -1,18 +1,12 @@
 // modules
-// import EventEmitter from 'event-emitter';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import 'moment/locale/en-ca';
 import chroma from 'chroma-js/chroma.min';
 
 import colourPalette from './components/utilities/colour-palette';
+import {config} from './app';
 
-
-//settings
-moment.locale('pt-br');
-
-const PATH = './dataset'; // Define files paths
-// export const event = new EventEmitter();
 
 const collection = {
 	videos: [],
@@ -29,6 +23,13 @@ let selectedTerm;
 
 
 const init = config => {
+
+	if (config.language === 'pt') {
+		moment.locale('pt-br');
+	} else {
+		moment.locale('en-us');
+	}
+
 	selectedTerm = config.terms[0].slug;
 	period.start = moment(config.period.start);
 	period.end = moment(config.period.end);
@@ -36,6 +37,8 @@ const init = config => {
 };
 
 export const loadData = async term => {
+
+	const PATH = config.dataset.path; // Define files paths
 
 	selectedTerm = term;
 

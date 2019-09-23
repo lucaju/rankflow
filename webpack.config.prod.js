@@ -1,16 +1,16 @@
 const path = require('path');
 const webpack = require('webpack');
 
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const WebpackBar = require('webpackbar');
 
 module.exports = {
-	mode: 'development',  //development || production
+	mode: 'production',  //development || production
 	entry: './src/app.js',
 	output: {
 		filename: 'app.bundle.js',
@@ -19,7 +19,7 @@ module.exports = {
 	devServer: {
 		contentBase: './dist',
 	},
-	devtool: 'inline-source-map',  //'inline-source-map' || '' 
+	devtool: '',  //'inline-source-map' || '' 
 	module: {
 		rules: [
 			{
@@ -31,7 +31,7 @@ module.exports = {
 							// you can specify a publicPath here
 							// by default it uses publicPath in webpackOptions.output
 							publicPath: '../',
-							hmr: process.env.NODE_ENV === 'development',
+							hmr: process.env.NODE_ENV === 'production',
 						},
 					},
 					'css-loader',
@@ -60,6 +60,7 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			template: './src/index.html',
 			filename: 'index.html',
+			// inject: 'head'
 		}),
 		new MiniCssExtractPlugin({
 			// Options similar to the same options in webpackOptions.output
@@ -67,19 +68,15 @@ module.exports = {
 			filename: '[name].css',
 			chunkFilename: '[id].css',
 		}),
-		// new CopyWebpackPlugin([
-		// 	{
-		// 		from: './src/config/',
-		// 		to: 'config/'
-		// 	},
-		// 	{
-		// 		from: './dataset/',
-		// 		to: 'dataset/'
-		// 	}
-		// ]),
+		new CopyWebpackPlugin([
+			{
+				from: './src/config-sample/',
+				to: 'config/'
+			}
+		]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 		new WebpackBar(),
-		// new BundleAnalyzerPlugin(),
+		new BundleAnalyzerPlugin(),
 	],
 	optimization: {
 		splitChunks: {
