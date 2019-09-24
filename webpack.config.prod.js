@@ -72,10 +72,6 @@ module.exports = {
 			{
 				from: './src/config-sample/',
 				to: 'config/'
-			},
-			{
-				from: './dataset/',
-				to: 'dataset/'
 			}
 		]),
 		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
