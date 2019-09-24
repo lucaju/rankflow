@@ -8,14 +8,18 @@ import topMenuHBS from './top-menu.hbs';
 import {config, getSelectedTerm} from '../../app';
 import {event as sidebarEvent} from '../sidebar/sidebar';
 
-
-moment.locale('pt-br');
 let pageData;
 
 const init = () => {
+
+	if (config.language === 'pt') {
+		moment.locale('pt-br');
+	} else {
+		moment.locale('en-us');
+	}
 	
-	const startDate = moment(config.period.start).locale('pt').format('DD [de] MMMM');
-	const endDate = moment(config.period.end).locale('pt').format('DD [de] MMMM');
+	const startDate = moment(config.period.start).locale(config.language).format('DD MMMM');
+	const endDate = moment(config.period.end).locale(config.language).format('DD MMMM');
 
 	// data
 	pageData = {
